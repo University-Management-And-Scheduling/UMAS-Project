@@ -1,6 +1,6 @@
 
 public class TestFile {
 	
-	System.out.println("I am")
+	int x=10000;
 
 }
