@@ -1,4 +1,4 @@
-=import java.sql.Connection;
+import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -27,6 +27,8 @@ public class MainMaster {
 					statement.setInt(1, studentUIN);
 					statement.setString(2, studentName);
 					statement.setInt(3, departmentID);
+					statement.executeUpdate();
+					Database.commitTransaction(conn);
 					
 					// For SQLStudentSelect
 		
