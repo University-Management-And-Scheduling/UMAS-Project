@@ -102,6 +102,10 @@ public class CourseOffered {
 		this.year = year;
 	}
 	
+	public CourseOffered(int offerID){
+		
+	}
+	
 	public CourseOffered getCourseOfferedFromID(int OfferID){
 		CourseOffered courseoffered = null;
 		return courseoffered;
