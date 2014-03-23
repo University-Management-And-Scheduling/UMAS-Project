@@ -12,19 +12,29 @@ public class Database {
 	private static String userName;
 	private static String password;
 	
-	static{
+//	static{
+//		conn = null;
+//		url = "jdbc:mysql://localhost:3306/";
+//		dbName = "university";
+//		driver = "com.mysql.jdbc.Driver";
+//		userName = "root";
+//		password = "engineering";
+//	}
+	
+//Constructor added	
+	public Database(){
 		conn = null;
 		url = "jdbc:mysql://localhost:3306/";
-		dbName = "courses";
+		dbName = "university";
 		driver = "com.mysql.jdbc.Driver";
 		userName = "root";
-		password = "Pras13ad";
+		password = "engineering";
 	}
 	
 	
 	// Call this function as " Connection conn = Database.getConnection(); " 
 	// to connect to the database
-	public static Connection getConnection(){
+	public synchronized Connection getConnection(){
 		try {
 			Class.forName(driver).newInstance();
 		} catch (InstantiationException e1) {
