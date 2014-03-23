@@ -21,6 +21,7 @@ public class Database {
 //		password = "engineering";
 //	}
 	
+//Constructor added	
 	public Database(){
 		conn = null;
 		url = "jdbc:mysql://localhost:3306/";
