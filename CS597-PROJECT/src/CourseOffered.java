@@ -108,7 +108,7 @@ public class CourseOffered {
 	public CourseOffered(int offerID){
 		setOfferID(offerID);
 		try{
-			Connection conn = Database.getConnection();
+			Connection conn = new Database().getConnection();
 			
 			try{
 				if(conn != null){
