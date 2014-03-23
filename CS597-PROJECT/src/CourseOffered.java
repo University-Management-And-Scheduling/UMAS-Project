@@ -1,11 +1,14 @@
+import java.sql.Connection;
 import java.sql.Date;
-import java.util.ArrayList;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 
 
 public class CourseOffered {
 	private Course course;
 	private CourseSchedule courseSchedule;
-	private ArrayList<CourseFiles> courseFiles;
+	private CourseFiles courseFiles;
 	private int offerID;
 	private String semester;
 	private Date year;
@@ -37,13 +40,13 @@ public class CourseOffered {
 	/**
 	 * @return the courseFiles
 	 */
-	public ArrayList<CourseFiles> getCourseFiles() {
+	public CourseFiles getCourseFiles() {
 		return courseFiles;
 	}
 	/**
 	 * @param courseFiles the courseFiles to set
 	 */
-	public void setCourseFiles(ArrayList<CourseFiles> courseFiles) {
+	public void setCourseFiles(CourseFiles courseFiles) {
 		this.courseFiles = courseFiles;
 	}
 	/**
@@ -91,7 +94,7 @@ public class CourseOffered {
 	 * @param year
 	 */
 	public CourseOffered(Course course, CourseSchedule courseSchedule,
-			ArrayList<CourseFiles> courseFiles, int offerID, String semester,
+			CourseFiles courseFiles, int offerID, String semester,
 			Date year) {
 		super();
 		this.course = course;
@@ -103,14 +106,72 @@ public class CourseOffered {
 	}
 	
 	public CourseOffered(int offerID){
+		setOfferID(offerID);
+		try{
+			Connection conn = Database.getConnection();
+			
+			try{
+				if(conn != null){
+					String SQLSelect= "Select OfferID, CourseID, Semester, Year, TotalCapacity, SeatsFilled, FileID"
+							+ " FROM university.coursesoffered"
+							+ " WHERE offerID="+offerID+";";
+					PreparedStatement statement = conn.prepareStatement(SQLSelect);					
+					// For SQLStudentSelect
+					statement = conn.prepareStatement(SQLSelect);
+					ResultSet rs =  statement.executeQuery();
+					
+					if(rs.first()){
+				         //Retrieve by column name
+				         int oID = rs.getInt("OfferID");
+				         int cID = rs.getInt("CourseID");
+				         String semester = rs.getString("Semester");
+				         Date year = rs.getDate("Year");
+				         int tCap = rs.getInt("TotalCapacity");
+				         int sFld = rs.getInt("SeatsFilled");
+				         int file = rs.getInt("FileID");
+				         
+				         this.course = new Course(cID);
+				 		 this.courseSchedule = new CourseSchedule(offerID);
+				 		 this.courseFiles = new CourseFiles(offerID);
+				 		 this.offerID = oID;
+				 		 this.semester = semester;
+				 		 this.year = year;
+				 		 
+				 		 System.out.println(offerID+" "+cID+" "+semester+" "+year.toString()+" "+tCap+" "+sFld);
+					}
+					
+					else{
+						int oID = -1;
+				        int cID = -1;
+				        String semester = null;
+				        int year = -1;
+				        int tCap = -1;
+				        int sFld = -1;
+				        int file = -1;
+				        
+				        this.course = null;
+				 		this.courseSchedule = null;
+				 		this.courseFiles = null;
+				 		this.offerID = offerID;
+				 		this.semester = null;
+				 		this.year = null;
+					}
+				}
+			}
+			
+			catch(SQLException e){
+				System.out.println(e);
+				Database.rollBackTransaction(conn);
+			}
+			
+			finally{
+				Database.closeConnection(conn);
+			}
+		}
 		
+		finally{
+			System.out.println("Done");
+		}
 	}
-	
-	public CourseOffered getCourseOfferedFromID(int OfferID){
-		CourseOffered courseoffered = null;
-		return courseoffered;
-	}
-	
-	
-	
+
 }

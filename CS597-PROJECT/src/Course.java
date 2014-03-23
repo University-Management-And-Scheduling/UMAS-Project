@@ -4,6 +4,10 @@ public class Course {
 	int courseID;
 	String courseName;
 	
+	public Course(int cID) {
+		// TODO Auto-generated constructor stub
+	}
+
 	/**
 	 * @return the department
 	 */
