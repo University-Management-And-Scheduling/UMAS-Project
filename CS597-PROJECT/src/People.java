@@ -16,7 +16,7 @@ public class People {
 	private int deptID;
 	private int positionID;
 	
-	public People(int UIN, String name, String userName, int deptID, int positionID)
+	public People(String name, String userName, int deptID, int positionID)
 	{
 		
 		this.UIN=UIN;
@@ -27,6 +27,10 @@ public class People {
 		
 		addIntoDatabase();
 				
+	}
+	
+	public People(int UIN){
+		
 	}
 
 	public int getUIN() {
@@ -73,47 +77,48 @@ public class People {
 	{
 		
 		try{
-			Connection conn = Database.getConnection();
+			Connection conn = new Database().getConnection();
+			
 			try{
 			
 				if(conn != null){
-					String SQLPeopleInsert= "Insert into Department Values (?,?);";
+					String SQLPeopleInsert= "Insert into People (Name, Username, DepartmentID, PositionID) Values (?,?,?,?);";
 					String SQLPeopleSelect= "Select UIN, Name, Username, DepartmentID, PositionID From People;";
 					
 					// For SQLPeopleInsert
 					
 					PreparedStatement statement = conn.prepareStatement(SQLPeopleInsert);
-					statement.setInt(1, UIN);
-					statement.setString(2, name);
-//					statement.setString(3, userName);
-//					statement.setInt(4, deptID);
-//					statement.setInt(5, positionID);
+					//statement.setInt(1, 2);
+					statement.setString(1, name);
+					statement.setString(2, userName);
+					statement.setInt(3, deptID);
+					statement.setInt(4, positionID);
 					
 					System.out.println(statement);
-					statement = conn.prepareStatement(SQLPeopleInsert);
-					statement.executeUpdate();
-					Database.commitTransaction(conn);
+					int i = statement.executeUpdate();
+					System.out.println(i);
+					//Database.commitTransaction(conn);
 					
 					// For SQLPeopleSelect
 		
-//					statement = conn.prepareStatement(SQLPeopleSelect);
-//					ResultSet rs =  statement.executeQuery();
-//					while(rs.next()){
-//				         //Retrieve by column name
-//				         int PeopleRetrievedUIN = rs.getInt("UIN");
-//				         String PeopleRetrievedName = rs.getString("Name");
-//				         String PeopleRetrieveduserName = rs.getString("UserName");
-//				         int peopleRetrievedDeptID = rs.getInt("DepartmentID");
-//				         int peopleRetrievedPositionID = rs.getInt("PositionID");
-//				         
-//				         System.out.println(PeopleRetrievedUIN);
-//				         System.out.println(PeopleRetrievedName);
-//				         System.out.println(PeopleRetrieveduserName);
-//				         System.out.println(peopleRetrievedDeptID);
-//				         System.out.println(peopleRetrievedPositionID);
+					statement = conn.prepareStatement(SQLPeopleSelect);
+					ResultSet rs =  statement.executeQuery();
+					while(rs.next()){
+				         //Retrieve by column name
+				         int PeopleRetrievedUIN = rs.getInt("UIN");
+				         String PeopleRetrievedName = rs.getString("Name");
+				         String PeopleRetrieveduserName = rs.getString("UserName");
+				         int peopleRetrievedDeptID = rs.getInt("DepartmentID");
+				         int peopleRetrievedPositionID = rs.getInt("PositionID");
+				         
+				         System.out.println(PeopleRetrievedUIN);
+				         System.out.println(PeopleRetrievedName);
+				         System.out.println(PeopleRetrieveduserName);
+				         System.out.println(peopleRetrievedDeptID);
+				         System.out.println(peopleRetrievedPositionID);
 				         //Student student = new Student(studentRetrievedUIN, studentRetrievedName,studentRetrievedDeptID);
 				         //studentList.add(student);
-					//}      
+					}      
 				}
 			} 	catch(SQLException e){
 				System.out.println(e);
@@ -138,7 +143,9 @@ public class People {
 
 	public static void main(String[] args)
 	{
-		People peopleObj=new People(1, "akshay", "athirk2", 001, 100);
+		People peopleObj=new People("akshay", "athirk2", 2, 1);
+		People peopleObj1=new People("simant", "spuroh6", 2, 1);
+		
 		
 		//peopleObj.addIntoDatabase();
 	}
