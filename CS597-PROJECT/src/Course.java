@@ -5,7 +5,7 @@ public class Course {
 	String courseName;
 	
 	public Course(int cID) {
-		
+		this.courseID = cID;
 	}
 
 	/**
@@ -47,6 +47,18 @@ public class Course {
 	 * @param courseName the courseName to set
 	 */
 	public void setCourseName(String courseName) {
+		this.courseName = courseName;
+	}
+
+	/**
+	 * @param department
+	 * @param courseID
+	 * @param courseName
+	 */
+	public Course(Department department, int courseID, String courseName) {
+		super();
+		this.department = department;
+		this.courseID = courseID;
 		this.courseName = courseName;
 	}
 	

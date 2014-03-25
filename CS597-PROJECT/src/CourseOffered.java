@@ -1,8 +1,13 @@
+import java.lang.reflect.Array;
 import java.sql.Connection;
 import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.Calendar;
+
+import org.junit.Ignore;
 
 
 public class CourseOffered {
@@ -12,17 +17,19 @@ public class CourseOffered {
 	private int offerID;
 	private String semester;
 	private Date year;
+	private int totalCapacity;
+	private int currentlyFilled;
 	
 	/**
 	 * @return the course
 	 */
-	public Course getCoure() {
+	public Course getCourse() {
 		return course;
 	}
 	/**
 	 * @param coure the course to set
 	 */
-	public void setCoure(Course course) {
+	public void setCourse(Course course) {
 		this.course = course;
 	}
 	/**
@@ -85,6 +92,31 @@ public class CourseOffered {
 	public void setYear(Date year) {
 		this.year = year;
 	}
+		
+	/**
+	 * @return the totalCapacity
+	 */
+	public int getTotalCapacity() {
+		return totalCapacity;
+	}
+	/**
+	 * @param totalCapacity the totalCapacity to set
+	 */
+	public void setTotalCapacity(int totalCapacity) {
+		this.totalCapacity = totalCapacity;
+	}
+	/**
+	 * @return the currentlyFilled
+	 */
+	public int getCurrentlyFilled() {
+		return currentlyFilled;
+	}
+	/**
+	 * @param currentlyFilled the currentlyFilled to set
+	 */
+	public void setCurrentlyFilled(int currentlyFilled) {
+		this.currentlyFilled = currentlyFilled;
+	}
 	/**
 	 * @param course
 	 * @param courseSchedule
@@ -92,10 +124,12 @@ public class CourseOffered {
 	 * @param offerID
 	 * @param semester
 	 * @param year
+	 * @param totalCapacity
+	 * @param currentlyFilled
 	 */
 	public CourseOffered(Course course, CourseSchedule courseSchedule,
-			CourseFiles courseFiles, int offerID, String semester,
-			Date year) {
+			CourseFiles courseFiles, int offerID, String semester, Date year,
+			int totalCapacity, int currentlyFilled) {
 		super();
 		this.course = course;
 		this.courseSchedule = courseSchedule;
@@ -103,8 +137,11 @@ public class CourseOffered {
 		this.offerID = offerID;
 		this.semester = semester;
 		this.year = year;
+		this.totalCapacity = totalCapacity;
+		this.currentlyFilled = currentlyFilled;
 	}
 	
+	//Initialize a CourseOffered object by looking up the offerID passed into the system.
 	public CourseOffered(int offerID){
 		setOfferID(offerID);
 		try{
@@ -116,7 +153,7 @@ public class CourseOffered {
 							+ " FROM university.coursesoffered"
 							+ " WHERE offerID="+offerID+";";
 					PreparedStatement statement = conn.prepareStatement(SQLSelect);					
-					// For SQLStudentSelect
+					
 					statement = conn.prepareStatement(SQLSelect);
 					ResultSet rs =  statement.executeQuery();
 					
@@ -124,37 +161,36 @@ public class CourseOffered {
 				         //Retrieve by column name
 				         int oID = rs.getInt("OfferID");
 				         int cID = rs.getInt("CourseID");
+				         System.out.println("CourseID retrived:"+cID);
 				         String semester = rs.getString("Semester");
 				         Date year = rs.getDate("Year");
 				         int tCap = rs.getInt("TotalCapacity");
 				         int sFld = rs.getInt("SeatsFilled");
-				         int file = rs.getInt("FileID");
+				         //int file = rs.getInt("FileID");
 				         
 				         this.course = new Course(cID);
+				         System.out.println(this.getCourse().getCourseID());
 				 		 this.courseSchedule = new CourseSchedule(offerID);
 				 		 this.courseFiles = new CourseFiles(offerID);
 				 		 this.offerID = oID;
 				 		 this.semester = semester;
 				 		 this.year = year;
+				 		 this.totalCapacity = tCap;
+				 		 this.currentlyFilled = sFld;
 				 		 
 				 		 System.out.println(offerID+" "+cID+" "+semester+" "+year.toString()+" "+tCap+" "+sFld);
 					}
 					
 					else{
-						int oID = -1;
-				        int cID = -1;
-				        String semester = null;
-				        int year = -1;
-				        int tCap = -1;
-				        int sFld = -1;
-				        int file = -1;
-				        
+							        
 				        this.course = null;
 				 		this.courseSchedule = null;
 				 		this.courseFiles = null;
-				 		this.offerID = offerID;
+				 		this.offerID = -1;
 				 		this.semester = null;
 				 		this.year = null;
+				 		this.totalCapacity = -1;
+				 		this.currentlyFilled = -1;
 					}
 				}
 			}
@@ -173,5 +209,96 @@ public class CourseOffered {
 			System.out.println("Done");
 		}
 	}
+
+	
+	//Add the courseOffered object to the database
+	@SuppressWarnings("deprecation")
+	public void addCourseOfferingToDatabase(){
+		
+		try{
+			Connection conn = new Database().getConnection();
+			
+			try{
+				if(conn != null){
+					String SQLSelect= "Select OfferID, CourseID, Semester, Year, TotalCapacity, SeatsFilled, FileID"
+							+ " FROM university.coursesoffered"
+							+ " WHERE offerID="+this.offerID+";";
+					PreparedStatement statement = conn.prepareStatement(SQLSelect);
+					statement = conn.prepareStatement(SQLSelect);
+					ResultSet rs =  statement.executeQuery();
+					
+					if(rs.first()){
+						//The object with the offerID already exists
+						//Just update the current object with new values
+						System.out.println("Updating");
+						SQLSelect= "Update university.coursesoffered"
+								+ " Set Semester= ?, TotalCapacity= ?,"
+								+ " SeatsFilled= ?, CourseID= ?"
+								+ " Where OfferID="+this.offerID+";";
+
+//						SQLSelect= "UPDATE university.coursesoffered"
+//								+ " Set SeatsFilled= ?"
+//								+ " WHERE OfferID="+this.offerID+";";
+						
+						statement = conn.prepareStatement(SQLSelect);
+						statement.setString(1, this.semester);
+						statement.setInt(2, this.totalCapacity);
+						statement.setInt(3, this.currentlyFilled);
+						System.out.println(this.getCourse().getCourseID());
+						statement.setInt(4, this.getCourse().getCourseID());
+						statement.toString();
+						statement.executeUpdate();
+					}
+					
+					else{
+						//add the object data to the courseOffered table
+						System.out.println("Not Updating");
+					}
+				}
+			}
+			
+			catch(SQLException e){
+				System.out.println("Error updating");
+				System.out.println(e.getMessage());
+			}
+			
+			finally{
+				Database.closeConnection(conn);
+			}
+			
+		}
+		
+		finally{
+			
+		}
+	}
+	
+	
+	//get all the students enrolled in the current course offering.
+//	public ArrayList<Student> getStudentsInCourse(int OfferId){
+//		try{
+//			Connection conn = new Database().getConnection();
+//			
+//			try{
+//				if(conn != null){
+//					String SQLSelect= "Select StudentUIN"
+//							+ " FROM university.coursesoffered"
+//							+ " WHERE offerID="+offerID+";";
+//					PreparedStatement statement = conn.prepareStatement(SQLSelect);					
+//					// For SQLStudentSelect
+//					statement = conn.prepareStatement(SQLSelect);
+//					ResultSet rs =  statement.executeQuery();
+//			}
+//		}
+//		
+//		finally{
+//			
+//		
+//		}
+//	
+//		}
+//
+//	}
+
 
 }
