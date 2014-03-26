@@ -18,20 +18,166 @@ public class People {
 	
 	public People(String name, String userName, int deptID, int positionID)
 	{
-		
-		this.UIN=UIN;
 		this.name=name;
 		this.userName=userName;
 		this.deptID=deptID;
 		this.positionID=positionID;
-		
-		addIntoDatabase();
 				
 	}
 	
 	public People(int UIN){
 		
+		try{
+			Connection conn = new Database().getConnection();
+			String SQLPeopleSelect="";
+			try{
+			
+				if(conn != null){
+					
+					SQLPeopleSelect = "Select UIN, Name, Username, DepartmentID, PositionID From People where UIN=?;";
+				}
+				
+				
+				
+				PreparedStatement stmtForSelect = conn.prepareStatement(SQLPeopleSelect);
+				stmtForSelect.setInt(1, UIN);
+				
+				ResultSet rs =  stmtForSelect.executeQuery();
+					
+					if(rs.first())
+					{
+						
+						int peopleRetrievedUIN = rs.getInt("UIN");
+				         String peopleRetrievedName = rs.getString("Name");
+				         String peopleRetrieveduserName = rs.getString("UserName");
+				         int peopleRetrievedDeptID = rs.getInt("DepartmentID");
+				         int peopleRetrievedPositionID = rs.getInt("PositionID");
+				     
+						
+				         this.UIN=peopleRetrievedUIN;
+				         this.name=peopleRetrievedName;
+				         this.userName=peopleRetrieveduserName;
+				         this.deptID=peopleRetrievedDeptID;
+				         this.positionID=peopleRetrievedPositionID;
+				         
+				         System.out.println(peopleRetrievedUIN);
+				         System.out.println(peopleRetrievedName);
+				         System.out.println(peopleRetrieveduserName);
+				         System.out.println(peopleRetrievedDeptID);
+				         System.out.println(peopleRetrievedPositionID);
+					}
+					
+					else
+					{
+						
+						System.out.println("UIN does not exist");
+
+					}
+					
+				
+			
+		
 	}
+			
+			catch(SQLException e){
+				System.out.println(e);
+				
+			}
+			
+			finally{
+				
+				System.out.println("retrieved");
+			}
+		}
+		
+		catch(Exception e){
+			System.out.println(e);
+			
+		}
+		
+		finally{
+			
+			System.out.println("retrieved");
+		}
+		
+}
+	
+	public People(String userName){
+	
+	try{
+		Connection conn = new Database().getConnection();
+		String SQLPeopleSelect="";
+		try{
+		
+			if(conn != null){
+				
+				SQLPeopleSelect = "Select UIN, Name, Username, DepartmentID, PositionID From People where Username=?;";
+			}
+			
+			
+			
+			PreparedStatement stmtForSelect = conn.prepareStatement(SQLPeopleSelect);
+			stmtForSelect.setString(1, userName);
+			
+			ResultSet rs =  stmtForSelect.executeQuery();
+				
+				if(rs.first())
+				{
+					
+					int peopleRetrievedUIN = rs.getInt("UIN");
+			         String peopleRetrievedName = rs.getString("Name");
+			         String peopleRetrieveduserName = rs.getString("UserName");
+			         int peopleRetrievedDeptID = rs.getInt("DepartmentID");
+			         int peopleRetrievedPositionID = rs.getInt("PositionID");
+			     
+					
+			         this.UIN=peopleRetrievedUIN;
+			         this.name=peopleRetrievedName;
+			         this.userName=peopleRetrieveduserName;
+			         this.deptID=peopleRetrievedDeptID;
+			         this.positionID=peopleRetrievedPositionID;
+			         
+			         System.out.println(peopleRetrievedUIN);
+			         System.out.println(peopleRetrievedName);
+			         System.out.println(peopleRetrieveduserName);
+			         System.out.println(peopleRetrievedDeptID);
+			         System.out.println(peopleRetrievedPositionID);
+				}
+				
+				else
+				{
+					
+					System.out.println("UIN does not exist");
+
+				}
+				
+			
+		
+	
+}
+		
+		catch(SQLException e){
+			System.out.println(e);
+			
+		}
+		
+		finally{
+			
+			System.out.println("retrieved");
+		}
+	}
+	
+	catch(Exception e){
+		System.out.println(e);
+		
+	}
+	
+	finally{
+		
+		System.out.println("retrieved");
+	}
+	
+}
 
 	public int getUIN() {
 		return UIN;
@@ -76,75 +222,74 @@ public class People {
 	public void addIntoDatabase()
 	{
 		
+		
 		try{
 			Connection conn = new Database().getConnection();
+			String SQLPeopleSelect="";
 			
 			try{
+				
+				SQLPeopleSelect = "Select UIN, Name, Username, DepartmentID, PositionID From People where Username=?;";
+				PreparedStatement stmt = conn.prepareStatement(SQLPeopleSelect);
+				stmt.setString(1, this.userName);
+				ResultSet rs =  stmt.executeQuery();
+				
+					if(rs.first()){
+				         System.out.println(this.userName+"already exists. Please choose another user name");
+				         //Insert a update query to update the values of the database....NOT ADD
+					}
+					
+					else
+					{
+						
+						System.out.println("Adding new data into the database");
+						String SQLPeopleInsert= "Insert into People (Name, Username, DepartmentID, PositionID) Values (?,?,?,?);";
+						stmt = conn.prepareStatement(SQLPeopleInsert);
+						//statement.setInt(1, 2);
+						stmt.setString(1, this.getName());
+						stmt.setString(2, this.getUserName());
+						stmt.setInt(3, this.getDeptID());
+						stmt.setInt(4, this.getPositionID());
+						System.out.println(stmt);
+						int i = stmt.executeUpdate();
+						System.out.println(i);
+					}
+					
+			}
 			
-				if(conn != null){
-					String SQLPeopleInsert= "Insert into People (Name, Username, DepartmentID, PositionID) Values (?,?,?,?);";
-					String SQLPeopleSelect= "Select UIN, Name, Username, DepartmentID, PositionID From People;";
-					
-					// For SQLPeopleInsert
-					
-					PreparedStatement statement = conn.prepareStatement(SQLPeopleInsert);
-					//statement.setInt(1, 2);
-					statement.setString(1, name);
-					statement.setString(2, userName);
-					statement.setInt(3, deptID);
-					statement.setInt(4, positionID);
-					
-					System.out.println(statement);
-					int i = statement.executeUpdate();
-					System.out.println(i);
-					//Database.commitTransaction(conn);
-					
-					// For SQLPeopleSelect
-		
-					statement = conn.prepareStatement(SQLPeopleSelect);
-					ResultSet rs =  statement.executeQuery();
-					while(rs.next()){
-				         //Retrieve by column name
-				         int PeopleRetrievedUIN = rs.getInt("UIN");
-				         String PeopleRetrievedName = rs.getString("Name");
-				         String PeopleRetrieveduserName = rs.getString("UserName");
-				         int peopleRetrievedDeptID = rs.getInt("DepartmentID");
-				         int peopleRetrievedPositionID = rs.getInt("PositionID");
-				         
-				         System.out.println(PeopleRetrievedUIN);
-				         System.out.println(PeopleRetrievedName);
-				         System.out.println(PeopleRetrieveduserName);
-				         System.out.println(peopleRetrievedDeptID);
-				         System.out.println(peopleRetrievedPositionID);
-				         //Student student = new Student(studentRetrievedUIN, studentRetrievedName,studentRetrievedDeptID);
-				         //studentList.add(student);
-					}      
-				}
-			} 	catch(SQLException e){
-				System.out.println(e);
-				//Database.rollBackTransaction(conn);
+			catch(SQLException e){
+				System.out.println("Error adding/updating to database");
+				System.out.println(e);	
 			}
 			
 			finally{
-				//Database.closeConnection(conn);
+				//System.out.println("retrieved");
 			}
+		}
 		
-	} catch(Exception e){
-		System.out.println(e);
+		catch(Exception e){
+			System.out.println("Connection faied");
+			System.out.println(e);
+			
+		}
+		
+		finally{
+			
+			//System.out.println("retrieved");
+		}
+		
 		
 	}
-	
-	finally{
-		//Database.closeConnection(conn);
-	}
-	
-}
-	
+
 
 	public static void main(String[] args)
 	{
-		People peopleObj=new People("akshay", "athirk2", 2, 1);
-		People peopleObj1=new People("simant", "spuroh6", 2, 1);
+		//People peopleObj=new People("akshay", "athirk2", 2, 1);
+		//People peopleObj1=new People("priyanka aravapalli", "maravapa", 2, 1);
+		//peopleObj1.addIntoDatabase();
+		
+		//People peopleobj3=new People();
+		//People peopleObj2=new People(3);
 		
 		
 		//peopleObj.addIntoDatabase();
@@ -153,13 +298,3 @@ public class People {
 	
 }
 			
-		 
-	
-		
-	
-	
-	
-	//1. add students to the database
-	
-
-
