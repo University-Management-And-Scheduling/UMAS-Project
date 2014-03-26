@@ -39,7 +39,7 @@ public class CourseFiles {
 	}
 	
 	public CourseFiles(int offerID){
-		
+		this.fileID = offerID;
 	}
 	
 }

@@ -1,13 +1,9 @@
-import java.lang.reflect.Array;
 import java.sql.Connection;
 import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.ArrayList;
 import java.util.Calendar;
-
-import org.junit.Ignore;
 
 
 public class CourseOffered {
@@ -16,7 +12,7 @@ public class CourseOffered {
 	private CourseFiles courseFiles;
 	private int offerID;
 	private String semester;
-	private Date year;
+	private Calendar year;
 	private int totalCapacity;
 	private int currentlyFilled;
 	
@@ -83,13 +79,13 @@ public class CourseOffered {
 	/**
 	 * @return the year
 	 */
-	public Date getYear() {
+	public Calendar getYear() {
 		return year;
 	}
 	/**
 	 * @param year the year to set
 	 */
-	public void setYear(Date year) {
+	public void setYear(Calendar year) {
 		this.year = year;
 	}
 		
@@ -128,7 +124,7 @@ public class CourseOffered {
 	 * @param currentlyFilled
 	 */
 	public CourseOffered(Course course, CourseSchedule courseSchedule,
-			CourseFiles courseFiles, int offerID, String semester, Date year,
+			CourseFiles courseFiles, int offerID, String semester, Calendar year,
 			int totalCapacity, int currentlyFilled) {
 		super();
 		this.course = course;
@@ -161,9 +157,8 @@ public class CourseOffered {
 				         //Retrieve by column name
 				         int oID = rs.getInt("OfferID");
 				         int cID = rs.getInt("CourseID");
-				         System.out.println("CourseID retrived:"+cID);
 				         String semester = rs.getString("Semester");
-				         Date year = rs.getDate("Year");
+				         
 				         int tCap = rs.getInt("TotalCapacity");
 				         int sFld = rs.getInt("SeatsFilled");
 				         //int file = rs.getInt("FileID");
@@ -174,7 +169,7 @@ public class CourseOffered {
 				 		 this.courseFiles = new CourseFiles(offerID);
 				 		 this.offerID = oID;
 				 		 this.semester = semester;
-				 		 this.year = year;
+				 		 //this.year = S
 				 		 this.totalCapacity = tCap;
 				 		 this.currentlyFilled = sFld;
 				 		 
@@ -196,6 +191,7 @@ public class CourseOffered {
 			}
 			
 			catch(SQLException e){
+				System.out.println("Error is data");
 				System.out.println(e);
 				Database.rollBackTransaction(conn);
 			}
@@ -233,7 +229,7 @@ public class CourseOffered {
 						System.out.println("Updating");
 						SQLSelect= "Update university.coursesoffered"
 								+ " Set Semester= ?, TotalCapacity= ?,"
-								+ " SeatsFilled= ?, CourseID= ?"
+								+ " SeatsFilled= ?, CourseID= ?, FileID= ?, Year= ?"
 								+ " Where OfferID="+this.offerID+";";
 
 //						SQLSelect= "UPDATE university.coursesoffered"
@@ -244,8 +240,9 @@ public class CourseOffered {
 						statement.setString(1, this.semester);
 						statement.setInt(2, this.totalCapacity);
 						statement.setInt(3, this.currentlyFilled);
-						System.out.println(this.getCourse().getCourseID());
 						statement.setInt(4, this.getCourse().getCourseID());
+						statement.setInt(5, this.getCourseFiles().fileID);
+						//statement.setDate(6, this.year);
 						statement.toString();
 						statement.executeUpdate();
 					}
