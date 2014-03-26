@@ -268,7 +268,7 @@ public class People {
 		}
 		
 		catch(Exception e){
-			System.out.println("Connection faied");
+			System.out.println("Connection failed");
 			System.out.println(e);
 			
 		}
@@ -280,19 +280,100 @@ public class People {
 		
 		
 	}
+	
+	public static void deleteFromDatabase(int UIN){
+		
+		try{
+			Connection conn = new Database().getConnection();
+			String SQLPeopleSelect="";
+			String SQLPeopleDelete="";
+			try{
+				if(conn != null){	
+				SQLPeopleSelect = "Select UIN, Name, Username, DepartmentID, PositionID From People where UIN=?;";
+				PreparedStatement stmt = conn.prepareStatement(SQLPeopleSelect);
+				stmt.setInt(1, UIN);
+				ResultSet rs =  stmt.executeQuery();
+				
+				
 
+					if(rs.first())
+					{	
+				         //this.UIN=peopleRetrievedUIN;
+				         //this.name=peopleRetrievedName;
+				         //this.userName=peopleRetrieveduserName;
+				         //this.deptID=peopleRetrievedDeptID;
+				         //this.positionID=peopleRetrievedPositionID;
+						
+						int peopleRetrievedUIN = rs.getInt("UIN");
+						String peopleRetrievedName = rs.getString("Name");
+						String peopleRetrieveduserName = rs.getString("UserName");
+						int peopleRetrievedDeptID = rs.getInt("DepartmentID");
+						int peopleRetrievedPositionID = rs.getInt("PositionID");
+				         
+//				         System.out.println(peopleRetrievedUIN);
+//				         System.out.println(peopleRetrievedName);
+//				         System.out.println(peopleRetrieveduserName);
+//				         System.out.println(peopleRetrievedDeptID);
+//				         System.out.println(peopleRetrievedPositionID);
+						
+						SQLPeopleDelete = "Delete From People where UIN=?;";
+						stmt = conn.prepareStatement(SQLPeopleDelete);
+						stmt.setInt(1, UIN);
+						int rs1=stmt.executeUpdate();
+						System.out.println(peopleRetrievedUIN+ " is deleted");
+						//System.out.println(rs1);
+						
+					}
+					
+					else
+					{
+						
+						System.out.println("UIN does not exist");
+
+					}
+				}
+					
+}
+			
+			catch(SQLException e){
+				System.out.println("Error trying to access the database");
+				System.out.println(e);	
+			}
+			
+			finally{
+				//System.out.println("retrieved");
+			}
+		}
+		
+		catch(Exception e){
+			System.out.println("Connection failed");
+			System.out.println(e);
+			
+		}
+		
+		finally{
+			
+			//System.out.println("retrieved");
+		}
+		
+			
+		
+					
+	}
+	
 
 	public static void main(String[] args)
 	{
 		//People peopleObj=new People("akshay", "athirk2", 2, 1);
-		//People peopleObj1=new People("priyanka aravapalli", "maravapa", 2, 1);
+		//People peopleObj1=new People("mrinal", "mrinal", 2, 1);
 		//peopleObj1.addIntoDatabase();
 		
 		//People peopleobj3=new People();
 		//People peopleObj2=new People(3);
 		
 		
-		//peopleObj.addIntoDatabase();
+		People.deleteFromDatabase(5);
+		People.deleteFromDatabase(6);
 	}
 	
 	
