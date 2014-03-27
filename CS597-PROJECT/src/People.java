@@ -10,11 +10,11 @@ import java.sql.Connection;
 
 public class People {
 	
-	private int UIN;
-	private String name;
-	private String userName;
-	private int deptID;
-	private int positionID;
+	protected int UIN;
+	protected String name;
+	protected String userName;
+	protected int deptID;
+	protected int positionID;
 	
 	public People(String name, String userName, int deptID, int positionID)
 	{
@@ -281,7 +281,7 @@ public class People {
 		
 	}
 	
-	public static void deleteFromDatabase(int UIN){
+	public static void deleteFromDatabaseByUIN(int UIN){
 		
 		try{
 			Connection conn = new Database().getConnection();
@@ -361,6 +361,229 @@ public class People {
 					
 	}
 	
+	public static void deleteFromDatabaseByUserName(String userName){
+		
+		try{
+			Connection conn = new Database().getConnection();
+			String SQLPeopleSelect="";
+			String SQLPeopleDelete="";
+			try{
+				if(conn != null){	
+				SQLPeopleSelect = "Select UIN, Name, Username, DepartmentID, PositionID From People where Username=?;";
+				PreparedStatement stmt = conn.prepareStatement(SQLPeopleSelect);
+				stmt.setString(1, userName);
+				ResultSet rs =  stmt.executeQuery();
+				
+				
+
+					if(rs.first())
+					{	
+				         //this.UIN=peopleRetrievedUIN;
+				         //this.name=peopleRetrievedName;
+				         //this.userName=peopleRetrieveduserName;
+				         //this.deptID=peopleRetrievedDeptID;
+				         //this.positionID=peopleRetrievedPositionID;
+						
+						int peopleRetrievedUIN = rs.getInt("UIN");
+						String peopleRetrievedName = rs.getString("Name");
+						String peopleRetrieveduserName = rs.getString("UserName");
+						int peopleRetrievedDeptID = rs.getInt("DepartmentID");
+						int peopleRetrievedPositionID = rs.getInt("PositionID");
+				         
+//				         System.out.println(peopleRetrievedUIN);
+//				         System.out.println(peopleRetrievedName);
+//				         System.out.println(peopleRetrieveduserName);
+//				         System.out.println(peopleRetrievedDeptID);
+//				         System.out.println(peopleRetrievedPositionID);
+						
+						SQLPeopleDelete = "Delete From People where Username=?;";
+						stmt = conn.prepareStatement(SQLPeopleDelete);
+						stmt.setString(1, userName);
+						int rs1=stmt.executeUpdate();
+						System.out.println(peopleRetrievedUIN+ " is deleted");
+						//System.out.println(rs1);
+						
+					}
+					
+					else
+					{
+						
+						System.out.println("UIN does not exist");
+
+					}
+				}
+					
+}
+			
+			catch(SQLException e){
+				System.out.println("Error trying to access the database");
+				System.out.println(e);	
+			}
+			
+			finally{
+				//System.out.println("retrieved");
+			}
+		}
+		
+		catch(Exception e){
+			System.out.println("Connection failed");
+			System.out.println(e);
+			
+		}
+		
+		finally{
+			
+			//System.out.println("retrieved");
+		}
+		
+			
+		
+					
+	}
+
+	public static void retireveDetailsByUIN(int UIN){
+		
+		try{
+			Connection conn = new Database().getConnection();
+			String SQLPeopleSelect="";
+			try{
+			
+				if(conn != null){
+					
+					SQLPeopleSelect = "Select UIN, Name, Username, DepartmentID, PositionID From People where UIN=?;";
+				}
+				
+				
+				
+				PreparedStatement stmtForSelect = conn.prepareStatement(SQLPeopleSelect);
+				stmtForSelect.setInt(1, UIN);
+				
+				ResultSet rs =  stmtForSelect.executeQuery();
+					
+					if(rs.first())
+					{
+						
+						int peopleRetrievedUIN = rs.getInt("UIN");
+				         String peopleRetrievedName = rs.getString("Name");
+				         String peopleRetrieveduserName = rs.getString("UserName");
+				         int peopleRetrievedDeptID = rs.getInt("DepartmentID");
+				         int peopleRetrievedPositionID = rs.getInt("PositionID");
+				         
+				         System.out.println(peopleRetrievedUIN);
+				         System.out.println(peopleRetrievedName);
+				         System.out.println(peopleRetrieveduserName);
+				         System.out.println(peopleRetrievedDeptID);
+				         System.out.println(peopleRetrievedPositionID);
+					}
+					
+					else
+					{
+						
+						System.out.println("UIN does not exist");
+
+					}
+					
+				
+			
+		
+	}
+			
+			catch(SQLException e){
+				System.out.println(e);
+				
+			}
+			
+			finally{
+				
+				System.out.println("retrieved");
+			}
+		}
+		
+		catch(Exception e){
+			System.out.println(e);
+			
+		}
+		
+		finally{
+			
+			System.out.println("retrieved");
+		}
+		
+
+		
+	}
+	
+	public static void retireveDetailsByuserName(String userName){
+		
+		try{
+			Connection conn = new Database().getConnection();
+			String SQLPeopleSelect="";
+			try{
+			
+				if(conn != null){
+					
+					SQLPeopleSelect = "Select UIN, Name, Username, DepartmentID, PositionID From People where Username=?;";
+				}
+				
+				
+				
+				PreparedStatement stmtForSelect = conn.prepareStatement(SQLPeopleSelect);
+				stmtForSelect.setString(1, userName);
+				
+				ResultSet rs =  stmtForSelect.executeQuery();
+					
+					if(rs.first())
+					{
+						
+						int peopleRetrievedUIN = rs.getInt("UIN");
+				         String peopleRetrievedName = rs.getString("Name");
+				         String peopleRetrieveduserName = rs.getString("UserName");
+				         int peopleRetrievedDeptID = rs.getInt("DepartmentID");
+				         int peopleRetrievedPositionID = rs.getInt("PositionID");
+				         
+				         System.out.println(peopleRetrievedUIN);
+				         System.out.println(peopleRetrievedName);
+				         System.out.println(peopleRetrieveduserName);
+				         System.out.println(peopleRetrievedDeptID);
+				         System.out.println(peopleRetrievedPositionID);
+					}
+					
+					else
+					{
+						
+						System.out.println("UIN does not exist");
+
+					}
+					
+				
+			
+		
+	}
+			
+			catch(SQLException e){
+				System.out.println(e);
+				
+			}
+			
+			finally{
+				
+				System.out.println("retrieved");
+			}
+		}
+		
+		catch(Exception e){
+			System.out.println(e);
+			
+		}
+		
+		finally{
+			
+			System.out.println("retrieved");
+		}
+		
+
+		
+	}
 
 	public static void main(String[] args)
 	{
@@ -372,8 +595,11 @@ public class People {
 		//People peopleObj2=new People(3);
 		
 		
-		People.deleteFromDatabase(5);
-		People.deleteFromDatabase(6);
+		//People.deleteFromDatabase(5);
+		//People.deleteFromDatabase(6);
+		
+		People.retireveDetailsByuserName("maravapa");
+		
 	}
 	
 	
