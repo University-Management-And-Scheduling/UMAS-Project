@@ -13,7 +13,6 @@ public class Professor extends People {
 	}
 	
 	public Professor(int UIN){
-		
 		super(UIN);
 	}
 		
@@ -83,6 +82,8 @@ public class Professor extends People {
 	}
 
 	//prof retrieval by UIN
+	//AKSHAY PLEASE CHECK IF THE PERSON WHOS UIN IS INPUT IS A PROFESSOR OR NOR
+	//SAME APPLIES TO THE NAME RETRIEVAL AND OTHER FUNCTIONS
 	public static void retrieveProfDetailsByUIN(int UIN){
 		
 		retireveDetailsByUIN(12);
