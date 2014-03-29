@@ -192,9 +192,23 @@ public class Department {
 					statement.setString(1, departmentName);
 					ResultSet rs =  statement.executeQuery();
 					
+					
 					if(rs.first()){
 						//The object with the DepartmentName already exists
 						System.out.println("Deleting the department:"+departmentName);
+						/*Remove all the courses related to this department*/
+						int departmentID = rs.getInt(1);
+						String courseSelect= "Select CourseID, CourseName, DepartmentID"
+								+ " FROM university.courses"
+								+ " WHERE DepartmentID= ?";
+						PreparedStatement statementForCourse = conn.prepareStatement(courseSelect, ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONCUR_UPDATABLE);
+						statementForCourse.setInt(1, departmentID);
+						ResultSet courseSetToDelete = statementForCourse.executeQuery();
+						while(courseSetToDelete.next()){
+							System.out.println("Deleting course:"+courseSetToDelete.getString(2));
+							Course.removeCourse(courseSetToDelete.getInt(1));
+						}
+						
 						rs.deleteRow();	
 						isDeleteSuccessfull = true;
 					}
@@ -275,7 +289,7 @@ public class Department {
 	}
 	
 	//DepartmentDoesnotExist Exception
-	private static class DepartmentDoesNotExistException extends Exception{
+	static class DepartmentDoesNotExistException extends Exception{
 		/**
 		 * 
 		 */
@@ -326,6 +340,15 @@ public class Department {
 	    public String getMessage() {
 	        return message;
 	    }
+	}
+	
+	public static void main(String[] args){
+		try {
+			Department.deleteDepartment("Electronics");
+		} catch (DepartmentDoesNotExistException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 
 }
