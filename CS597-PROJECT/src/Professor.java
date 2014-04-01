@@ -111,10 +111,7 @@ public class Professor extends People {
 						
 				         int peopleRetrievedPositionID = rs.getInt("PositionID");
 				         System.out.println("UIN:"+UIN+" Position ID:"+peopleRetrievedPositionID);
-				         /*Check here if the position ID id of a professor i.e 2, UIN exists for students
-				          * professors, admins TA and virtually every person existing in the university
-				          * Check if the position ID of the passed UIN is of a professor.
-				          */
+				         
 				         
 				         if(peopleRetrievedPositionID == 2)
 				        	 return true;
