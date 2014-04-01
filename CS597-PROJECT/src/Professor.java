@@ -81,32 +81,206 @@ public class Professor extends People {
 		
 	}
 
-	//prof retrieval by UIN
+	
 	//AKSHAY PLEASE CHECK IF THE PERSON WHOS UIN IS INPUT IS A PROFESSOR OR NOR
+	public static boolean checkIfProfessor(int UIN){
+		
+		try{
+			Connection conn = new Database().getConnection();
+			String SQLPeopleSelect="";
+			try{
+			
+				if(conn != null){
+					
+					SQLPeopleSelect = "Select PositionID From People where UIN=?;";
+				}
+				
+				
+				
+				PreparedStatement stmtForSelect = conn.prepareStatement(SQLPeopleSelect);
+				stmtForSelect.setInt(1, UIN);
+				
+				ResultSet rs =  stmtForSelect.executeQuery();
+					
+					if(rs.first())
+					{
+						
+				         int peopleRetrievedPositionID = rs.getInt("PositionID");
+				         System.out.println("Professor UIN exists");
+				         return true;
+
+				         
+					}
+					
+					else
+					{
+						
+						System.out.println("UIN does not exist");
+						return false;
+
+					}
+					
+				
+			
+		
+	}
+			
+			catch(SQLException e){
+				System.out.println(e);
+				
+			}
+			
+			finally{
+				
+				//System.out.println("retrieved");
+			}
+		}
+		
+		catch(Exception e){
+			System.out.println(e);
+			
+		}
+		
+		finally{
+			
+			//System.out.println("retrieved");
+		}		
+		
+		return false;
+	}
+	
+	public static boolean checkIfProfessor(String userName){
+		
+		try{
+			Connection conn = new Database().getConnection();
+			String SQLPeopleSelect="";
+			try{
+			
+				if(conn != null){
+					
+					SQLPeopleSelect = "Select PositionID From People where Username=?;";
+				}
+				
+				
+				
+				PreparedStatement stmtForSelect = conn.prepareStatement(SQLPeopleSelect);
+				stmtForSelect.setString(1, userName);
+				
+				ResultSet rs =  stmtForSelect.executeQuery();
+					
+					if(rs.first())
+					{
+						
+				         int peopleRetrievedPositionID = rs.getInt("PositionID");
+				         System.out.println("Professor username exists");
+				         return true;
+
+				         
+					}
+					
+					else
+					{
+						
+						System.out.println("username does not exist");
+						return false;
+
+					}
+					
+				
+			
+		
+	}
+			
+			catch(SQLException e){
+				System.out.println(e);
+				
+			}
+			
+			finally{
+				
+				//System.out.println("retrieved");
+			}
+		}
+		
+		catch(Exception e){
+			System.out.println(e);
+			
+		}
+		
+		finally{
+			
+			//System.out.println("retrieved");
+		}		
+		
+		return false;
+	}
+	
 	//SAME APPLIES TO THE NAME RETRIEVAL AND OTHER FUNCTIONS
+	
+	//prof retrieval by UIN
 	public static void retrieveProfDetailsByUIN(int UIN){
 		
+		boolean check=checkIfProfessor(UIN);
+		
+		if(check==true)
+		{
 		retireveDetailsByUIN(12);
+		}
+		
+		else
+		{
+			System.out.println("There exists no professor with that UIN");
+		}
 		
 	}
 	
 	//prof retrieval by userName
 	public static void retrieveProfDetailsByUserName(String userName){
 		
+		boolean check=checkIfProfessor(userName);
+		
+		if(check==true)
+		{
 		retireveDetailsByuserName(userName);
+		}
+		else
+		{
+			System.out.println("There exists no professor with that username");
+		}
+		
 		
 	}
 	
 	//prof deletion	by UIN
 	public static void deleteProfFromDbUsingUIN(int UIN){
 		
+		boolean check=checkIfProfessor(UIN);
+		
+		if(check==true)
+		{
 		deleteFromDatabaseByUIN(UIN);
+		}
+		else
+		{
+			System.out.println("There exists no professor with that UIN");	
+		}
+		
+		
 	}
 	
 	//prof deletion	by username	
 	public static void deleteProfFromDbUsingUserName(String userName){
 		
+boolean check=checkIfProfessor(userName);
+		
+		if(check==true)
+		{
 		deleteFromDatabaseByUserName(userName);
+		}
+		else
+		{
+			System.out.println("There exists no professor with that username");
+		}
 	}
 		
 	//add files
@@ -121,6 +295,8 @@ public class Professor extends People {
 		
 		//x.addProfToDb();
 		
+		//checkIfProfessor("maravapa");
+		
 		
 		//People.
 		
@@ -128,3 +304,4 @@ public class Professor extends People {
 	}
 
 }
+
