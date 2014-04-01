@@ -110,8 +110,17 @@ public class Professor extends People {
 					{
 						
 				         int peopleRetrievedPositionID = rs.getInt("PositionID");
-				         System.out.println("Professor UIN exists");
-				         return true;
+				         System.out.println("UIN:"+UIN+" Position ID:"+peopleRetrievedPositionID);
+				         /*Check here if the position ID id of a professor i.e 2, UIN exists for students
+				          * professors, admins TA and virtually every person existing in the university
+				          * Check if the position ID of the passed UIN is of a professor.
+				          */
+				         
+				         if(peopleRetrievedPositionID == 2)
+				        	 return true;
+				         
+				         else return false;
+				         //System.out.println("Professor UIN exists");
 
 				         
 					}
@@ -175,9 +184,19 @@ public class Professor extends People {
 					if(rs.first())
 					{
 						
-				         int peopleRetrievedPositionID = rs.getInt("PositionID");
-				         System.out.println("Professor username exists");
-				         return true;
+						 int peopleRetrievedPositionID = rs.getInt("PositionID");
+				         System.out.println("Username:"+userName+" Position ID:"+peopleRetrievedPositionID);
+				         /*Check here if the position ID id of a professor i.e 2, UIN exists for students
+				          * professors, admins TA and virtually every person existing in the university
+				          * Check if the position ID of the passed UIN is of a professor.
+				          */
+				         
+				         if(peopleRetrievedPositionID == 2)
+				        	 return true;
+				         
+				         else return false;
+				         //System.out.println("Professor UIN exists");
+
 
 				         
 					}
@@ -282,7 +301,8 @@ public class Professor extends People {
 	//prof deletion	by username	
 	public static void deleteProfFromDbUsingUserName(String userName){
 		
-boolean check=checkIfProfessor(userName);
+
+		boolean check=checkIfProfessor(userName);
 		
 		if(check==true)
 		{
