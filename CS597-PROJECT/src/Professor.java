@@ -15,6 +15,10 @@ public class Professor extends People {
 	public Professor(int UIN){
 		super(UIN);
 	}
+	
+	public Professor(String userName){
+		super(userName);
+	}
 		
 	//prof adding
 	public void addProfToDb(){
@@ -218,34 +222,41 @@ public class Professor extends People {
 	//SAME APPLIES TO THE NAME RETRIEVAL AND OTHER FUNCTIONS
 	
 	//prof retrieval by UIN
-	public static void retrieveProfDetailsByUIN(int UIN){
+	public static Professor retrieveProfDetailsByUIN(int UIN){
 		
 		boolean check=checkIfProfessor(UIN);
 		
 		if(check==true)
 		{
-		retireveDetailsByUIN(12);
+		//retireveDetailsByUIN(12);
+		Professor professor = new Professor(UIN);
+		return professor;
 		}
 		
 		else
 		{
 			System.out.println("There exists no professor with that UIN");
+			return null;
 		}
 		
 	}
 	
 	//prof retrieval by userName
-	public static void retrieveProfDetailsByUserName(String userName){
+	public static Professor retrieveProfDetailsByUserName(String userName){
 		
 		boolean check=checkIfProfessor(userName);
 		
 		if(check==true)
 		{
-		retireveDetailsByuserName(userName);
+			Professor professor = new Professor(userName);
+			//System.out.println(professor.getUIN());
+			return professor;
+			
 		}
 		else
 		{
 			System.out.println("There exists no professor with that username");
+			return null;
 		}
 		
 		
@@ -295,7 +306,7 @@ boolean check=checkIfProfessor(userName);
 		
 		//x.addProfToDb();
 		
-		//checkIfProfessor("maravapa");
+		retrieveProfDetailsByUserName("maravapa");
 		
 		
 		//People.
