@@ -30,10 +30,23 @@ public void setFileLocation(String fileLocation) {
 	this.fileLocation = fileLocation;
 }
 
+public int getOfferID() {
+	return offerID;
+}
+
+public void setOfferID(int offerID) {
+	this.offerID = offerID;
+}
 
 // Add a new file to file table in the database
 public static void addFileToDB(File file){
-	// Add File to database
+	int fileID = file.getFileID();
+	String fileLocation = file.getFileLocation();
+	int offerID = file.getOfferID();
+	
+	
+	// DB Code
+
 }
 
 
