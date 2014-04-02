@@ -38,7 +38,7 @@ public static void addFileToDB(File file){
 
 
 // Get a list of files for a single course
-public static List<File> getFiles(int offerID){
+public static ArrayList<File> getFiles(int offerID){
 	ArrayList<File> courseFiles = new ArrayList<File>();
 	int fileID = 0;
 	String fileLocation = null;
