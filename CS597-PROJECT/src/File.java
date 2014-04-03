@@ -1,5 +1,4 @@
 import java.util.ArrayList;
-import java.util.List;
 
 
 public class File {
@@ -48,7 +47,6 @@ public static void addFileToDB(File file){
 	// DB Code
 
 }
-
 
 // Get a list of files for a single course
 public static ArrayList<File> getFiles(int offerID){
