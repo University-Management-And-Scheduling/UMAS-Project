@@ -7,7 +7,7 @@ public class CourseExams {
 	String examName;
 	int examTotal;
 	
-	HashMap examMarks = new HashMap<Student,Float>();
+	HashMap examMarks = new HashMap<Student,Double>();
 	
 	
 	public CourseExams(int offerID, String examName, HashMap examMarks) {
@@ -123,7 +123,7 @@ public class CourseExams {
 		String examName = this.examName;
 		
 		int UIN = 0;
-		Float studentMarks = null;
+		double studentMarks = 0.0;
 		
 		// DB code to get Student's mks from the CourseExam Table
 		
@@ -134,7 +134,6 @@ public class CourseExams {
 		return classExamMarks;
 	}
 
-	
 	public void modifyStudentMarks(Student student, Float newMarks){
 		int OfferID = this.offerID;
 		String examName = this.examName;
@@ -144,7 +143,6 @@ public class CourseExams {
 		
 		
 	}
-
 
 
 

@@ -2,9 +2,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Statement;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.HashMap;
 
 
@@ -16,7 +14,7 @@ public class StudentEnrollment {
 	
 	
 	// Stud obbj
-	//CREATE Hashmap OF hashmap 3 nodes enrollmentID, offerID,grade
+	//CREATE HashMap OF hashmap 3 nodes enrollmentID, offerID,grade
 	
 	// Constructor to populate object
 
