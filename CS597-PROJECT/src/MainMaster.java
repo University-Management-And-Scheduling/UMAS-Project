@@ -3,58 +3,65 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Scanner;
 
 
 public class MainMaster {
 	
 	public static void main(String[] args) {
-		ArrayList<Student> studentList = new ArrayList<Student>();
-		int studentUIN = 1234;
-		String studentName = "XYZ";
-		int departmentID = 5678;
 		
-		try{
-			Connection conn = Database.getConnection();
-			try{
-			
-				if(conn != null){
-					String SQLStudentInsert= "Insert into Student Values (?,?,?);";
-					String SQLStudentSelect= "Select studentUIN, studentName, departmentID From Student;";
-					
-					// For SQLStudentInsert
-					
-					PreparedStatement statement = conn.prepareStatement(SQLStudentInsert);
-					statement.setInt(1, studentUIN);
-					statement.setString(2, studentName);
-					statement.setInt(3, departmentID);
-					statement.executeUpdate();
-					Database.commitTransaction(conn);
-					
-					// For SQLStudentSelect
+		System.out.println("WELCOME TO UMAS");
+		System.out.println();
 		
-					statement = conn.prepareStatement(SQLStudentSelect);
-					ResultSet rs =  statement.executeQuery();
-					while(rs.next()){
-				         //Retrieve by column name
-				         int studentRetrievedUIN = rs.getInt("studentUIN");
-				         String studentRetrievedName = rs.getString("studentName");
-				         int studentRetrievedDeptID = rs.getInt("departmentID");
-				         
-				         Student student = new Student(studentRetrievedUIN, studentRetrievedName,studentRetrievedDeptID);
-				         studentList.add(student);
-					}      
-				}
-			} 
-			catch(SQLException e){
-				System.out.println(e);
-				Database.rollBackTransaction(conn);
-			}
-			finally{
-				Database.closeConnection(conn);
-			}
-			
-		} catch(SQLException e){
-			System.out.println(e);
-		  }
+		Login user = authenticate();
+		
+		System.out.println("Welcome " + user.getUsername());
+		
+		
+//		do{
+//			int option = 0;
+//			Scanner in = new Scanner(System.in);
+//			switch (option) {
+//	        case 1:  System.out.println("");
+//	        		 
+//	        		 
+//	                 break;
+//	        
+//	        
+//	        default: System.out.println("Invalid input. Enter again.");
+//	                 break;
+//	    }
+//
+//		} while (user != null);
+		
 	}
+
+	private static Login authenticate() {
+		Scanner in = new Scanner(System.in);
+		boolean isValidUser = false;
+		boolean continueInput = true;
+		Login user = null;
+		do{
+			System.out.println("Please Login");
+			System.out.println("Enter Username: ");
+			String username = in.nextLine();
+			System.out.println("Enter Password: ");
+			String password = in.nextLine();
+			user = new Login(username, password);
+			isValidUser = user.authenticate();
+			if(isValidUser == false ){
+				System.out.println("Invalid Username or Password. Try Again ? Y/N: ");
+				String tryAgain = in.next();
+				if(tryAgain == "n" || tryAgain == "N"){
+					continueInput = false;
+					user = null;
+					break;
+				}
+			}
+		} while (isValidUser == false || continueInput == true);
+		
+		return user;
+	}
+
+
 }
