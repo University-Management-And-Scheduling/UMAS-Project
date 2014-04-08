@@ -38,11 +38,7 @@ public void setOfferID(int offerID) {
 }
 
 // Add a new file to file table in the database
-public static void addFileToDB(File file){
-	int fileID = file.getFileID();
-	String fileLocation = file.getFileLocation();
-	int offerID = file.getOfferID();
-	
+public static void addFileToDB(String fileLocation, int offerID){
 	
 	// DB Code
 
