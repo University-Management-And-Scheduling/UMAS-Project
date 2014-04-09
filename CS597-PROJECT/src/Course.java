@@ -26,7 +26,7 @@ public class Course {
 		System.out.println("Searching for course with ID:"+cID);
 		
 		try{
-			Connection conn = new Database().getConnection();
+			Connection conn = Database.getConnection();
 			
 			try{
 				if(conn != null){
@@ -65,7 +65,7 @@ public class Course {
 			}
 			
 			finally{
-				Database.closeConnection(conn);
+				//Database.closeConnection(conn);
 			}
 			
 		}

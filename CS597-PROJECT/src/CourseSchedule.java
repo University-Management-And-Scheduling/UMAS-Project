@@ -14,8 +14,9 @@ public class CourseSchedule {
 		this.classRoomID = classRoomID;
 		this.timeSlotID = timeSlotID;
 	}
-	public CourseSchedule(int offerID2) {
-		// TODO Auto-generated constructor stub
+	public CourseSchedule(int offerID) {
+		//retrieve course schedule
+		
 	}
 	/**
 	 * @return the offerID
