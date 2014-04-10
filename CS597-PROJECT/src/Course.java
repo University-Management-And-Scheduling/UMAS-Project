@@ -14,8 +14,9 @@ public class Course {
 	 * @param courseID
 	 * @param courseName
 	 */
-	public Course(Department department, String courseName) {
+	public Course(int courseID, Department department, String courseName) {
 		super();
+		this.courseID = courseID;
 		this.department = department;
 		this.courseName = courseName;
 	}
@@ -119,7 +120,7 @@ public class Course {
 		System.out.println("Searching for course with name:"+courseName);
 		
 		try{
-			Connection conn = new Database().getConnection();
+			Connection conn = Database.getConnection();
 			
 			try{
 				if(conn != null){
@@ -145,6 +146,7 @@ public class Course {
 						statement.setString(1, courseName);
 						statement.setInt(2, department.getDepartmentID());
 						statement.execute();
+						Database.commitTransaction(conn);
 					}
 				}
 			}
@@ -155,7 +157,7 @@ public class Course {
 			}
 			
 			finally{
-				Database.closeConnection(conn);
+				//Database.closeConnection(conn);
 			}
 			
 		}
@@ -169,7 +171,7 @@ public class Course {
 		//check if the course to be removed exists
 		//Remove the courses-offered related to this course
 		try{
-			Connection conn = new Database().getConnection();
+			Connection conn = Database.getConnection();
 			
 			try{
 				if(conn != null){
@@ -200,7 +202,7 @@ public class Course {
 			}
 			
 			finally{
-				Database.closeConnection(conn);
+				//Database.closeConnection(conn);
 			}
 			
 		}

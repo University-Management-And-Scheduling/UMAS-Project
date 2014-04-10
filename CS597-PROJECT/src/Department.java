@@ -32,7 +32,7 @@ public class Department {
 		System.out.println("Searching for department with ID:"+departmentID);
 		
 		try{
-			Connection conn = new Database().getConnection();
+			Connection conn = Database.getConnection();
 			
 			try{
 				if(conn != null){
@@ -69,7 +69,7 @@ public class Department {
 			}
 			
 			finally{
-				Database.closeConnection(conn);
+				//Database.closeConnection(conn);
 			}
 			
 		}
@@ -84,7 +84,7 @@ public class Department {
 			System.out.println("Searching for department with Name:"+departmentName);
 			
 			try{
-				Connection conn = new Database().getConnection();
+				Connection conn = Database.getConnection();
 				
 				try{
 					if(conn != null){
@@ -121,7 +121,7 @@ public class Department {
 				}
 				
 				finally{
-					Database.closeConnection(conn);
+					//Database.closeConnection(conn);
 				}
 				
 			}
@@ -133,7 +133,7 @@ public class Department {
 	//Add a new department, static method, can be accessed via class name only
 	public static void addNewDepartment(String departmentName) throws DepartmentAlreadyExistsException{
 		try{
-			Connection conn = new Database().getConnection();
+			Connection conn = Database.getConnection();
 			
 			try{
 				if(conn != null){
@@ -158,6 +158,7 @@ public class Department {
 						statement = conn.prepareStatement(SQLInsert);
 						statement.setString(1, departmentName);
 						statement.execute();
+						Database.commitTransaction(conn);
 					}
 				}
 			}
@@ -168,7 +169,7 @@ public class Department {
 			}
 			
 			finally{
-				Database.closeConnection(conn);
+				//Database.closeConnection(conn);
 			}
 			
 		}
@@ -182,7 +183,7 @@ public class Department {
 	public static void deleteDepartment(String departmentName) throws DepartmentDoesNotExistException{
 		boolean isDeleteSuccessfull = false;
 		try{
-			Connection conn = new Database().getConnection();
+			Connection conn = Database.getConnection();
 			try{
 				if(conn != null){
 					String SQLSelect= "Select DepartmentID, DepartmentName"
@@ -230,7 +231,7 @@ public class Department {
 			}
 			
 			finally{
-				Database.closeConnection(conn);
+				//Database.closeConnection(conn);
 			}
 			
 		}
@@ -247,7 +248,7 @@ public class Department {
 			throw new DepartmentDoesNotExistException("Un-initialized object");
 		
 		try{
-			Connection conn = new Database().getConnection();
+			Connection conn = Database.getConnection();
 			try{
 				if(conn != null){
 					String SQLSelect= "Select DepartmentID, DepartmentName"
@@ -262,7 +263,8 @@ public class Department {
 						System.out.println("Updating the department with new values");
 						rs.updateInt(1, this.getDepartmentID());
 						rs.updateString(2, this.getDepartmentName());
-						rs.updateRow();						
+						rs.updateRow();	
+						Database.commitTransaction(conn);
 					}
 					
 				}
@@ -274,7 +276,7 @@ public class Department {
 			}
 			
 			finally{
-				Database.closeConnection(conn);
+				//Database.closeConnection(conn);
 			}
 			
 		}
@@ -343,12 +345,7 @@ public class Department {
 	}
 	
 	public static void main(String[] args){
-		try {
-			Department.deleteDepartment("Electronics");
-		} catch (DepartmentDoesNotExistException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+		
 	}
 
 }
