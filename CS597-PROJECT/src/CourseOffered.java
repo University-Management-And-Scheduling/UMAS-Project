@@ -4,6 +4,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 
+
 public class CourseOffered {
 	private int offerID;
 	private Course course;
@@ -274,6 +275,7 @@ public class CourseOffered {
 			
 			finally{
 				//Database.closeConnection(conn);
+				Database.commitTransaction(conn);
 			}
 			
 		}
@@ -337,13 +339,59 @@ public class CourseOffered {
 	}
 	
 	//get all courses of the student passed
-	public static ArrayList<CourseOffered> getStudentCourses(Student student){
-		return null;
+	public static ArrayList<CourseOffered> getStudentCourses(Student student) throws Course.CourseDoesNotExistException, CourseOfferingDoesNotExistException{
+		if(student == null)
+			throw new NullPointerException();
+		
+		ArrayList<CourseOffered> studentCourses = new ArrayList<CourseOffered>();
+		
+		try{
+			Connection conn = Database.getConnection();
+			
+			try{
+				if(conn != null){
+					
+					//Retrieve the current semester ID
+					String SemesterSelect = "Select *"
+							+ " FROM university.studentenrollment"
+							+ " WHERE UIN= ?";
+					PreparedStatement statement = conn.prepareStatement(SemesterSelect);
+					statement.setInt(1, student.getUIN());
+					ResultSet rs = statement.executeQuery();
+					
+					while(rs.next()){
+						int offerID = rs.getInt(3);
+						CourseOffered course = new CourseOffered(offerID);
+						studentCourses.add(course);
+					}
+					
+				}
+					
+			}
+			
+			catch(SQLException e){
+				System.out.println("Error addind course offering");
+				System.out.println(e.getMessage());
+				e.printStackTrace();
+				
+			}
+				
+			finally{
+				//Database.commitTransaction(conn);
+			}
+			
+		
+			return studentCourses;
+		}
+		
+		finally{
+		}
+		
 	}
 	
 	//get all students in the current course offering object
 	//Non-static, requires initialization of Class object
-	public ArrayList<Student> getAllStudents(){
+	public static ArrayList<Student> getAllStudentsInCourse(CourseOffered courseOffered){
 		return null;
 	}
 	
