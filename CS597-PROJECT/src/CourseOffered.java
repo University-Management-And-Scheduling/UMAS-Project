@@ -390,9 +390,15 @@ public class CourseOffered {
 	}
 	
 	//get all students in the current course offering object
-	//Non-static, requires initialization of Class object
 	public static ArrayList<Student> getAllStudentsInCourse(CourseOffered courseOffered){
-		return null;
+		if(courseOffered == null)
+			throw new NullPointerException();
+		ArrayList<Student> students = new ArrayList<Student>();
+		
+		/*Code goes here*/
+		
+		return students;
+		
 	}
 	
 	public static boolean isCourseFull(CourseOffered courseOffered) throws CourseOfferingDoesNotExistException{
@@ -480,7 +486,6 @@ public class CourseOffered {
 	    }
 	}
 
-	
 	//CourseOfferingAlreadyExistsException
 	static class CourseOfferingAlreadyExistsException extends Exception{
 		private static final long serialVersionUID = 1L;
