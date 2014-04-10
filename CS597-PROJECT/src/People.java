@@ -8,6 +8,8 @@ import java.sql.Connection;
 //import com.mysql.jdbc.Connection;
 
 
+
+
 public class People {
 	
 	protected int UIN;
