@@ -442,7 +442,7 @@ public class CourseOffered {
 				
 			}
 			
-			catch(SQLException e){
+			catch(Exception e){
 				System.out.println("Error addind course offering");
 				System.out.println(e.getMessage());
 				e.printStackTrace();
@@ -454,6 +454,8 @@ public class CourseOffered {
 			}
 			
 		}
+		
+		
 		
 		finally{
 		}
