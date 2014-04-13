@@ -359,7 +359,7 @@ public class People {
 		
 	}
 	
-		
+		// add into database which generates username and password and adds into people table
 	public static int addIntoDatabase(String name, Department dept, int positionId)
 	{
 		
