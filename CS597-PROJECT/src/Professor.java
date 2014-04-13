@@ -41,6 +41,12 @@ public class Professor extends People {
 		
 		int returnedUIN=addIntoDatabase(name, dept, 2);
 		System.out.println(returnedUIN);
+
+		Employee.addEmployee(returnedUIN);
+		
+		Connection conn=Database.getConnection();
+		Database.commitTransaction(conn);
+		
 		
 	}
 
