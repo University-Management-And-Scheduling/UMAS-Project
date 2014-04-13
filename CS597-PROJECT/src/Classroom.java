@@ -217,11 +217,13 @@ public class Classroom {
 		Classroom c = new Classroom(1);
 		ArrayList<Timeslots> slots = findOpenSlotsForClassroom(c, 2);
 		System.out.println("Printing available slots");
+		//printing available slots
 		if(slots != null){
 			for(Timeslots slot:slots){
 				System.out.println("Slot:"+slot.getTimeSlotID()+" start:"+slot.getStartHour()+" end:"+slot.getEndHour());
 			}
 		}
+		
 		
 	}
 }
