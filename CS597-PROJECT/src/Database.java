@@ -61,47 +61,40 @@ public class Database {
 	}
 	
 	// Call this function to commit when transaction is successful
-			public static void commitTransaction(Connection conn) 
-		    {
-		        try 
-		        {
-		            if (conn != null) {
-		            	conn.commit();
-		                System.out.println("Transaction Committed!");
-		            	}
-		        } catch (SQLException e) {
-		            e.printStackTrace();
-		        }
-		    }
+	public static void commitTransaction(Connection conn){
+		try {
+			if (conn != null) {
+		    	conn.commit();
+		        System.out.println("Transaction Committed!");
+	    	}
+	    } catch (SQLException e) {
+	    	e.printStackTrace();
+	    }
+	}
 	
 	// Call this function to rollback when transaction is unsuccessful
-		public static void rollBackTransaction(Connection conn) 
-	    {
-	        try 
-	        {
-	            if (conn != null) {
-	            	conn.rollback();
-	                System.out.println("Transaction Rolledback!");
-	            	}
-	        } catch (SQLException e) {
-	            e.printStackTrace();
+	public static void rollBackTransaction(Connection conn) {
+		try {
+			if (conn != null) {
+				conn.rollback();
+	            System.out.println("Transaction Rolledback!");
 	        }
+	    } catch (SQLException e) {
+	    	e.printStackTrace();
 	    }
+	}
 		
 	
 	//Call this function to close the Database Connection
-		public static void closeConnection(Connection conn) 
-		{
-			try 
-			{
-				if (conn != null) {
-					conn.close();
-					System.out.println("Closed the connection to database!");
-            	}
-			} catch (SQLException e) {
-				e.printStackTrace();
+	public static void closeConnection(Connection conn) {
+		try {
+			if (conn != null) {
+				conn.close();
+				System.out.println("Closed the connection to database!");
 			}
-    }
-	
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+    }	
 	
 }
