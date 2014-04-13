@@ -368,7 +368,7 @@ public class People {
 		int addedUIN=0;
 		int lengthOfName=name.length();
 		if(lengthOfName<=5){
-			userName=name;
+			userName=name.toLowerCase();
 			
 		}
 		else
@@ -383,7 +383,8 @@ public class People {
 		while(checkIfUserNameExists(userName))
 		{
 			Random randomNumber=new Random();
-			userName=userName+randomNumber.nextInt(99);
+			userName=(userName+randomNumber.nextInt(99));
+			userName=userName.toLowerCase();
 		}
 		
 		
