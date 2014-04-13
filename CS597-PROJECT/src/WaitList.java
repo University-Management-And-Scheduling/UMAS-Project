@@ -39,4 +39,34 @@ public class WaitList {
 	public void setQueuePos(int queuePos) {
 		this.queuePos = queuePos;
 	}
+
+	public static void addStudentToWaitList(Student student, CourseOffered courseOffered){
+		
+	}
+	
+	public static void emailNextStudentForCourse(CourseOffered courseOffered){
+		
+	}
+	
+	public static void closeWaitList(CourseOffered courseOffered){
+		
+	}
+	
+	public static void removeFromWaitList(Student student, CourseOffered courseOffered){
+		
+	}
+	
+	private static boolean isStudentFirstOnWaitList(Student student, CourseOffered courseOffered){
+		return false;
+	}
+	
+	private static boolean isStudentRegistered(Student student, CourseOffered courseOffered){
+		return false;
+	}
+	
+	private static void checkTheStatusOfEmailedStudent(){
+		
+	}
+	
+	
 }
