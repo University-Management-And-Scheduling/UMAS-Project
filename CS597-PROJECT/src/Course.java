@@ -140,7 +140,7 @@ public class Course {
 					else{
 						//add the data to the course table
 						System.out.println("Inserting new course");
-						String SQLInsert= "Insert into university.course (CourseName, DepartmentID) Values (?,?);";
+						String SQLInsert= "Insert into university.courses (CourseName, DepartmentID) Values (?,?);";
 						statement.close();
 						statement = conn.prepareStatement(SQLInsert);
 						statement.setString(1, courseName);

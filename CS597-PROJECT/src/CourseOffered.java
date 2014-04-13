@@ -16,7 +16,7 @@ public class CourseOffered {
 	private int currentlyFilled;	
 	
 	
-	public CourseOffered(int offerID) throws Course.CourseDoesNotExistException, CourseOfferingDoesNotExistException{
+	public CourseOffered(final int offerID) throws Course.CourseDoesNotExistException, CourseOfferingDoesNotExistException{
 		this.offerID = offerID;
 		try{
 			Connection conn = Database.getConnection();
@@ -78,7 +78,7 @@ public class CourseOffered {
 	/**
 	 * @return the offerID
 	 */
-	public int getOfferID() {
+	public final int getOfferID() {
 		return offerID;
 	}
 
@@ -86,7 +86,7 @@ public class CourseOffered {
 	/**
 	 * @return the course
 	 */
-	public Course getCourse() {
+	public final Course getCourse() {
 		return course;
 	}
 
@@ -94,7 +94,7 @@ public class CourseOffered {
 	/**
 	 * @param course the course to set
 	 */
-	public void setCourse(Course course) {
+	public final void setCourse(final Course course) {
 		this.course = course;
 	}
 
@@ -102,7 +102,7 @@ public class CourseOffered {
 	/**
 	 * @return the courseSchedule
 	 */
-	public CourseSchedule getCourseSchedule() {
+	public final CourseSchedule getCourseSchedule() {
 		return courseSchedule;
 	}
 
@@ -110,7 +110,7 @@ public class CourseOffered {
 	/**
 	 * @param courseSchedule the courseSchedule to set
 	 */
-	public void setCourseSchedule(CourseSchedule courseSchedule) {
+	public final void setCourseSchedule(final CourseSchedule courseSchedule) {
 		this.courseSchedule = courseSchedule;
 	}
 
@@ -118,7 +118,7 @@ public class CourseOffered {
 	/**
 	 * @return the files
 	 */
-	public ArrayList<File> getFiles() {
+	public final ArrayList<File> getFiles() {
 		return files;
 	}
 	
@@ -126,14 +126,14 @@ public class CourseOffered {
 	/**
 	 * @param files the files to set
 	 */
-	public void setFiles(ArrayList<File> files) {
+	public final void setFiles(final ArrayList<File> files) {
 		this.files = files;
 	}
 
 	/**
 	 * @return the professor
 	 */
-	public Professor getProfessor() {
+	public final Professor getProfessor() {
 		return professor;
 	}
 
@@ -141,7 +141,7 @@ public class CourseOffered {
 	/**
 	 * @param professor the professor to set
 	 */
-	public void setProfessor(Professor professor) {
+	public final void setProfessor(final Professor professor) {
 		this.professor = professor;
 	}
 
@@ -149,7 +149,7 @@ public class CourseOffered {
 	/**
 	 * @return the semesterID
 	 */
-	public int getSemesterID() {
+	public final int getSemesterID() {
 		return SemesterID;
 	}
 
@@ -157,7 +157,7 @@ public class CourseOffered {
 	/**
 	 * @param semesterID the semesterID to set
 	 */
-	public void setSemesterID(int semesterID) {
+	public final void setSemesterID(final int semesterID) {
 		SemesterID = semesterID;
 	}
 
@@ -165,7 +165,7 @@ public class CourseOffered {
 	/**
 	 * @return the totalCapacity
 	 */
-	public int getTotalCapacity() {
+	public final int getTotalCapacity() {
 		return totalCapacity;
 	}
 
@@ -173,7 +173,7 @@ public class CourseOffered {
 	/**
 	 * @param totalCapacity the totalCapacity to set
 	 */
-	public void setTotalCapacity(int totalCapacity) {
+	public final void setTotalCapacity(final int totalCapacity) {
 		this.totalCapacity = totalCapacity;
 	}
 
@@ -181,7 +181,7 @@ public class CourseOffered {
 	/**
 	 * @return the currentlyFilled
 	 */
-	public int getCurrentlyFilled() {
+	public final int getCurrentlyFilled() {
 		return currentlyFilled;
 	}
 
@@ -189,13 +189,13 @@ public class CourseOffered {
 	/**
 	 * @param currentlyFilled the currentlyFilled to set
 	 */
-	public void setCurrentlyFilled(int currentlyFilled) {
+	public final void setCurrentlyFilled(final int currentlyFilled) {
 		this.currentlyFilled = currentlyFilled;
 	}
 
 	
 	//get course offering by ID
-	public static CourseOffered getCourseOfferingByID(int courseOfferingID){
+	public static CourseOffered getCourseOfferingByID(final int courseOfferingID){
 		return null;
 	}
 	
@@ -210,7 +210,7 @@ public class CourseOffered {
 	}
 	
 	//Add the courseOffered object to the database
-	public static void addCourseOfferingToDatabase(Course course,  Professor professor, int capacity) throws CourseOfferingAlreadyExistsException{
+	public static void addCourseOfferingToDatabase(final Course course,  final Professor professor, final int capacity) throws CourseOfferingAlreadyExistsException{
 		int profID = professor.getUIN();
 		int courseID = course.getCourseID();
 		int totalCap = capacity;
@@ -261,6 +261,7 @@ public class CourseOffered {
 						statement.setInt(4, 0);
 						statement.setInt(5, profID);
 						statement.executeUpdate();
+						Database.commitTransaction(conn);
 						
 														
 					}
@@ -275,7 +276,7 @@ public class CourseOffered {
 			
 			finally{
 				//Database.closeConnection(conn);
-				Database.commitTransaction(conn);
+				//Database.commitTransaction(conn);
 			}
 			
 		}
@@ -287,7 +288,7 @@ public class CourseOffered {
 
 	//Remove courseOffered from database
 	//Will be removed only if it is current
-	public static void removeCourseOffering(CourseOffered courseOffered) throws CourseOfferingDoesNotExistException{		
+	public static void removeCourseOffering(final CourseOffered courseOffered) throws CourseOfferingDoesNotExistException{		
 		
 		try{
 			Connection conn = Database.getConnection();
@@ -339,9 +340,10 @@ public class CourseOffered {
 	}
 	
 	//get all courses of the student passed
-	public static ArrayList<CourseOffered> getStudentCourses(Student student) throws Course.CourseDoesNotExistException, CourseOfferingDoesNotExistException{
-		if(student == null)
+	public static ArrayList<CourseOffered> getStudentCourses(final Student student) throws Course.CourseDoesNotExistException, CourseOfferingDoesNotExistException{
+		if(student == null) {
 			throw new NullPointerException();
+		}
 		
 		ArrayList<CourseOffered> studentCourses = new ArrayList<CourseOffered>();
 		
@@ -390,9 +392,10 @@ public class CourseOffered {
 	}
 	
 	//get all students in the current course offering object
-	public static ArrayList<Student> getAllStudentsInCourse(CourseOffered courseOffered){
-		if(courseOffered == null)
+	public static ArrayList<Student> getAllStudentsInCourse(final CourseOffered courseOffered){
+		if(courseOffered == null) {
 			throw new NullPointerException();
+		}
 		ArrayList<Student> students = new ArrayList<Student>();
 		
 		/*Code goes here*/
@@ -401,14 +404,15 @@ public class CourseOffered {
 		
 	}
 	
-	public static boolean isCourseFull(CourseOffered courseOffered) throws CourseOfferingDoesNotExistException{
-		if(courseOffered == null)
+	public static boolean isCourseFull(final CourseOffered courseOffered) throws CourseOfferingDoesNotExistException{
+		if(courseOffered == null) {
 			throw new CourseOfferingDoesNotExistException();
+		}
 		
 		return ((courseOffered.getTotalCapacity() - courseOffered.getCurrentlyFilled()) <= 0);
 	}
 	
-	public static void addOneSeatFilledToCourseOffered(CourseOffered courseOffered) throws CourseOfferingDoesNotExistException{
+	public static void addOneSeatFilledToCourseOffered(final CourseOffered courseOffered) throws CourseOfferingDoesNotExistException{
 		
 		try{
 			Connection conn = Database.getConnection();
@@ -472,7 +476,7 @@ public class CourseOffered {
 	        this.message = "Course does not exist";
 	    }
 	    
-	    public CourseOfferingDoesNotExistException(String message) {
+	    public CourseOfferingDoesNotExistException(final String message) {
 	        super();
 	        this.message = message;
 	    }
@@ -498,7 +502,7 @@ public class CourseOffered {
 	        this.message = "Course offering already exists with the same parameters";
 	    }
 	    
-	    public CourseOfferingAlreadyExistsException(String message) {
+	    public CourseOfferingAlreadyExistsException(final String message) {
 	        super();
 	        this.message = message;
 	    }
@@ -515,7 +519,7 @@ public class CourseOffered {
 	}
 
 	
-	public static void main(String[] args){
+	public static void main(final String[] args){
 		try {
 			CourseOffered.addCourseOfferingToDatabase(new Course(1), Professor.retrieveProfDetailsByUIN(1), 50);
 		} 
