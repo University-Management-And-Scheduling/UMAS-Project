@@ -53,7 +53,7 @@ public class Student extends People {
 	
 	public static void addIntoStudentTable(int UIN, int level) throws levelNotExistException{
 		
-		if(level>3 || level<0){
+		if(level>3 || level<1){
 			throw new levelNotExistException();
 		}
 		
