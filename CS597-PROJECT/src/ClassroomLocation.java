@@ -1,5 +1,6 @@
 
 public enum ClassroomLocation {
+	//List of all locations
 	LOCATION1,
 	LOCATION2,
 	LOCATION3,
