@@ -78,7 +78,16 @@ public class CourseSchedule {
 		return false;
 	}
 	
-	
+	public static boolean isAnotherCourseSchedulable(){
+		//go to first location
+		//go to the first classroom in the location
+		//check already scheduled courses in the current classroom
+		//check if the any course can be accommodated inside the current schedule
+		//if not then go to next class,location
+		
+		
+		return false;
+	}
 	
 	
 }
