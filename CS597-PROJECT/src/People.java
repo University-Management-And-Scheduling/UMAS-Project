@@ -237,6 +237,8 @@ public class People {
 		return result;
 		}
 	
+	
+	// checking if auto generated username already exists function
 	public static boolean checkIfUserNameExists(String userName){
 		
 		try{
