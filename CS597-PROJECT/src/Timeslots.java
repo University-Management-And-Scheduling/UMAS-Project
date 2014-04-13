@@ -46,7 +46,7 @@ public class Timeslots {
 				if(conn != null){
 					
 					//query to retrieve all time slots and check if the time slot already exists
-					String findString = "Select TimeSlotID "
+					String findString = "Select * "
 							+ "FROM university.timeslots "
 							+ "WHERE TimeSlotID= ?";
 					PreparedStatement statement = conn.prepareStatement(findString);
@@ -197,6 +197,45 @@ public class Timeslots {
 			return true;
 	}
 	
+	public static boolean isConflict(Timeslots t1, Timeslots t2){
+		int t1Type = t1.getTimeslotType();
+		int t2Type = t2.getTimeslotType();
+		
+		if(t1Type != t2Type){
+			return false;
+		}
+		
+		int t1s = t1.getStartHour();
+		int t1e = t1.getEndHour();
+		int t2s = t2.getStartHour();
+		int t2e = t2.getEndHour();
+		
+		if(t1s == t2s || t1e == t2e)
+			return true;
+		if(isInBetween(t1s, t1e, t2s))
+			return true;
+		if(isInBetween(t1s, t1e, t2e))
+			return true;
+		if(isInBetween(t2s, t2e, t1s))
+			return true;
+		if(isInBetween(t2s, t2e, t1e))
+			return true;
+		
+		
+		return false;
+	}
+	
+	public static boolean isInBetween(int start, int end, int toCheck){
+		if(toCheck<end && toCheck>start){
+			return true;
+		}
+		
+		else
+			return false;
+		
+		
+	}
+
 	public static boolean isTypeCorrect(int startHour, int endHour, int type){
 		boolean flag = false;
 		
@@ -221,6 +260,9 @@ public class Timeslots {
 	}
 	
 	public static void main(String args[]){
+		Timeslots t1 = new Timeslots(31);
+		Timeslots t2 = new Timeslots(38);
+		System.out.println(isConflict(t1, t2));
 	}
 	
 }
