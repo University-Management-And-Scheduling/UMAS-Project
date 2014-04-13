@@ -368,7 +368,7 @@ public class People {
 		int addedUIN=0;
 		int lengthOfName=name.length();
 		if(lengthOfName<=5){
-			userName=name.toLowerCase();
+			userName=name;
 			
 		}
 		else
@@ -384,7 +384,7 @@ public class People {
 		{
 			Random randomNumber=new Random();
 			userName=(userName+randomNumber.nextInt(99));
-			userName=userName.toLowerCase();
+			
 		}
 		
 		
@@ -392,6 +392,7 @@ public class People {
 		String randomPassword=generatePassword(8);		
 		
 		//add into login details
+		userName=userName.toLowerCase();
 		addUserDetailsIntoLoginTable(userName, randomPassword);
 		
 		//add into people table 

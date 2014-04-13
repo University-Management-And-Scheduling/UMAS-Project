@@ -109,8 +109,22 @@ public class Student extends People {
 		
 	}
 		
+	public static void deleteStudent(int UIN){
+		
+		
+		
+		
+	}
 	
-
+	public static void deleteStudent(String userName){
+		
+		
+		
+		
+	}
+	
+	
+	
 	public static boolean checkIfStudent(int UIN){
 		
 		try{
