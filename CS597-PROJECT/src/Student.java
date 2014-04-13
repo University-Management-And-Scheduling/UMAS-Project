@@ -25,22 +25,38 @@ public class Student extends People {
 	}
 	
 
-	public void addStudentToDb(){
+	public static void addStudentToDb(String name, Department dept,int level){
 		
+		int addedUIN= addIntoDatabase(name, dept, 3);
+		System.out.println(addedUIN);
+		System.out.println(level);
+
+		addIntoStudentTable(addedUIN, level);
+		
+		
+		Connection conn = Database.getConnection();
+		Database.commitTransaction(conn);
+		
+	
+		
+		
+	}
+	
+	public static void addIntoStudentTable(int UIN, int level){
 		
 		try{
-			Connection conn = new Database().getConnection();
+			Connection conn = Database.getConnection();
 			String SQLPeopleSelect="";
 			
 			try{
 				
-				SQLPeopleSelect = "Select UIN, Name, Username, DepartmentID, PositionID From People where Username=?;";
+				SQLPeopleSelect = "Select UIN From student where UIN=?;";
 				PreparedStatement stmt = conn.prepareStatement(SQLPeopleSelect);
-				stmt.setString(1, this.getUserName());
+				stmt.setInt(1, UIN);
 				ResultSet rs =  stmt.executeQuery();
 				
 					if(rs.first()){
-				         System.out.println(this.getUserName()+"already exists. Please choose another user name");
+				         System.out.println(UIN+"already exists");
 				         //Insert a update query to update the values of the database....NOT ADD
 					}
 					
@@ -48,18 +64,15 @@ public class Student extends People {
 					{
 						
 						System.out.println("Adding new data into the database");
-						String SQLPeopleInsert= "Insert into People (Name, Username, DepartmentID, PositionID) Values (?,?,?,?);";
+						String SQLPeopleInsert= "Insert into student (UIN, GPA, Level) Values (?,?,?);";
 						stmt = conn.prepareStatement(SQLPeopleInsert);
-						stmt.setString(1, this.getName());
-						stmt.setString(2, this.getUserName());
-						stmt.setInt(3, this.getDeptID());
-						stmt.setInt(4, this.getPositionID());
+						stmt.setInt(1, UIN);
+						stmt.setFloat(2, (float) 4.0);
+						stmt.setInt(3, level);
 						System.out.println(stmt);
 						int i = stmt.executeUpdate();
 						System.out.println(i);
-						
-						//The UIN returned is 0. execute the select function here to get his UIN
-						System.out.println("Inserted: "+getUIN()+" "+getName()+" "+getUserName()+" "+getDeptID()+" "+getPositionID());
+						System.out.println("Inserted");
 						
 					}
 					
@@ -67,17 +80,19 @@ public class Student extends People {
 			
 			catch(SQLException e){
 				System.out.println("Error adding/updating to database");
+				e.printStackTrace();
 				System.out.println(e);	
 			}
 			
 			finally{
 				//System.out.println("retrieved");
-				Database.closeConnection(conn);
+				//Database.closeConnection(conn);
 			}
 		}
 		
 		catch(Exception e){
 			System.out.println("Connection failed");
+			e.printStackTrace();
 			System.out.println(e);
 			
 		}
@@ -89,11 +104,13 @@ public class Student extends People {
 		
 		
 	}
+		
+	
 
 	public static boolean checkIfStudent(int UIN){
 		
 		try{
-			Connection conn = new Database().getConnection();
+			Connection conn = Database.getConnection();
 			String SQLPeopleSelect="";
 			try{
 			
@@ -145,6 +162,7 @@ public class Student extends People {
 	}
 			
 			catch(SQLException e){
+				e.printStackTrace();
 				System.out.println(e);
 				
 			}
@@ -158,6 +176,7 @@ public class Student extends People {
 		
 		catch(Exception e){
 			System.out.println(e);
+			e.printStackTrace();
 			
 		}
 		
@@ -169,4 +188,18 @@ public class Student extends People {
 		return false;
 	}
 
+	
+	public static void main(String[] args){
+		
+		try {
+			Department dept=new Department(2);
+			addStudentToDb("arihant", dept,1);
+		} catch (Department.DepartmentDoesNotExistException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+	
 }
+
+
