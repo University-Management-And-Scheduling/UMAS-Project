@@ -55,7 +55,6 @@ public void setFileLocation(String fileLocation) {
 	this.fileLocation = fileLocation;
 }
 
-
 public int getOfferID() {
 	return offerID;
 }
