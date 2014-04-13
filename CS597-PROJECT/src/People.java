@@ -8,6 +8,8 @@ import java.sql.Connection;
 //import com.mysql.jdbc.Connection;
 
 
+
+
 public class People {
 	
 	protected int UIN;
@@ -28,7 +30,7 @@ public class People {
 	public People(int UIN){
 		
 		try{
-			Connection conn = new Database().getConnection();
+			Connection conn = Database.getConnection();
 			String SQLPeopleSelect="";
 			try{
 			
@@ -105,7 +107,7 @@ public class People {
 	public People(String userName){
 	
 	try{
-		Connection conn = new Database().getConnection();
+		Connection conn = Database.getConnection();
 		String SQLPeopleSelect="";
 		try{
 		
@@ -224,7 +226,7 @@ public class People {
 		
 		
 		try{
-			Connection conn = new Database().getConnection();
+			Connection conn = Database.getConnection();
 			String SQLPeopleSelect="";
 			
 			try{
@@ -284,7 +286,7 @@ public class People {
 	public static void deleteFromDatabaseByUIN(int UIN){
 		
 		try{
-			Connection conn = new Database().getConnection();
+			Connection conn = Database.getConnection();
 			String SQLPeopleSelect="";
 			String SQLPeopleDelete="";
 			try{
@@ -364,7 +366,7 @@ public class People {
 	public static void deleteFromDatabaseByUserName(String userName){
 		
 		try{
-			Connection conn = new Database().getConnection();
+			Connection conn = Database.getConnection();
 			String SQLPeopleSelect="";
 			String SQLPeopleDelete="";
 			try{
@@ -448,7 +450,7 @@ public class People {
 	public static void retireveDetailsByUIN(int UIN){
 		
 		try{
-			Connection conn = new Database().getConnection();
+			Connection conn = Database.getConnection();
 			String SQLPeopleSelect="";
 			try{
 			
@@ -520,7 +522,7 @@ public class People {
 	public static void retireveDetailsByuserName(String userName){
 		
 		try{
-			Connection conn = new Database().getConnection();
+			Connection conn = Database.getConnection();
 			String SQLPeopleSelect="";
 			try{
 			

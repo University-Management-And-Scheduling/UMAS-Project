@@ -4,15 +4,76 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 
+
 public class CourseOffered {
 	private int offerID;
 	private Course course;
 	private CourseSchedule courseSchedule;
-	private CourseFiles courseFiles;
+	private ArrayList<File> files;
 	private Professor professor;
 	private int SemesterID;
 	private int totalCapacity;
 	private int currentlyFilled;	
+	
+	
+	public CourseOffered(int offerID) throws Course.CourseDoesNotExistException, CourseOfferingDoesNotExistException{
+		this.offerID = offerID;
+		try{
+			Connection conn = Database.getConnection();
+			
+			try{
+				if(conn != null){
+					
+					//Retrieve the current semester ID
+					String SemesterSelect = "Select *"
+							+ " FROM university.coursesoffered"
+							+ " WHERE OfferID= ?";
+					PreparedStatement statement = conn.prepareStatement(SemesterSelect);
+					statement.setInt(1, offerID);
+					ResultSet rs = statement.executeQuery();
+					
+					if(rs.first()){
+						//course offering exists
+						Course course = new Course(rs.getInt(2));
+						CourseSchedule courseSchedule = new CourseSchedule(offerID);
+						ArrayList<File> files = File.getFiles(offerID);
+						Professor professor = new Professor(rs.getInt(6));
+						this.SemesterID = rs.getInt(3);
+						this.totalCapacity = rs.getInt(4);
+						this.currentlyFilled = rs.getInt(5);
+						this.professor = professor;
+						this.course = course;
+						this.courseSchedule = courseSchedule;
+						this.files = files;
+						
+					}
+					
+					else{
+						throw new CourseOfferingDoesNotExistException();
+					}
+										
+					
+				}
+			}
+			
+			catch(SQLException e){
+				System.out.println("Error  course offering");
+				System.out.println(e.getMessage());
+				e.printStackTrace();
+			}
+			
+			finally{
+				//Database.closeConnection(conn);
+			}
+			
+		}
+		
+		finally{
+		}
+
+		
+	}
+	
 	
 	/**
 	 * @return the offerID
@@ -53,22 +114,21 @@ public class CourseOffered {
 		this.courseSchedule = courseSchedule;
 	}
 
+	
+	/**
+	 * @return the files
+	 */
+	public ArrayList<File> getFiles() {
+		return files;
+	}
+	
 
 	/**
-	 * @return the courseFiles
+	 * @param files the files to set
 	 */
-	public CourseFiles getCourseFiles() {
-		return courseFiles;
+	public void setFiles(ArrayList<File> files) {
+		this.files = files;
 	}
-
-
-	/**
-	 * @param courseFiles the courseFiles to set
-	 */
-	public void setCourseFiles(CourseFiles courseFiles) {
-		this.courseFiles = courseFiles;
-	}
-
 
 	/**
 	 * @return the professor
@@ -134,33 +194,6 @@ public class CourseOffered {
 	}
 
 	
-	
-	
-	/**
-	 * @param offerID
-	 * @param course
-	 * @param courseSchedule
-	 * @param courseFiles
-	 * @param professor
-	 * @param semesterID
-	 * @param totalCapacity
-	 * @param currentlyFilled
-	 */
-	public CourseOffered(int offerID, Course course,
-			CourseSchedule courseSchedule, CourseFiles courseFiles,
-			Professor professor, int semesterID, int totalCapacity,
-			int currentlyFilled) {
-		this.offerID = offerID;
-		this.course = course;
-		this.courseSchedule = courseSchedule;
-		this.courseFiles = courseFiles;
-		this.professor = professor;
-		SemesterID = semesterID;
-		this.totalCapacity = totalCapacity;
-		this.currentlyFilled = currentlyFilled;
-	}
-
-
 	//get course offering by ID
 	public static CourseOffered getCourseOfferingByID(int courseOfferingID){
 		return null;
@@ -186,7 +219,7 @@ public class CourseOffered {
 		//if yes then add the course offering in the table
 		//then retrieve the same course in a result set
 		try{
-			Connection conn = new Database().getConnection();
+			Connection conn = Database.getConnection();
 			
 			try{
 				if(conn != null){
@@ -241,7 +274,8 @@ public class CourseOffered {
 			}
 			
 			finally{
-				Database.closeConnection(conn);
+				//Database.closeConnection(conn);
+				Database.commitTransaction(conn);
 			}
 			
 		}
@@ -250,14 +284,13 @@ public class CourseOffered {
 		}
 		
 	}
-	
 
 	//Remove courseOffered from database
 	//Will be removed only if it is current
 	public static void removeCourseOffering(CourseOffered courseOffered) throws CourseOfferingDoesNotExistException{		
 		
 		try{
-			Connection conn = new Database().getConnection();
+			Connection conn = Database.getConnection();
 			
 			try{
 				if(conn != null){
@@ -294,7 +327,7 @@ public class CourseOffered {
 			}
 			
 			finally{
-				Database.closeConnection(conn);
+				//Database.closeConnection(conn);
 			}
 			
 		}
@@ -306,16 +339,128 @@ public class CourseOffered {
 	}
 	
 	//get all courses of the student passed
-	public static ArrayList<CourseOffered> getStudentCourses(Student student){
-		return null;
+	public static ArrayList<CourseOffered> getStudentCourses(Student student) throws Course.CourseDoesNotExistException, CourseOfferingDoesNotExistException{
+		if(student == null)
+			throw new NullPointerException();
+		
+		ArrayList<CourseOffered> studentCourses = new ArrayList<CourseOffered>();
+		
+		try{
+			Connection conn = Database.getConnection();
+			
+			try{
+				if(conn != null){
+					
+					//Retrieve the current semester ID
+					String SemesterSelect = "Select *"
+							+ " FROM university.studentenrollment"
+							+ " WHERE UIN= ?";
+					PreparedStatement statement = conn.prepareStatement(SemesterSelect);
+					statement.setInt(1, student.getUIN());
+					ResultSet rs = statement.executeQuery();
+					
+					while(rs.next()){
+						int offerID = rs.getInt(3);
+						CourseOffered course = new CourseOffered(offerID);
+						studentCourses.add(course);
+					}
+					
+				}
+					
+			}
+			
+			catch(SQLException e){
+				System.out.println("Error addind course offering");
+				System.out.println(e.getMessage());
+				e.printStackTrace();
+				
+			}
+				
+			finally{
+				//Database.commitTransaction(conn);
+			}
+			
+		
+			return studentCourses;
+		}
+		
+		finally{
+		}
+		
 	}
 	
 	//get all students in the current course offering object
-	//Non-static, requires initialization of Class object
-	public ArrayList<Student> getAllStudents(){
-		return null;
+	public static ArrayList<Student> getAllStudentsInCourse(CourseOffered courseOffered){
+		if(courseOffered == null)
+			throw new NullPointerException();
+		ArrayList<Student> students = new ArrayList<Student>();
+		
+		/*Code goes here*/
+		
+		return students;
+		
 	}
 	
+	public static boolean isCourseFull(CourseOffered courseOffered) throws CourseOfferingDoesNotExistException{
+		if(courseOffered == null)
+			throw new CourseOfferingDoesNotExistException();
+		
+		return ((courseOffered.getTotalCapacity() - courseOffered.getCurrentlyFilled()) <= 0);
+	}
+	
+	public static void addOneSeatFilledToCourseOffered(CourseOffered courseOffered) throws CourseOfferingDoesNotExistException{
+		
+		try{
+			Connection conn = Database.getConnection();
+			
+			try{
+				if(conn != null){
+					
+					//Retrieve the current semester ID
+					String SemesterSelect = "Select *"
+							+ " FROM university.coursesoffered"
+							+ " WHERE OfferID= ?";
+					PreparedStatement statement = conn.prepareStatement(SemesterSelect);
+					statement.setInt(1, courseOffered.getOfferID());
+					ResultSet rs = statement.executeQuery();
+					
+					if(rs.first()){
+						int currentlyFilled = rs.getInt(5);
+						currentlyFilled += 1;
+						rs.updateInt(5, currentlyFilled);
+					}
+					
+				}
+					
+					
+				else{
+					throw new CourseOfferingDoesNotExistException();
+					
+				}
+										
+					
+				
+			}
+			
+			catch(Exception e){
+				System.out.println("Error addind course offering");
+				System.out.println(e.getMessage());
+				e.printStackTrace();
+				
+			}
+				
+			finally{
+				Database.commitTransaction(conn);
+			}
+			
+		}
+		
+		
+		
+		finally{
+		}
+			
+	}
 	
 	//CourseDoesnotExist Exception
 	static class CourseOfferingDoesNotExistException extends Exception{
@@ -343,7 +488,6 @@ public class CourseOffered {
 	    }
 	}
 
-	
 	//CourseOfferingAlreadyExistsException
 	static class CourseOfferingAlreadyExistsException extends Exception{
 		private static final long serialVersionUID = 1L;

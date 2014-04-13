@@ -1,57 +1,84 @@
 
 public class CourseSchedule {
-	private int OfferID;
-	private int classRoomID;
-	private int timeSlotID;
+	private int courseScheduleId;
+	private CourseOffered courseOffered;
+	private Timeslots timeslot;
+	private Classroom classroom;
+	
 	/**
-	 * @param offerID
-	 * @param classRoomID
-	 * @param timeSlotID
+	 * @return the courseScheduleId
 	 */
-	public CourseSchedule(int offerID, int classRoomID, int timeSlotID) {
-		super();
-		OfferID = offerID;
-		this.classRoomID = classRoomID;
-		this.timeSlotID = timeSlotID;
-	}
-	public CourseSchedule(int offerID2) {
-		// TODO Auto-generated constructor stub
+	public int getCourseScheduleId() {
+		return courseScheduleId;
 	}
 	/**
-	 * @return the offerID
+	 * @param courseScheduleId the courseScheduleId to set
 	 */
-	public int getOfferID() {
-		return OfferID;
+	public void setCourseScheduleId(int courseScheduleId) {
+		this.courseScheduleId = courseScheduleId;
 	}
 	/**
-	 * @param offerID the offerID to set
+	 * @return the courseOffered
 	 */
-	public void setOfferID(int offerID) {
-		OfferID = offerID;
+	public CourseOffered getCourseOffered() {
+		return courseOffered;
 	}
 	/**
-	 * @return the classRoomID
+	 * @param courseOffered the courseOffered to set
 	 */
-	public int getClassRoomID() {
-		return classRoomID;
+	public void setCourseOffered(CourseOffered courseOffered) {
+		this.courseOffered = courseOffered;
 	}
 	/**
-	 * @param classRoomID the classRoomID to set
+	 * @return the timeslot
 	 */
-	public void setClassRoomID(int classRoomID) {
-		this.classRoomID = classRoomID;
+	public Timeslots getTimeslot() {
+		return timeslot;
 	}
 	/**
-	 * @return the timeSlotID
+	 * @param timeslot the timeslot to set
 	 */
-	public int getTimeSlotID() {
-		return timeSlotID;
+	public void setTimeslot(Timeslots timeslot) {
+		this.timeslot = timeslot;
 	}
 	/**
-	 * @param timeSlotID the timeSlotID to set
+	 * @return the classroom
 	 */
-	public void setTimeSlotID(int timeSlotID) {
-		this.timeSlotID = timeSlotID;
+	public Classroom getClassroom() {
+		return classroom;
 	}
+	/**
+	 * @param classroom the classroom to set
+	 */
+	public void setClassroom(Classroom classroom) {
+		this.classroom = classroom;
+	}
+	
+	public CourseSchedule(int courseScheduleId){
+		
+	}
+	
+	public static void addCourseSchedule(CourseOffered courseoffered, Classroom classroom, Timeslots timeslots){
+		
+	}
+	
+	public void updateCourseSchedule(Classroom classroom, Timeslots timeslots){
+		
+	}
+	
+	public void deleteCourseSchedule(){
+		
+	}
+	
+	public static void scheduleAllCurrentCourses(){
+		
+	}
+	
+	public static boolean hasConflict(){
+		return false;
+	}
+	
+	
+	
 	
 }

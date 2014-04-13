@@ -51,6 +51,7 @@ public class Database {
 		try{
 			if(conn == null){
 				conn = DriverManager.getConnection(url + dbName, userName, password);
+				conn.setAutoCommit(false);
 	            System.out.println("Connected to the database");
 			}
 		} catch (SQLException e){

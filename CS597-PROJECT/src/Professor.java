@@ -6,6 +6,16 @@ import java.sql.SQLException;
 
 public class Professor extends People {
 	
+	/* Due to some unknown error some functions and some updates have been deleted. I am writing them and updating them as i remember
+	 * 
+	 *  
+	 *  PLease let me know if you think of any other functions, write the function signature so that i will know what to do
+	 *  
+	 *  */
+	
+	//This is a professor class
+	
+	
 	
 	//prof constructor
 	public Professor(String name, String userName, int deptID){
@@ -25,7 +35,7 @@ public class Professor extends People {
 		
 		
 		try{
-			Connection conn = new Database().getConnection();
+			Connection conn = Database.getConnection();
 			String SQLPeopleSelect="";
 			
 			try{
@@ -86,11 +96,11 @@ public class Professor extends People {
 	}
 
 	
-	//AKSHAY PLEASE CHECK IF THE PERSON WHOS UIN IS INPUT IS A PROFESSOR OR NOR
+	//CHECKING IF THE PERSON WHOS UIN IS INPUT IS A PROFESSOR OR NOT
 	public static boolean checkIfProfessor(int UIN){
 		
 		try{
-			Connection conn = new Database().getConnection();
+			Connection conn = Database.getConnection();
 			String SQLPeopleSelect="";
 			try{
 			
@@ -113,11 +123,17 @@ public class Professor extends People {
 				         System.out.println("UIN:"+UIN+" Position ID:"+peopleRetrievedPositionID);
 				         
 				         
-				         if(peopleRetrievedPositionID == 2)
+				         if(peopleRetrievedPositionID == 2){
+				        	 System.out.println("Professor UIN exists");
 				        	 return true;
+				         }
+				         else 
+				         {
+				        	 System.out.println("UIN exists, but it is not a professor");
+				        	 return false;
+						
+				         }
 				         
-				         else return false;
-				         //System.out.println("Professor UIN exists");
 
 				         
 					}
@@ -162,18 +178,18 @@ public class Professor extends People {
 	public static boolean checkIfProfessor(String userName){
 		
 		try{
-			Connection conn = new Database().getConnection();
-			String SQLPeopleSelect="";
+			Connection conn = Database.getConnection();
+			String SQLProfSelect="";
 			try{
 			
 				if(conn != null){
 					
-					SQLPeopleSelect = "Select PositionID From People where Username=?;";
+					SQLProfSelect = "Select PositionID From People where Username=?;";
 				}
 				
 				
 				
-				PreparedStatement stmtForSelect = conn.prepareStatement(SQLPeopleSelect);
+				PreparedStatement stmtForSelect = conn.prepareStatement(SQLProfSelect);
 				stmtForSelect.setString(1, userName);
 				
 				ResultSet rs =  stmtForSelect.executeQuery();
@@ -189,9 +205,12 @@ public class Professor extends People {
 				          */
 				         
 				         if(peopleRetrievedPositionID == 2)
+				         {
 				        	 return true;
-				         
-				         else return false;
+				         }
+				         else {
+				        	 return false;
+				         }
 				         //System.out.println("Professor UIN exists");
 
 
@@ -316,6 +335,9 @@ public class Professor extends People {
 	//add exams
 	
 	//grade exams
+	
+	
+	
 	
 	public static void main(String[] args){
 		
