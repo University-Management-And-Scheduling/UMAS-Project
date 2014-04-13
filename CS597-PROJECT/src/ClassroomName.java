@@ -7,6 +7,7 @@
  *
  */
 public enum ClassroomName {
+	//List of classrooms at every location
 	CLASS1,
 	CLASS2,
 	CLASS3,
