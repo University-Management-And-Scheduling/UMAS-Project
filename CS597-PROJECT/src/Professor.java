@@ -4,10 +4,6 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 
-
-
-
-
 public class Professor extends People {
 	
 	/* Due to some unknown error some functions and some updates have been deleted. I am writing them and updating them as i remember
@@ -38,6 +34,11 @@ public class Professor extends People {
 		
 	//prof adding
 	public static void addProfToDb(String name, Department dept){
+		
+		if(dept==null)
+		{
+			throw new NullPointerException();
+		}
 		
 		int returnedUIN=addIntoDatabase(name, dept, 2);
 		System.out.println(returnedUIN);
@@ -260,6 +261,10 @@ public class Professor extends People {
 		if(check==true)
 		{
 		deleteFromDatabaseByUIN(UIN);
+		Employee.deleteFromDatabaseByUIN(UIN);
+		
+		Connection conn=Database.getConnection();
+		Database.commitTransaction(conn);
 		}
 		else
 		{
@@ -278,6 +283,7 @@ public class Professor extends People {
 		if(check==true)
 		{
 		deleteFromDatabaseByUserName(userName);
+		Employee.deleteFromDatabaseByUIN(userName);
 		}
 		else
 		{

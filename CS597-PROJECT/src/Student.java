@@ -27,6 +27,10 @@ public class Student extends People {
 
 	public static void addStudentToDb(String name, Department dept,int level){
 		
+		if(dept==null){
+			throw new NullPointerException();
+		}
+		
 		int addedUIN= addIntoDatabase(name, dept, 3);
 		System.out.println(addedUIN);
 		System.out.println(level);

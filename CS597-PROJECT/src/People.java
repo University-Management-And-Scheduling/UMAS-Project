@@ -368,7 +368,7 @@ public class People {
 		int addedUIN=0;
 		int lengthOfName=name.length();
 		if(lengthOfName<=5){
-			name=userName;
+			userName=name;
 			
 		}
 		else
@@ -630,6 +630,7 @@ public class People {
 	RETURNING THE OBJECT SO THAT WE CAN JUST PASS THE NAME AND GET A OBJECT FOR US TO USE*/
 	/* ADDING EXCEPTIONS AND THROWING THEM WHEN PEOPLE BEING SEARCHED FOR IS NOT FOUND*/
 	public static People retireveDetailsByUIN(int UIN) throws PersonDoesNotExistException{
+		
 		
 		try{
 			Connection conn = Database.getConnection();

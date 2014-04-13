@@ -92,8 +92,159 @@ public class Employee extends People implements EmployeeInterface {
 		
 		
 	}
+	
+public static void deleteFromDatabaseByUIN(int UIN){
+		
+		try{
+			Connection conn = Database.getConnection();
+			String SQLPeopleSelect="";
+			String SQLPeopleDelete="";
+			try{
+				if(conn != null){	
+				SQLPeopleSelect = "Select UIN From employee where UIN=?;";
+				PreparedStatement stmt = conn.prepareStatement(SQLPeopleSelect);
+				stmt.setInt(1, UIN);
+				ResultSet rs =  stmt.executeQuery();
+				
+				
+
+					if(rs.first())
+					{	
+				         //this.UIN=peopleRetrievedUIN;
+				         //this.name=peopleRetrievedName;
+				         //this.userName=peopleRetrieveduserName;
+				         //this.deptID=peopleRetrievedDeptID;
+				         //this.positionID=peopleRetrievedPositionID;
+						
+						int peopleRetrievedUIN = rs.getInt("UIN");
+//						String peopleRetrievedName = rs.getString("Name");
+//						String peopleRetrieveduserName = rs.getString("UserName");
+//						int peopleRetrievedDeptID = rs.getInt("DepartmentID");
+//						int peopleRetrievedPositionID = rs.getInt("PositionID");
+				         
+//				         System.out.println(peopleRetrievedUIN);
+//				         System.out.println(peopleRetrievedName);
+//				         System.out.println(peopleRetrieveduserName);
+//				         System.out.println(peopleRetrievedDeptID);
+//				         System.out.println(peopleRetrievedPositionID);
+						
+						SQLPeopleDelete = "Delete From employee where UIN=?;";
+						stmt = conn.prepareStatement(SQLPeopleDelete);
+						stmt.setInt(1, UIN);
+						int rs1=stmt.executeUpdate();
+						System.out.println(rs1);
+						System.out.println(peopleRetrievedUIN+ " is deleted");
+						
+						
+					}
+					
+					else
+					{
+						
+						System.out.println("UIN does not exist");
+
+					}
+				}
+					
+}
+			
+			catch(SQLException e){
+				System.out.println("Error trying to access the database");
+				e.printStackTrace();
+				System.out.println(e);	
+			}
+			
+			finally{
+				//System.out.println("retrieved");
+			}
+		}
+		
+		catch(Exception e){
+			System.out.println("Connection failed");
+			e.printStackTrace();
+			System.out.println(e);
+			
+		}
+		
+		finally{
+			
+			//System.out.println("retrieved");
+		}
+		
+			
+		
+					
+	}
+
+	public static void deleteFromDatabaseByUIN(String userName){
+	
+	try{
+		Connection conn = Database.getConnection();
+		String SQLPeopleSelect="";
+		String SQLPeopleDelete="";
+		try{
+			if(conn != null){	
+			SQLPeopleSelect = "Select UIN From people where Username=?;";
+			PreparedStatement stmt = conn.prepareStatement(SQLPeopleSelect);
+			stmt.setString(1, userName);
+			ResultSet rs =  stmt.executeQuery();
+			
+			
+
+				if(rs.first())
+				{	
+					
+					int peopleRetrievedUIN = rs.getInt("UIN");	
+					
+					SQLPeopleDelete = "Delete From employee where UIN=?;";
+					stmt = conn.prepareStatement(SQLPeopleDelete);
+					stmt.setInt(1, peopleRetrievedUIN);
+					int rs1=stmt.executeUpdate();
+					System.out.println(rs1);
+					System.out.println(peopleRetrievedUIN+ " is deleted");
+					
+					
+				}
+				
+				else
+				{
+					
+					System.out.println("UIN does not exist as a employee");
+
+				}
+			}
+				
+}
+		
+		catch(SQLException e){
+			System.out.println("Error trying to access the database");
+			e.printStackTrace();
+			System.out.println(e);	
+		}
+		
+		finally{
+			//System.out.println("retrieved");
+		}
+	}
+	
+	catch(Exception e){
+		System.out.println("Connection failed");
+		e.printStackTrace();
+		System.out.println(e);
 		
 	}
+	
+	finally{
+		
+		//System.out.println("retrieved");
+	}
+	
+		
+	
+				
+	}
+		
+}
 	
 	
 
