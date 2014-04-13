@@ -222,6 +222,7 @@ public class People {
 		this.positionID = positionID;
 	}
 	
+	//generate random passwords
 	public static String generatePassword(int length){
 		String alphabet = 
 		        new String("0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz"); //9
