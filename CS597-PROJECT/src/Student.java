@@ -35,7 +35,12 @@ public class Student extends People {
 		System.out.println(addedUIN);
 		System.out.println(level);
 
-		addIntoStudentTable(addedUIN, level);
+		try {
+			addIntoStudentTable(addedUIN, level);
+		} catch (levelNotExistException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		
 		
 		Connection conn = Database.getConnection();
@@ -46,7 +51,11 @@ public class Student extends People {
 		
 	}
 	
-	public static void addIntoStudentTable(int UIN, int level){
+	public static void addIntoStudentTable(int UIN, int level) throws levelNotExistException{
+		
+		if(level>3 || level<0){
+			throw new levelNotExistException();
+		}
 		
 		try{
 			Connection conn = Database.getConnection();
@@ -205,6 +214,32 @@ public class Student extends People {
 		
 		return false;
 	}
+	
+	static class levelNotExistException extends Exception{
+		private static final long serialVersionUID = 1L;
+		private String message = null;
+		 
+	    public levelNotExistException() {
+	        super();
+	        this.message = "level does not exist";
+	    }
+	    
+	    public levelNotExistException(String message) {
+	        super();
+	        this.message = message;
+	    }
+	 
+	    @Override
+	    public String toString() {
+	        return message;
+	    }
+	 
+	    @Override
+	    public String getMessage() {
+	        return message;
+	    }
+	}
+	
 
 	
 	public static void main(String[] args){
