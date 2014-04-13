@@ -2,6 +2,10 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
+
+
+
 
 
 public class Professor extends People {
@@ -29,69 +33,14 @@ public class Professor extends People {
 	public Professor(String userName){
 		super(userName);
 	}
+	
+	
 		
 	//prof adding
-	public void addProfToDb(){
+	public static void addProfToDb(String name, Department dept){
 		
-		
-		try{
-			Connection conn = Database.getConnection();
-			String SQLPeopleSelect="";
-			
-			try{
-				
-				SQLPeopleSelect = "Select UIN, Name, Username, DepartmentID, PositionID From People where Username=?;";
-				PreparedStatement stmt = conn.prepareStatement(SQLPeopleSelect);
-				stmt.setString(1, this.getUserName());
-				ResultSet rs =  stmt.executeQuery();
-				
-					if(rs.first()){
-				         System.out.println(this.getUserName()+"already exists. Please choose another user name");
-				         //Insert a update query to update the values of the database....NOT ADD
-					}
-					
-					else
-					{
-						
-						System.out.println("Adding new data into the database");
-						String SQLPeopleInsert= "Insert into People (Name, Username, DepartmentID, PositionID) Values (?,?,?,?);";
-						stmt = conn.prepareStatement(SQLPeopleInsert);
-						stmt.setString(1, this.getName());
-						stmt.setString(2, this.getUserName());
-						stmt.setInt(3, this.getDeptID());
-						stmt.setInt(4, this.getPositionID());
-						System.out.println(stmt);
-						int i = stmt.executeUpdate();
-						System.out.println(i);
-						
-						//The UIN returned is 0. execute the select function here to get his UIN
-						System.out.println("Inserted: "+getUIN()+" "+getName()+" "+getUserName()+" "+getDeptID()+" "+getPositionID());
-						
-					}
-					
-			}
-			
-			catch(SQLException e){
-				System.out.println("Error adding/updating to database");
-				System.out.println(e);	
-			}
-			
-			finally{
-				//System.out.println("retrieved");
-			}
-		}
-		
-		catch(Exception e){
-			System.out.println("Connection failed");
-			System.out.println(e);
-			
-		}
-		
-		finally{
-			
-			//System.out.println("retrieved");
-		}
-		
+		int returnedUIN=addIntoDatabase(name, dept, 2);
+		System.out.println(returnedUIN);
 		
 	}
 
@@ -329,6 +278,168 @@ public class Professor extends People {
 			System.out.println("There exists no professor with that username");
 		}
 	}
+	
+	public String toString(){
+		
+		return getUIN()+" "+getUserName()+" "+getName()+" "+getDeptID()+" "+getPositionID();
+		
+		
+	}
+	
+	public static ArrayList<Professor> getAllProfInADept(int departmentID) throws ProfessorDoesNotExistException  {
+		//if(Professor == null)
+			//throw new NullPointerException();
+		
+		ArrayList<Professor> ProfOfOneDept = new ArrayList<Professor>();
+		
+		try{
+			Connection conn = Database.getConnection();
+			
+			try{
+				if(conn != null){
+					
+					Department dept=new Department(departmentID);
+					
+					
+					//Retrieve all the professors from one department
+					String ProfessorSelect = "Select *"
+							+ " FROM university.people"
+							+ " WHERE DepartmentID= ? and PositionID=2";
+					PreparedStatement statement = conn.prepareStatement(ProfessorSelect);
+					statement.setInt(1, departmentID);
+					ResultSet rs = statement.executeQuery();
+					
+					while(rs.next()){
+						
+						
+						String retreivedProfUserNames=rs.getString("Username");
+						//System.out.println(retreivedProfUserNames);
+						Professor prof=new Professor(retreivedProfUserNames);
+						ProfOfOneDept.add(prof);
+						System.out.println(prof.toString());						
+					}
+					
+				}
+					
+			}
+			
+			catch(SQLException e){
+				System.out.println("Error fetching all the professors of the department ");
+				System.out.println(e.getMessage());
+				e.printStackTrace();
+				
+			}
+			
+			catch(Department.DepartmentDoesNotExistException e){
+				System.out.println("Error fetching the department ");
+				System.out.println(e.getMessage());
+				e.printStackTrace();
+				
+			}
+				
+			finally{
+				//Database.commitTransaction(conn);
+			}
+			
+		
+			return ProfOfOneDept;
+		}
+		
+		finally{
+		}
+		
+	}
+	
+	public static ArrayList<Professor> getAllProfInADept(String DepartmentName) throws ProfessorDoesNotExistException {
+		//if(Professor == null)
+			//throw new NullPointerException();
+		
+		ArrayList<Professor> ProfOfOneDept = new ArrayList<Professor>();
+		
+		try{
+			Connection conn = Database.getConnection();
+			
+			try{
+				if(conn != null){
+					
+					int retreivedDepartmentID=0;
+					
+					try{
+						String getDeptID = "Select DepartmentID"
+								+ " FROM university.department"
+								+ " WHERE DepartmentName= ?";
+						
+						PreparedStatement statement = conn.prepareStatement(getDeptID);
+						statement.setString(1, DepartmentName);
+						ResultSet rs1 = statement.executeQuery();
+						
+						if(rs1.first()){
+							
+							retreivedDepartmentID=rs1.getInt("DepartmentID");
+							
+						}
+						else{
+							
+							throw new Department.DepartmentDoesNotExistException();
+						}
+					
+						
+					}
+					
+					catch(SQLException e){
+						System.out.println("Error finding the department name ");
+						System.out.println(e.getMessage());
+						e.printStackTrace();
+						
+					}
+					
+					catch(Department.DepartmentDoesNotExistException e){
+						System.out.println("Error fetching the department ");
+						System.out.println(e.getMessage());
+						e.printStackTrace();
+						
+					}
+					
+					//Retrieve all the professors from one department
+					String SemesterSelect = "Select *"
+							+ " FROM university.people"
+							+ " WHERE DepartmentID= ? and PositionID=2";
+					PreparedStatement statement1 = conn.prepareStatement(SemesterSelect);
+					statement1.setInt(1, retreivedDepartmentID);
+					ResultSet rs = statement1.executeQuery();
+					
+					while(rs.next()){
+						
+						String retreivedProfUserNames=rs.getString("Username");
+						//System.out.println(retreivedProfUserNames);
+						Professor prof=new Professor(retreivedProfUserNames);
+						ProfOfOneDept.add(prof);
+						System.out.println(prof.toString());						
+					}
+					
+				}
+					
+			}
+			
+			catch(SQLException e){
+				System.out.println("Error fetching all the professors of the department ");
+				System.out.println(e.getMessage());
+				e.printStackTrace();
+				
+			}
+				
+			finally{
+				//Database.commitTransaction(conn);
+			}
+			
+		
+			return ProfOfOneDept;
+		}
+		
+		finally{
+		}
+		
+	}
 		
 	//add files
 	
@@ -336,16 +447,59 @@ public class Professor extends People {
 	
 	//grade exams
 	
-	
+	static class ProfessorDoesNotExistException extends Exception{
+		private static final long serialVersionUID = 1L;
+		private String message = null;
+		 
+	    public ProfessorDoesNotExistException() {
+	        super();
+	        this.message = "Professor does not exist";
+	    }
+	    
+	    public ProfessorDoesNotExistException(String message) {
+	        super();
+	        this.message = message;
+	    }
+	 
+	    @Override
+	    public String toString() {
+	        return message;
+	    }
+	 
+	    @Override
+	    public String getMessage() {
+	        return message;
+	    }
+	}
 	
 	
 	public static void main(String[] args){
+		
+		try {
+			Department dept=new Department(2);
+			addProfToDb("priyanka", dept);
+		} catch (Department.DepartmentDoesNotExistException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		
 		
 		//Professor x = new Professor("priyanka", "maravapa", 2);
 		
 		//x.addProfToDb();
 		
-		retrieveProfDetailsByUserName("maravapa");
+		//retrieveProfDetailsByUserName("maravapa");
+		
+//		try {
+//			getAllProfInADept("aksh");
+//		} catch (ProfessorDoesNotExistException e) {
+//			// TODO Auto-generated catch block
+//			e.printStackTrace();
+//		}
+		
+		
+		
 		
 		
 		//People.
