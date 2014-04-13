@@ -297,7 +297,7 @@ public class People {
 	return false;
 	}
 	
-	
+	// adding the user to the login table with auto generated username and password
 	public static void addUserDetailsIntoLoginTable(String userName, String Password){
 		
 		
