@@ -53,60 +53,21 @@ public class CourseExams {
 		// DB code to create table to maintain students' exam mks
 		
 		
-		createCourseExamStructureTable(course);
+		CourseExamStructure.createCourseExamStructureTable(course);
 	}
-	
-	private static void createCourseExamStructureTable(CourseOffered course){
 		
-		// DB code to create ExamStructure Table that has the exam structure.
-		
-	}
-	
-	public void addNewExam(){
-		int OfferID = this.offerID;
-		String examName = this.examName;
-		int examTotal = this.examTotal;
-		
-		// DB code to add exam in ExamStructure Table
-		
-		this.addNewExamColumn();
-	}
-	
-	private void addNewExamColumn(){
+	public static void addNewExamColumn(){
 		
 		// DB code to add new column for the exam in courseExam Table
 	}
 	
-	public void modifyExistingExamName(String newExamName){
-		CourseExams exam = null;
-		
-		// DB code to modify name in ExamStructure table
-		
-		exam.modifyExistingExamColumnName(newExamName);
-	}	
-	
-	private void modifyExistingExamColumnName(String newExamName){
+	public void modifyExistingExamColumnName(String newExamName){
 		
 		// DB code to modify name of the exam column in CourseExam table
 		
 	}	
 	
-	public void modifyExistingExamTotalMarks(Float newMarks){
-		
-		// DB code to modify total marks in ExamStructure table
-	}
-
-	public void deleteExistingExam(){
-		int OfferID = this.offerID;
-		String examName = this.examName;
-		
-		// DB code to delete exam in ExamStructure Table
-		
-		
-		
-	}
-	
-	private void deleteExistingExamColumn(){
+	public void deleteExistingExamColumn(){
 		
 		// DB code to delete existing column for the exam in courseExam Table
 	}

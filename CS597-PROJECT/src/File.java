@@ -65,7 +65,8 @@ public void setOfferID(int offerID) {
 }
 
 // Add a new file to file table in the database
-public static void addFileToDB(String fileName, String fileLocation, int offerID){
+public static boolean addFileToDB(String fileName, String fileLocation, int offerID){
+	boolean fileAdded = false;
 	@DBAnnotation (
 			variable = {"fileName","fileLocation", "offerID"},  
 			table = "files", 
@@ -102,6 +103,7 @@ public static void addFileToDB(String fileName, String fileLocation, int offerID
 					statement.setInt(3, offerID);
 					statement.executeUpdate();
 					Database.commitTransaction(conn);
+					fileAdded = true;
 				}		
 			}
 		} catch (SQLException e) {
@@ -112,6 +114,8 @@ public static void addFileToDB(String fileName, String fileLocation, int offerID
 	} catch (Exception e) {
 		System.out.println(e);
 	}
+	
+	return fileAdded;
 		
 }
 
