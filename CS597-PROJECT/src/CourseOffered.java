@@ -5,6 +5,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 
 
+
 public class CourseOffered {
 	private int offerID;
 	private Course course;
@@ -194,21 +195,94 @@ public class CourseOffered {
 	}
 
 	
-	//get course offering by ID
-	public static CourseOffered getCourseOfferingByID(final int courseOfferingID){
-		return null;
-	}
-	
 	//get all current current course offerings
 	public static ArrayList<CourseOffered> getAllCurrentlyOfferedCourses(){
-		return null;
+		ArrayList<CourseOffered> currentOffering = new ArrayList<CourseOffered>();
+		int currentSemID = getCurrentSemesterID();
+		
+		try{
+			Connection conn = Database.getConnection();
+			
+			try{
+				if(conn != null){
+					
+					//Retrieve the current semester ID
+					String SemesterSelect = "Select *"
+							+ " FROM university.coursesoffered"
+							+ " WHERE SemesterID= ?";
+					PreparedStatement statement = conn.prepareStatement(SemesterSelect);
+					statement.setInt(1, currentSemID);
+					ResultSet rs = statement.executeQuery();
+					
+					while(rs.next()){
+						CourseOffered c = new CourseOffered(rs.getInt("OfferID"));
+						currentOffering.add(c);
+					}
+										
+				}
+			}
+			
+			catch(SQLException e){
+				System.out.println("Error  course offering");
+				System.out.println(e.getMessage());
+				e.printStackTrace();
+			} catch (Course.CourseDoesNotExistException e) {
+				e.printStackTrace();
+			} catch (CourseOfferingDoesNotExistException e) {
+				e.printStackTrace();
+			}			
+		}
+		
+		finally{
+		}
+		
+		return currentOffering;
 	}
 	
+	//gets all current and previously offered courses
 	//get all present and past courses
 	public static ArrayList<CourseOffered> getAllOfferedCourses(){
-		return null;
+		ArrayList<CourseOffered> currentOffering = new ArrayList<CourseOffered>();		
+		try{
+			Connection conn = Database.getConnection();
+			
+			try{
+				if(conn != null){
+					
+					//Retrieve the current semester ID
+					String SemesterSelect = "Select *"
+							+ " FROM university.coursesoffered";
+					PreparedStatement statement = conn.prepareStatement(SemesterSelect);
+					ResultSet rs = statement.executeQuery();
+					
+					while(rs.next()){
+						CourseOffered c = new CourseOffered(rs.getInt("OfferID"));
+						currentOffering.add(c);
+					}
+										
+				}
+			}
+			
+			catch(SQLException e){
+				System.out.println("Error  course offering");
+				System.out.println(e.getMessage());
+				e.printStackTrace();
+			} catch (Course.CourseDoesNotExistException e) {
+				e.printStackTrace();
+			} catch (CourseOfferingDoesNotExistException e) {
+				e.printStackTrace();
+			}			
+		}
+		
+		finally{
+		}
+		
+		return currentOffering;
 	}
 	
+	//function revision pending
+	//to be added functionality to check if this course can be scheduled if offered
+	//also schedule the course on a available slot after adding
 	//Add the courseOffered object to the database
 	public static void addCourseOfferingToDatabase(final Course course,  final Professor professor, final int capacity) throws CourseOfferingAlreadyExistsException{
 		int profID = professor.getUIN();
@@ -286,6 +360,7 @@ public class CourseOffered {
 		
 	}
 
+	//Not to be used, functionality not complete
 	//Remove courseOffered from database
 	//Will be removed only if it is current
 	public static void removeCourseOffering(final CourseOffered courseOffered) throws CourseOfferingDoesNotExistException{		
@@ -339,6 +414,7 @@ public class CourseOffered {
 		
 	}
 	
+	//complete
 	//get all courses of the student passed
 	public static ArrayList<CourseOffered> getStudentCourses(final Student student) throws Course.CourseDoesNotExistException, CourseOfferingDoesNotExistException{
 		if(student == null) {
@@ -391,6 +467,7 @@ public class CourseOffered {
 		
 	}
 	
+	//incomplete
 	//get all students in the current course offering object
 	public static ArrayList<Student> getAllStudentsInCourse(final CourseOffered courseOffered){
 		if(courseOffered == null) {
@@ -404,6 +481,7 @@ public class CourseOffered {
 		
 	}
 	
+	//complete
 	public static boolean isCourseFull(final CourseOffered courseOffered) throws CourseOfferingDoesNotExistException{
 		if(courseOffered == null) {
 			throw new CourseOfferingDoesNotExistException();
@@ -412,6 +490,7 @@ public class CourseOffered {
 		return ((courseOffered.getTotalCapacity() - courseOffered.getCurrentlyFilled()) <= 0);
 	}
 	
+	//complete
 	public static void addOneSeatFilledToCourseOffered(final CourseOffered courseOffered) throws CourseOfferingDoesNotExistException{
 		
 		try{
@@ -466,6 +545,98 @@ public class CourseOffered {
 			
 	}
 	
+	//complete
+	//check if the current course object is scheduled
+	//check first if the course offering is current
+	//if not current, throw courseOffering not current exception
+	public boolean checkIfScheduled() throws CourseOfferingNotCurrentException{
+		if(!checkIfCurrent()){
+			throw new CourseOfferingNotCurrentException("This course is not a currently offered course");
+		}
+		
+		boolean doesExist = false;
+		
+		try{
+			Connection conn = Database.getConnection();
+			
+			try{
+				if(conn != null){
+					
+					//Retrieve the current semester ID
+					String scheduleSelect = "Select *"
+							+ " FROM university.courseschedule"
+							+ " WHERE OfferID= ?";
+					PreparedStatement statement = conn.prepareStatement(scheduleSelect);
+					statement.setInt(1, this.getOfferID());
+					ResultSet rs = statement.executeQuery();
+					
+					if(rs.first()){
+						doesExist = true;	
+					}							
+					
+				}
+			}
+			
+			catch(SQLException e){
+				System.out.println("Error in SQL");
+				System.out.println(e.getMessage());
+				e.printStackTrace();
+			}
+						
+		}
+		
+		finally{
+		}
+		
+		return doesExist;
+	}
+	
+	//complete
+	//return current semesterID
+	public static int getCurrentSemesterID(){
+		int current = -1;
+		try{
+			Connection conn = Database.getConnection();
+			
+			try{
+				if(conn != null){
+					
+					//Retrieve the current semester ID
+					String semSelect = "Select *"
+							+ " FROM university.semester"
+							+ " WHERE isCurrent= ?";
+					PreparedStatement statement = conn.prepareStatement(semSelect);
+					statement.setInt(1, 1);
+					ResultSet rs = statement.executeQuery();
+					
+					if(rs.first()){
+						current = rs.getInt("IsCurrent");
+					}							
+					
+				}
+			}
+			
+			catch(SQLException e){
+				System.out.println("Error in SQL");
+				System.out.println(e.getMessage());
+				e.printStackTrace();
+			}
+			
+			return current;
+						
+		}
+		
+		finally{
+		}
+	}
+	
+	//complete
+	//check if the current courseOffering is current
+	public boolean checkIfCurrent(){
+		int semID = this.getSemesterID();
+		return (semID == getCurrentSemesterID());
+	}
+	
 	//CourseDoesnotExist Exception
 	static class CourseOfferingDoesNotExistException extends Exception{
 		private static final long serialVersionUID = 1L;
@@ -503,6 +674,32 @@ public class CourseOffered {
 	    }
 	    
 	    public CourseOfferingAlreadyExistsException(final String message) {
+	        super();
+	        this.message = message;
+	    }
+	 
+	    @Override
+	    public String toString() {
+	        return message;
+	    }
+	 
+	    @Override
+	    public String getMessage() {
+	        return message;
+	    }
+	}
+
+	//CourseOfferingNotCurrent Exception
+	static class CourseOfferingNotCurrentException extends Exception{
+		private static final long serialVersionUID = 1L;
+		private String message = null;
+		 
+	    public CourseOfferingNotCurrentException() {
+	        super();
+	        this.message = "Course not current";
+	    }
+	    
+	    public CourseOfferingNotCurrentException(final String message) {
 	        super();
 	        this.message = message;
 	    }
