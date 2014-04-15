@@ -3,6 +3,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Arrays;
 
 public class Classroom {
 	private ClassroomName classroomName;
@@ -38,7 +39,6 @@ public class Classroom {
 		return classroomCapacity;
 	}
 
-
 	public Classroom(int classroomID){
 		this.classroomID = classroomID;
 		try{
@@ -59,12 +59,12 @@ public class Classroom {
 						this.classroomCapacity = rs.getInt(4);
 						this.classroomName = ClassroomName.valueOf(rs.getString(2));
 						this.classroomLocation = ClassroomLocation.valueOf(rs.getString(3));
-						System.out.println("Retreived:");
-						System.out.println("ID:"+this.classroomID+" Name:"+this.classroomName.toString()+" Location:"+this.classroomLocation.toString());
+						//System.out.println("Retreived:");
+						//System.out.println("ID:"+this.classroomID+" Name:"+this.classroomName.toString()+" Location:"+this.classroomLocation.toString());
 					}
 					
 					else{
-						throw new IllegalArgumentException("classroom does ot exist");
+						throw new IllegalArgumentException("Classroom does ot exist");
 					}
 										
 					
@@ -140,11 +140,111 @@ public class Classroom {
 		}
 	}
 	
+	public static Timeslots getEmptySlot(Classroom classroom, int timeSlotType){
+		if(!checkTimeSlotType(timeSlotType)){
+			System.out.println("Timeslot type is incorrect");
+			return null;
+		}
+		
+		
+		ArrayList<Timeslots> emptySlots = findOpenSlotsForClassroom(classroom, timeSlotType);
+		int size = emptySlots.size();
+		if(size>0){
+			System.out.println("--------------Found and empty time slot---------------");
+			return emptySlots.get(0);
+		}
+		
+		else return null;
+	}
+	
+	public static boolean checkTimeSlotType(int timeSlotType){
+		return (timeSlotType == 1 || timeSlotType == 2);
+	}
+	
+	public static Classroom getEmptyClassroom(ClassroomLocation location, int timeSlotType){
+		System.out.println("xxxxxxxxxxxxxxxxINSIDE getEmptyCLassroom FUNCTIONxxxxxxxxxxxxxx");
+		ArrayList<ClassroomName> names = new ArrayList<ClassroomName>(Arrays.asList(ClassroomName.values()));
+		Classroom c = null;
+		ArrayList<Timeslots> times = null;
+		for(ClassroomName name:names){
+			int classID = getClassID(name, location);
+			if(classID != -1){
+				c = new Classroom(classID);
+				if(c!=null){
+					//System.out.println("Call findEmptySlotsForClassroom for just checking. Not retreiving");
+					times = findOpenSlotsForClassroom(c, timeSlotType);
+					if(times.size()>0){
+						System.out.println("Found a classroom with empty time slots:"+c.getClassroomName().toString()+" "
+								+ ""+ c.getClassroomLocation().toString());
+						break;
+					}
+				}
+			}
+		}
+		
+		return c;
+	}
+
+	public static int getClassID(ClassroomName name, ClassroomLocation location){
+		String classroomName = name.toString();
+		String classroomLocation = location.toString();
+		int id = -1;
+		try{
+			Connection conn = Database.getConnection();
+			
+			try{
+				if(conn != null){
+					
+					//Retrieve the current semester ID
+					String ClassroomSelect = "Select *"
+							+ " FROM university.classroom"
+							+ " WHERE classroomName= ? and classroomLocation= ?";
+					PreparedStatement statement = conn.prepareStatement(ClassroomSelect);
+					statement.setString(1, classroomName);
+					statement.setString(2, classroomLocation);
+					ResultSet rs = statement.executeQuery();
+					
+					if(rs.first()){
+						id = rs.getInt("ClassroomID");
+					}
+					
+					else{
+						throw new IllegalArgumentException();
+					}
+										
+					
+				}
+				
+				else{
+					throw new SQLException();
+				}
+			}
+			
+			catch(SQLException e){
+				System.out.println("Error retreiving classroom");
+				System.out.println(e.getMessage());
+				e.printStackTrace();
+			}
+			
+			finally{
+				//Database.closeConnection(conn);
+			}
+			
+		}
+		
+		finally{
+		}
+		
+		return id;
+	}
+	
 	public static ArrayList<Timeslots> findOpenSlotsForClassroom(Classroom classroom, int timeSlotType){
 		if(classroom == null)
 			return null;
 		if(timeSlotType < 1 || timeSlotType > 2)
 			return null;
+		
+		System.out.println("Looking for open time slots in classroom:"+classroom.getClassroomName().toString()+" at location:"+classroom.getClassroomLocation().toString());
 		
 		ArrayList<Timeslots> timeslots = new ArrayList<Timeslots>();
 		int classroomID = classroom.getClassroomID();
@@ -161,11 +261,11 @@ public class Classroom {
 					statement.setInt(2, timeSlotType);
 					ResultSet rs = statement.executeQuery();
 					ArrayList<Timeslots> occupiedTimeslots = new ArrayList<Timeslots>();
-					System.out.println("Printing occupied slots:");
+					//System.out.println("-----Printing occupied slots---------");
 					while(rs.next()){
 						int timeslotID = rs.getInt(1);
 						Timeslots t = new Timeslots(timeslotID);
-						System.out.println("Slot:"+t.getTimeSlotID()+" start:"+t.getStartHour()+" end:"+t.getEndHour());
+						//System.out.println("Slot:"+t.getTimeSlotID()+" start:"+t.getStartHour()+" end:"+t.getEndHour());
 						occupiedTimeslots.add(t);
 					}
 					
@@ -176,14 +276,18 @@ public class Classroom {
 					statement.setInt(1, timeSlotType);
 					rs = statement.executeQuery();
 					
+					System.out.println("-------------Looking for time conflicts-------------");
 					while(rs.next()){
 						Timeslots t = new Timeslots(rs.getInt(1));
 						boolean conflict = false;
 						for(Timeslots slot:occupiedTimeslots){
 							if(Timeslots.isConflict(t, slot)){
+								//System.out.println("Conflict detect");
 								conflict = true;
 								break;
 							}
+							
+							//System.out.println("No conflicts, its an open time slot!");
 						}
 						
 						if(!conflict){
@@ -213,17 +317,5 @@ public class Classroom {
 	}
 	
 	public static void main(String[] args){
-
-		Classroom c = new Classroom(1);
-		ArrayList<Timeslots> slots = findOpenSlotsForClassroom(c, 2);
-		System.out.println("Printing available slots");
-		//printing available slots from calculated slots
-		if(slots != null){
-			for(Timeslots slot:slots){
-				System.out.println("Slot:"+slot.getTimeSlotID()+" start:"+slot.getStartHour()+" end:"+slot.getEndHour());
-			}
-		}
-		
-		
 	}
 }
