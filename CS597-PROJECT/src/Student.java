@@ -1,4 +1,3 @@
-
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -7,17 +6,114 @@ import java.sql.SQLException;
 import javax.xml.crypto.Data;
 
 
+
 public class Student extends People {
+	
+	double GPA;
+	int level;	
+	
 
 	public Student(int UIN) {
 		super(UIN);
-		// TODO Auto-generated constructor stub
+		
+		try{
+			Connection conn = Database.getConnection();
+			String SQLStudentGPASelect="";
+			try{
+			
+				if(conn != null){
+					
+					SQLStudentGPASelect = "Select * From university.student where UIN=?;";
+				}
+				
+				PreparedStatement stmtForSelect = conn.prepareStatement(SQLStudentGPASelect);
+				stmtForSelect.setInt(1, UIN);
+				
+				ResultSet rs =  stmtForSelect.executeQuery();
+					
+					if(rs.first())
+					{
+						int retrievedStudentUIN = rs.getInt("UIN");
+				        double retrievedStudentGPA = rs.getDouble("GPA");
+				        int retrievedStudentLevel = rs.getInt("Level");
+				     
+						
+				         this.UIN=retrievedStudentUIN;
+				         this.GPA=retrievedStudentGPA;
+				         this.level=retrievedStudentLevel;
+
+				         
+				         //System.out.println(peopleRetrievedUIN);
+				         //System.out.println(peopleRetrievedName);
+				         //System.out.println(peopleRetrieveduserName);
+				         //System.out.println(peopleRetrievedDeptID);
+				         //System.out.println(peopleRetrievedPositionID);
+					}
+					
+					else
+					{
+						
+						System.out.println("UIN does not exist");
+
+					}
+					
+				
+			
+		
 	}
+			
+			catch(SQLException e){
+				System.out.print("SQL exception in student const");
+				System.out.println(e);
+				e.printStackTrace();
+				
+			}
+			
+			finally{
+				
+				//System.out.println("retrieved");
+			}
+		}
+		
+		catch(Exception e){
+			System.out.println(e);
+			e.printStackTrace();
+			
+		}
+		
+		finally{
+			
+			//System.out.println("retrieved");
+		}
+		
+}
+		// TODO Auto-generated constructor stub
+	
 
 	public Student(String name, String userName, int deptID, int positionID) {
 		super(name, userName, deptID, 3);
 		// TODO Auto-generated constructor stub
 	}
+
+	public double getGPA() {
+		return GPA;
+	}
+
+
+	public void setGPA(double gPA) {
+		GPA = gPA;
+	}
+
+
+	public int getLevel() {
+		return level;
+	}
+
+
+	public void setLevel(int level) {
+		this.level = level;
+	}
+
 
 	public Student(String userName) {
 		super(userName);
