@@ -188,13 +188,13 @@ public class JobApplication {
 		
 		if(skill1)
 			skillScore1=1;
-		if(skill1)
+		if(skill2)
 			skillScore2=1;
-		if(skill1)
+		if(skill3)
 			skillScore3=1;
-		if(skill1)
+		if(skill4)
 			skillScore4=1;
-		if(skill1)
+		if(skill5)
 			skillScore5=1;
 		
 		scaledScore=skillScore1+skillScore2+skillScore3+skillScore4+skillScore5;
@@ -333,8 +333,8 @@ public class JobApplication {
 	 public static void main(String[] args)
 		{
 		 
-		 //addApplicationDetails(28, 1.5, false, false, true, true, true);
-		 retreiveMatchingStudents(1.5, false, false, true, true, true);
+		 addApplicationDetails(28, 1.5, false, false, true, true, true);
+		 //retreiveMatchingStudents(1.5, false, false, true, true, true);
 		 
 		}
 	 
