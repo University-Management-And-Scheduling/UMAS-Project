@@ -3,8 +3,6 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
-import javax.xml.crypto.Data;
-
 
 
 public class Student extends People {
@@ -129,30 +127,33 @@ public class Student extends People {
 			throw new NullPointerException();
 		}
 		
-		int addedUIN= addIntoDatabase(name, dept, 3);
-		
-		if(addedUIN!=-1){
-			
-			System.out.println(addedUIN);
-			System.out.println(level);
-
-			try {
-				isAdded=addIntoStudentTable(addedUIN, level);
+		int addedUIN;
+		try {
+			addedUIN = addIntoDatabase(name, dept, 3);
+			if(addedUIN!=-1){
 				
-			} catch (levelNotExistException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+				System.out.println(addedUIN);
+				System.out.println(level);
+
+				try {
+					isAdded=addIntoStudentTable(addedUIN, level);
+					
+				} catch (levelNotExistException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+				
+				
+				Connection conn = Database.getConnection();
+				Database.commitTransaction(conn);
+				
 			}
-			
-			
-			Connection conn = Database.getConnection();
-			Database.commitTransaction(conn);
-			
+		} catch (loginDetailsnotAdded e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
 		}
 		
 		return isAdded;
-	
-		
 		
 	}
 	
@@ -226,18 +227,18 @@ public class Student extends People {
 		
 	}
 		
-	public static void deleteStudent(int UIN){
-		
-	
-		
-	}
-	
-	public static void deleteStudent(String userName){
-		
-		
-		
-		
-	}
+//	public static void deleteStudent(int UIN){
+//		
+//	
+//		
+//	}
+//	
+//	public static void deleteStudent(String userName){
+//		
+//		
+//		
+//		
+//	}
 	
 	public static boolean checkIfStudent(int UIN){
 		
@@ -319,13 +320,13 @@ public class Student extends People {
 		
 		return false;
 	}
-	
-	
-	public static void updateGPA(int UIN, double newGPA ) throws GPAnotValidException{
+		
+	public static boolean updateGPA(int UIN, double newGPA ) throws GPAnotValidException{
 		
 //		if(level>3 || level<1){
 //			throw new levelNotExistException();
 //		}
+		boolean updateGPA=false;
 		
 		if(newGPA>4.00 || newGPA<1.0)
 			
@@ -355,6 +356,7 @@ public class Student extends People {
 							int i = stmt.executeUpdate();
 							System.out.println(i);
 							System.out.println("Updated");
+							updateGPA=true;
 							
 							//Connection conn=Database.getConnection();
 							//Database.commitTransaction(conn);
@@ -395,7 +397,7 @@ public class Student extends People {
 			//System.out.println("retrieved");
 		}
 		
-		
+		return updateGPA;
 	}
 
 

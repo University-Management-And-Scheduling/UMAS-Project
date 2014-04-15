@@ -299,8 +299,9 @@ public class People {
 	}
 	
 	// adding the user to the login table with auto generated username and password
-	public static void addUserDetailsIntoLoginTable(String userName, String Password){
+	public static boolean addUserDetailsIntoLoginTable(String userName, String Password){
 		
+		boolean isAdded=false;
 		
 		try{
 			Connection conn = Database.getConnection();
@@ -330,6 +331,7 @@ public class People {
 						int i = stmt.executeUpdate();
 						System.out.println(i);
 						System.out.println("Inserted");
+						isAdded=true;
 						
 					}
 					
@@ -357,11 +359,11 @@ public class People {
 			//System.out.println("retrieved");
 		}
 		
-		
+	return isAdded;
 	}
 	
 		// add into database which generates username and password and adds into people table
-	public static int addIntoDatabase(String name, Department dept, int positionId)
+	public static int addIntoDatabase(String name, Department dept, int positionId) throws loginDetailsnotAdded
 	{
 		
 		//generate a user name from name
@@ -394,13 +396,13 @@ public class People {
 		
 		//add into login details
 		userName=userName.toLowerCase();
-		addUserDetailsIntoLoginTable(userName, randomPassword);
+		boolean isAdded=addUserDetailsIntoLoginTable(userName, randomPassword);
+		
+		if(isAdded){
 		
 		//add into people table 
 		
 		//change the return type
-		
-		
 		
 		try{
 			Connection conn = Database.getConnection();
@@ -464,12 +466,21 @@ public class People {
 			//System.out.println("retrieved");
 		}
 		
-	return addedUIN;
+		return addedUIN;
+	
+		}
+		
+		else{
+			
+			throw new loginDetailsnotAdded();
+		}
+		
 		
 	}
 	
-	public static void deleteFromDatabaseByUIN(int UIN){
+	public static boolean deleteFromDatabaseByUIN(int UIN){
 		
+		boolean isDeleted=false;
 		try{
 			Connection conn = Database.getConnection();
 			String SQLPeopleSelect="";
@@ -508,6 +519,8 @@ public class People {
 						stmt.setInt(1, UIN);
 						int rs1=stmt.executeUpdate();
 						System.out.println(peopleRetrievedUIN+ " is deleted");
+						isDeleted=true;
+						
 						//System.out.println(rs1);
 						
 					}
@@ -544,11 +557,13 @@ public class People {
 		}
 		
 			
-		
+	return isDeleted;	
 					
 	}
 	
-	public static void deleteFromDatabaseByUserName(String userName){
+	public static boolean deleteFromDatabaseByUserName(String userName){
+		
+		boolean isDeleted=false;
 		
 		try{
 			Connection conn = Database.getConnection();
@@ -588,6 +603,7 @@ public class People {
 						stmt.setString(1, userName);
 						int rs1=stmt.executeUpdate();
 						System.out.println(peopleRetrievedUIN+ " is deleted");
+						isDeleted=true;
 						//System.out.println(rs1);
 						
 					}
@@ -623,7 +639,8 @@ public class People {
 			//System.out.println("retrieved");
 		}
 		
-			
+		
+		return isDeleted;
 		
 					
 	}
@@ -796,6 +813,31 @@ public class People {
 	    }
 	    
 	    public PersonDoesNotExistException(String message) {
+	        super();
+	        this.message = message;
+	    }
+	 
+	    @Override
+	    public String toString() {
+	        return message;
+	    }
+	 
+	    @Override
+	    public String getMessage() {
+	        return message;
+	    }
+	}
+	
+	static class loginDetailsnotAdded extends Exception{
+		private static final long serialVersionUID = 1L;
+		private String message = null;
+		 
+	    public loginDetailsnotAdded () {
+	        super();
+	        this.message = "login Details not Added ";
+	    }
+	    
+	    public loginDetailsnotAdded (String message) {
 	        super();
 	        this.message = message;
 	    }

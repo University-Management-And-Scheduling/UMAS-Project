@@ -98,8 +98,9 @@ public class Employee extends People {
 		
 	}
 	
-	public static void updateEmpDetails(int UIN, String officeAddress, String officeHours){
+	public static boolean updateEmpDetails(int UIN, String officeAddress, String officeHours){
 		
+		boolean  isUpdated=false;
 		try{
 			Connection conn = Database.getConnection();
 			String SQLselectEmp="";
@@ -124,8 +125,9 @@ public class Employee extends People {
 						int i = stmt.executeUpdate();
 						System.out.println(i);
 						System.out.println("Updated");
-						
+
 						Database.commitTransaction(conn);
+						isUpdated=true;
 					}
 					
 					else
@@ -162,9 +164,12 @@ public class Employee extends People {
 			//System.out.println("retrieved");
 		}
 		
+		return isUpdated;
 	}
 
-	public static void giveBonus(int UIN, double bonusPercent) throws bonusNotValidException{
+	public static boolean giveBonus(int UIN, double bonusPercent) throws bonusNotValidException{
+		
+		boolean giveBonus=false;
 		
 		if(bonusPercent<5.0 || bonusPercent>30.0)
 			{
@@ -201,6 +206,7 @@ public class Employee extends People {
 						System.out.println("Updated");
 						
 						Database.commitTransaction(conn);
+						giveBonus=true;
 					}
 					
 					else
@@ -237,9 +243,12 @@ public class Employee extends People {
 			//System.out.println("retrieved");
 		}
 		
+		return giveBonus;
 	}
 
-	public static void deleteFromDatabaseByUIN(int UIN){
+	public static boolean deleteFromDatabaseByUIN(int UIN){
+		
+		boolean isDeleted=false;
 		
 		try{
 			Connection conn = Database.getConnection();
@@ -280,6 +289,7 @@ public class Employee extends People {
 						int rs1=stmt.executeUpdate();
 						System.out.println(rs1);
 						System.out.println(peopleRetrievedUIN+ " is deleted");
+						isDeleted=true;
 						
 						
 					}
@@ -318,12 +328,13 @@ public class Employee extends People {
 		}
 		
 			
-		
+	return isDeleted;	
 					
 	}
 
-	public static void deleteFromDatabaseByUIN(String userName){
+	public static boolean deleteFromDatabaseByUserName(String userName){
 	
+	boolean isDeleted=false;	
 	try{
 		Connection conn = Database.getConnection();
 		String SQLPeopleSelect="";
@@ -348,7 +359,7 @@ public class Employee extends People {
 					int rs1=stmt.executeUpdate();
 					System.out.println(rs1);
 					System.out.println(peopleRetrievedUIN+ " is deleted");
-					
+					isDeleted=true;
 					
 				}
 				
@@ -386,7 +397,7 @@ public class Employee extends People {
 	}
 	
 		
-	
+	return isDeleted;
 				
 	}
 	

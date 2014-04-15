@@ -4,6 +4,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 
+
 public class Professor extends People {
 	
 	/* Due to some unknown error some functions and some updates have been deleted. I am writing them and updating them as i remember
@@ -36,25 +37,33 @@ public class Professor extends People {
 	public static boolean addProfToDb(String name, Department dept){
 		
 		boolean isAdded=false;
+		int returnedUIN;
 		
 		if(dept==null)
 		{
 			throw new NullPointerException();
 		}
 		
-		int returnedUIN=addIntoDatabase(name, dept, 2);
 		
-		if(returnedUIN!=-1){
-			
-			System.out.println(returnedUIN);
+		try {
+			returnedUIN = addIntoDatabase(name, dept, 2);
+			if(returnedUIN!=-1){
+				
+				System.out.println(returnedUIN);
 
-			isAdded=Employee.addEmployee(returnedUIN);
+				isAdded=Employee.addEmployee(returnedUIN);
+				
+				Connection conn=Database.getConnection();
+				Database.commitTransaction(conn);
+		}
+		}
 			
-			Connection conn=Database.getConnection();
-			Database.commitTransaction(conn);
-			
+			catch (People.loginDetailsnotAdded e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
 		
+
 		return isAdded;
 		
 	}
@@ -283,20 +292,23 @@ public class Professor extends People {
 	}
 	
 	//prof deletion	by username	
-	public static void deleteProfFromDbUsingUserName(String userName){
+	public static boolean deleteProfFromDbUsingUserName(String userName){
 		
-
+		boolean isDeleted=false;
+		
 		boolean check=checkIfProfessor(userName);
 		
 		if(check==true)
 		{
 		deleteFromDatabaseByUserName(userName);
-		Employee.deleteFromDatabaseByUIN(userName);
+		isDeleted=Employee.deleteFromDatabaseByUserName(userName);
 		}
 		else
 		{
 			System.out.println("There exists no professor with that username");
 		}
+		
+		return isDeleted;
 	}
 	
 	public String toString(){
