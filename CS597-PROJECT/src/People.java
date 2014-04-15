@@ -19,6 +19,7 @@ public class People {
 	protected int deptID;
 	protected int positionID;
 	
+	// const
 	public People(String name, String userName, int deptID, int positionID)
 	{
 		this.name=name;
