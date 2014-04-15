@@ -385,9 +385,8 @@ public class Student extends People {
 		
 		
 	}
-	
-	
-	
+
+
 	static class levelNotExistException extends Exception{
 		private static final long serialVersionUID = 1L;
 		private String message = null;
