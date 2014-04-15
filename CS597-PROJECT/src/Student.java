@@ -121,34 +121,44 @@ public class Student extends People {
 	}
 	
 
-	public static void addStudentToDb(String name, Department dept,int level){
+	public static boolean addStudentToDb(String name, Department dept,int level){
+		
+		boolean isAdded=false;
 		
 		if(dept==null){
 			throw new NullPointerException();
 		}
 		
 		int addedUIN= addIntoDatabase(name, dept, 3);
-		System.out.println(addedUIN);
-		System.out.println(level);
+		
+		if(addedUIN!=-1){
+			
+			System.out.println(addedUIN);
+			System.out.println(level);
 
-		try {
-			addIntoStudentTable(addedUIN, level);
-		} catch (levelNotExistException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			try {
+				isAdded=addIntoStudentTable(addedUIN, level);
+				
+			} catch (levelNotExistException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			
+			
+			Connection conn = Database.getConnection();
+			Database.commitTransaction(conn);
+			
 		}
 		
-		
-		Connection conn = Database.getConnection();
-		Database.commitTransaction(conn);
-		
+		return isAdded;
 	
 		
 		
 	}
 	
-	public static void addIntoStudentTable(int UIN, int level) throws levelNotExistException{
+	private static boolean addIntoStudentTable(int UIN, int level) throws levelNotExistException{
 		
+		boolean isAdded=false;
 		if(level>3 || level<1){
 			throw new levelNotExistException();
 		}
@@ -182,6 +192,8 @@ public class Student extends People {
 						int i = stmt.executeUpdate();
 						System.out.println(i);
 						System.out.println("Inserted");
+						isAdded=true;
+						
 						
 					}
 					
@@ -210,7 +222,7 @@ public class Student extends People {
 			
 			//System.out.println("retrieved");
 		}
-		
+		return isAdded;
 		
 	}
 		

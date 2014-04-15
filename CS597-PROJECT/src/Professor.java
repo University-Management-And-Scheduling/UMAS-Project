@@ -48,11 +48,11 @@ public class Professor extends People {
 			
 			System.out.println(returnedUIN);
 
-			Employee.addEmployee(returnedUIN);
+			isAdded=Employee.addEmployee(returnedUIN);
 			
 			Connection conn=Database.getConnection();
 			Database.commitTransaction(conn);
-			isAdded=true;
+			
 		}
 		
 		return isAdded;

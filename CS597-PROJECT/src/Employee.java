@@ -27,8 +27,9 @@ public class Employee extends People {
 		// TODO Auto-generated constructor stub
 	}
 
-	public static void addEmployee(int UIN){
+	public static boolean addEmployee(int UIN){
 		
+		boolean isAdded=false;
 		double salary=40000.00;
 		String Office_address="to be decided";
 		String office_hours="to be decided";
@@ -63,6 +64,7 @@ public class Employee extends People {
 						int i = stmt.executeUpdate();
 						System.out.println(i);
 						System.out.println("Inserted");
+						isAdded=true;
 						
 					}
 					
@@ -92,6 +94,7 @@ public class Employee extends People {
 			//System.out.println("retrieved");
 		}
 		
+		return isAdded;
 		
 	}
 	
