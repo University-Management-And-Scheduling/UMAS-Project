@@ -455,6 +455,8 @@ public class Professor extends People {
 		
 	//add files
 	
+	//get all course taken by the professor
+	
 	//add exams
 	
 	//grade exams
