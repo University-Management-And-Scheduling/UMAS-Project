@@ -366,7 +366,7 @@ public class People {
 		
 		//generate a user name from name
 		String userName="";
-		int addedUIN=0;
+		int addedUIN=-1;
 		int lengthOfName=name.length();
 		if(lengthOfName<=5){
 			userName=name;

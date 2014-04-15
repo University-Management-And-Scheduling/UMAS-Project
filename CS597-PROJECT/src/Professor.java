@@ -33,7 +33,9 @@ public class Professor extends People {
 	
 		
 	//prof adding
-	public static void addProfToDb(String name, Department dept){
+	public static boolean addProfToDb(String name, Department dept){
+		
+		boolean isAdded=false;
 		
 		if(dept==null)
 		{
@@ -41,13 +43,19 @@ public class Professor extends People {
 		}
 		
 		int returnedUIN=addIntoDatabase(name, dept, 2);
-		System.out.println(returnedUIN);
+		
+		if(returnedUIN!=-1){
+			
+			System.out.println(returnedUIN);
 
-		Employee.addEmployee(returnedUIN);
+			Employee.addEmployee(returnedUIN);
+			
+			Connection conn=Database.getConnection();
+			Database.commitTransaction(conn);
+			isAdded=true;
+		}
 		
-		Connection conn=Database.getConnection();
-		Database.commitTransaction(conn);
-		
+		return isAdded;
 		
 	}
 
