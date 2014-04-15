@@ -243,6 +243,7 @@ public static void deleteFromDatabaseByUIN(int UIN){
 	
 				
 	}
+	
 		
 }
 	
