@@ -8,7 +8,7 @@ import javax.xml.crypto.Data;
 
 
 
-public class Employee extends People implements EmployeeInterface {
+public class Employee extends People {
 
 	public Employee(int UIN) {
 		super(UIN);
