@@ -3,6 +3,8 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
+import javax.xml.crypto.Data;
+
 
 
 
@@ -93,7 +95,148 @@ public class Employee extends People implements EmployeeInterface {
 		
 	}
 	
-public static void deleteFromDatabaseByUIN(int UIN){
+	public static void updateEmpDetails(int UIN, String officeAddress, String officeHours){
+		
+		try{
+			Connection conn = Database.getConnection();
+			String SQLselectEmp="";
+			
+			try{
+				
+				SQLselectEmp = "Select UIN From employee where UIN=?;";
+				PreparedStatement stmt = conn.prepareStatement(SQLselectEmp);
+				stmt.setInt(1, UIN);
+				ResultSet rs =  stmt.executeQuery();
+				
+					if(rs.first()){
+				        
+				         //Insert a update query to update the values of the database....NOT ADD
+						System.out.println("Updating the emp details in the database");
+						String SQLPeopleInsert= "UPDATE employee SET OfficeAddress=?, OfficeHours=? where UIN=?;";
+						stmt = conn.prepareStatement(SQLPeopleInsert);
+						stmt.setString(1, officeAddress);
+						stmt.setString(2, officeHours);
+						stmt.setInt(3, UIN);
+						System.out.println(stmt);
+						int i = stmt.executeUpdate();
+						System.out.println(i);
+						System.out.println("Updated");
+						
+						Database.commitTransaction(conn);
+					}
+					
+					else
+					{
+						
+						System.out.println(UIN+" is not an employee");
+						
+						
+					}
+					
+			}
+			
+			catch(SQLException e){
+				System.out.println("Error adding/updating to database");
+				e.printStackTrace();
+				System.out.println(e);	
+			}
+			
+			finally{
+				//System.out.println("retrieved");
+				//Database.closeConnection(conn);
+			}
+		}
+		
+		catch(Exception e){
+			System.out.println("Connection failed");
+			e.printStackTrace();
+			System.out.println(e);
+			
+		}
+		
+		finally{
+			
+			//System.out.println("retrieved");
+		}
+		
+	}
+
+	public static void giveBonus(int UIN, double bonusPercent) throws bonusNotValidException{
+		
+		if(bonusPercent<5.0 || bonusPercent>30.0)
+			{
+			 throw new bonusNotValidException();			
+			 }
+
+		
+		try{
+			Connection conn = Database.getConnection();
+			String SQLselectEmp="";
+			
+			try{
+				
+				SQLselectEmp = "Select Salary From employee where UIN=?;";
+				PreparedStatement stmt = conn.prepareStatement(SQLselectEmp);
+				stmt.setInt(1, UIN);
+				ResultSet rs =  stmt.executeQuery();
+				
+					if(rs.first()){
+						
+						double retreivedSalary=rs.getDouble("Salary");
+						double newSalary=(retreivedSalary+((retreivedSalary*bonusPercent)/100));
+						
+				        
+				         //Insert a update query to update the values of the database....NOT ADD
+						System.out.println("Updating the emp details in the database");
+						String SQLPeopleInsert= "UPDATE employee SET Salary=? where UIN=?;";
+						stmt = conn.prepareStatement(SQLPeopleInsert);
+						stmt.setDouble(1, newSalary);
+						stmt.setInt(2,UIN);
+						System.out.println(stmt);
+						int i = stmt.executeUpdate();
+						System.out.println(i);
+						System.out.println("Updated");
+						
+						Database.commitTransaction(conn);
+					}
+					
+					else
+					{
+						
+						System.out.println(UIN+" is not an employee");
+						
+						
+					}
+					
+			}
+			
+			catch(SQLException e){
+				System.out.println("Error adding/updating to database");
+				e.printStackTrace();
+				System.out.println(e);	
+			}
+			
+			finally{
+				//System.out.println("retrieved");
+				//Database.closeConnection(conn);
+			}
+		}
+		
+		catch(Exception e){
+			System.out.println("Connection failed");
+			e.printStackTrace();
+			System.out.println(e);
+			
+		}
+		
+		finally{
+			
+			//System.out.println("retrieved");
+		}
+		
+	}
+
+	public static void deleteFromDatabaseByUIN(int UIN){
 		
 		try{
 			Connection conn = Database.getConnection();
@@ -244,7 +387,43 @@ public static void deleteFromDatabaseByUIN(int UIN){
 				
 	}
 	
+	
+	static class bonusNotValidException extends Exception{
+		private static final long serialVersionUID = 1L;
+		private String message = null;
+		 
+	    public bonusNotValidException() {
+	        super();
+	        this.message = "bonus is not valid";
+	    }
+	    
+	    public bonusNotValidException(String message) {
+	        super();
+	        this.message = message;
+	    }
+	 
+	    @Override
+	    public String toString() {
+	        return message;
+	    }
+	 
+	    @Override
+	    public String getMessage() {
+	        return message;
+	    }
+	}
+	
+	
+	public static void main(String[] args){
 		
+		//updateEmpDetails(28,"off","off");
+		try {
+			giveBonus(28, 34.0);
+		} catch (bonusNotValidException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
 }
 	
 	

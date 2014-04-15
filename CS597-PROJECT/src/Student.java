@@ -308,6 +308,86 @@ public class Student extends People {
 		return false;
 	}
 	
+	
+	public static void updateGPA(int UIN, double newGPA ) throws GPAnotValidException{
+		
+//		if(level>3 || level<1){
+//			throw new levelNotExistException();
+//		}
+		
+		if(newGPA>4.00 || newGPA<1.0)
+			
+				throw new GPAnotValidException();
+			
+		
+		try{
+			Connection conn = Database.getConnection();
+			String SQLPeopleSelect="";
+			
+			try{
+				
+				SQLPeopleSelect = "Select UIN From student where UIN=?;";
+				PreparedStatement stmt = conn.prepareStatement(SQLPeopleSelect);
+				stmt.setInt(1, UIN);
+				ResultSet rs =  stmt.executeQuery();
+				
+					if(rs.first()){
+				         
+				         //Insert a update query to update the values of the database....NOT ADD
+				         	System.out.println("Updating GPA into the database");
+							String SQLupdateGPA= "UPDATE student SET GPA=? where UIN=?;";
+							stmt = conn.prepareStatement(SQLupdateGPA);
+							stmt.setDouble(1, newGPA);
+							stmt.setInt(2,UIN);
+							System.out.println(stmt);
+							int i = stmt.executeUpdate();
+							System.out.println(i);
+							System.out.println("Updated");
+							
+							//Connection conn=Database.getConnection();
+							//Database.commitTransaction(conn);
+									
+						
+					}
+					
+					else
+					{
+						System.out.println(UIN+"already exists");
+						
+						
+					}
+					
+			}
+			
+			catch(SQLException e){
+				System.out.println("Error adding/updating to database");
+				e.printStackTrace();
+				System.out.println(e);	
+			}
+			
+			finally{
+				//System.out.println("retrieved");
+				//Database.closeConnection(conn);
+			}
+		}
+		
+		catch(Exception e){
+			System.out.println("Connection failed");
+			e.printStackTrace();
+			System.out.println(e);
+			
+		}
+		
+		finally{
+			
+			//System.out.println("retrieved");
+		}
+		
+		
+	}
+	
+	
+	
 	static class levelNotExistException extends Exception{
 		private static final long serialVersionUID = 1L;
 		private String message = null;
@@ -333,17 +413,52 @@ public class Student extends People {
 	    }
 	}
 	
+	static class GPAnotValidException extends Exception{
+		private static final long serialVersionUID = 1L;
+		private String message = null;
+		 
+	    public GPAnotValidException() {
+	        super();
+	        this.message = "GPA is not valid";
+	    }
+	    
+	    public GPAnotValidException(String message) {
+	        super();
+	        this.message = message;
+	    }
+	 
+	    @Override
+	    public String toString() {
+	        return message;
+	    }
+	 
+	    @Override
+	    public String getMessage() {
+	        return message;
+	    }
+	}
+	
 
 	
 	public static void main(String[] args){
 		
+//		try {
+//			Department dept=new Department(2);
+//			addStudentToDb("arihant", dept,1);
+//		} catch (Department.DepartmentDoesNotExistException e) {
+//			// TODO Auto-generated catch block
+//			e.printStackTrace();
+//		}
+		
+		
 		try {
-			Department dept=new Department(2);
-			addStudentToDb("arihant", dept,1);
-		} catch (Department.DepartmentDoesNotExistException e) {
+			updateGPA(28, 3.5);
+		} catch (GPAnotValidException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+		
+		
 	}
 	
 }
