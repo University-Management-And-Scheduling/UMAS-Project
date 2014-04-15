@@ -216,8 +216,7 @@ public class Student extends People {
 		
 	public static void deleteStudent(int UIN){
 		
-		
-		
+	
 		
 	}
 	
@@ -227,8 +226,6 @@ public class Student extends People {
 		
 		
 	}
-	
-	
 	
 	public static boolean checkIfStudent(int UIN){
 		
