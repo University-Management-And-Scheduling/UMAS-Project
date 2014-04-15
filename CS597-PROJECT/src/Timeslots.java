@@ -201,6 +201,8 @@ public class Timeslots {
 		int t1Type = t1.getTimeslotType();
 		int t2Type = t2.getTimeslotType();
 		
+		//System.out.println("Looking for conflict between timeslots "+t1+" and:"+t2);
+		
 		if(t1Type != t2Type){
 			return false;
 		}
