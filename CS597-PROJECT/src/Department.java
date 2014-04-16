@@ -2,6 +2,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
 
 public class Department {
 	private String departmentName;
@@ -287,7 +288,10 @@ public class Department {
 	
 	@Override
 	public String toString(){
-		return ("ID:"+this.getDepartmentID()+"\nDepartmenr Name:"+this.getDepartmentName());
+		String toReturn = " ";
+		toReturn+="\nDepartment name:"+this.getDepartmentName();
+		toReturn+="\nDepartment ID:"+this.getDepartmentName();
+		return toReturn;
 	}
 	
 	//DepartmentDoesnotExist Exception
@@ -342,6 +346,15 @@ public class Department {
 	    public String getMessage() {
 	        return message;
 	    }
+	}
+	
+	//to be implemented
+	public ArrayList<Course> getDepartmentCourses(){
+		return null;
+	}
+	
+	public ArrayList<CourseOffered> getDepartmentCourseOffered(){
+		return null;
 	}
 	
 	public static void main(String[] args){
