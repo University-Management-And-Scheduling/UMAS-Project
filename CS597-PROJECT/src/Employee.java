@@ -46,7 +46,7 @@ public class Employee extends People {
 				ResultSet rs =  stmt.executeQuery();
 				
 					if(rs.first()){
-				         System.out.println(UIN+"already exists. Please choose another UIN");
+				         System.out.println(UIN+"already exists");
 				         //Insert a update query to update the values of the database....NOT ADD
 					}
 					
