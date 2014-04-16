@@ -269,4 +269,12 @@ public class Course {
 	        return message;
 	    }
 	}
+
+	public String toString(){
+		String toReturn = "";
+		toReturn+="\nCourse Name:"+this.getCourseName();
+		toReturn+=this.getDepartment().toString();
+		return toReturn;
+		
+	}
 }
