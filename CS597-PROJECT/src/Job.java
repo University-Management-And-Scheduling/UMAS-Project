@@ -234,6 +234,8 @@ public class Job {
 		
 	}
 	
+	// Checks the eligibility to post
+	
 	public static boolean checkEligibility(int UIN){
 		
 		boolean check=false;
