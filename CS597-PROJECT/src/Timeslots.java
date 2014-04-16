@@ -261,6 +261,15 @@ public class Timeslots {
 		return flag;
 	}
 	
+	public String toString(){
+		String toReturn="";
+		toReturn+="\nStart Hour:"+this.getStartHour();
+		toReturn+="\nEnd Hour:"+this.getEndHour();
+		toReturn+="\nTimeslot ID:"+this.getTimeSlotID();
+		toReturn+="\nTimeslot Type:"+this.getTimeslotType();
+		return toReturn;
+	}
+	
 	public static void main(String args[]){
 		Timeslots t1 = new Timeslots(31);
 		Timeslots t2 = new Timeslots(38);
