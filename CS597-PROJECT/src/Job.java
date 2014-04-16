@@ -307,6 +307,7 @@ public class Job {
 		return check;
 	}
 	
+	// add to jobRoster
 	
 	public static boolean addToJobRoster(int UIN,int jobiD){
 		
