@@ -248,7 +248,7 @@ public class JobApplication {
 		
 	}
 	 
-	 
+	 //retreive matching details
 	 public static ArrayList<Student> retreiveMatchingStudents(double GPA, double workExp, boolean skill1, boolean skill2, boolean skill3, boolean skill4, boolean skill5){
 		
 		 ArrayList<Student> selectedStudents=new ArrayList<Student>();
