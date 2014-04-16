@@ -5,7 +5,6 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 
 
-
 public class CourseOffered {
 	private int offerID;
 	private Course course;
@@ -74,8 +73,7 @@ public class CourseOffered {
 
 		
 	}
-	
-	
+		
 	/**
 	 * @return the offerID
 	 */
@@ -284,7 +282,7 @@ public class CourseOffered {
 	//to be added functionality to check if this course can be scheduled if offered
 	//also schedule the course on a available slot after adding
 	//Add the courseOffered object to the database
-	public static void addCourseOfferingToDatabase(final Course course,  final Professor professor, final int capacity) throws CourseOfferingAlreadyExistsException{
+	public static void addCourseOfferingToDatabase(final Course course,  final Professor professor, final int capacity) throws CourseOfferingAlreadyExistsException, CourseOfferingNotSchedulable{
 		int profID = professor.getUIN();
 		int courseID = course.getCourseID();
 		int totalCap = capacity;
@@ -298,25 +296,25 @@ public class CourseOffered {
 			try{
 				if(conn != null){
 					
-					//Retrieve the current semester ID
-					String SemesterSelect = "Select SemesterID"
-							+ " FROM university.semester"
-							+ " WHERE IsCurrent= ?";
-					PreparedStatement statement = conn.prepareStatement(SemesterSelect);
-					statement.setInt(1, 1);
-					ResultSet rs = statement.executeQuery();
-					rs.first();
-					int semesterID = rs.getInt(1);
+//					//Retrieve the current semester ID
+//					String SemesterSelect = "Select SemesterID"
+//							+ " FROM university.semester"
+//							+ " WHERE IsCurrent= ?";
+//					PreparedStatement statement = conn.prepareStatement(SemesterSelect);
+//					statement.setInt(1, 1);
+//					ResultSet rs = statement.executeQuery();
+//					rs.first();
+					int semesterID = getCurrentSemesterID();
 					
 					
 					String SQLSelect= "Select OfferID"
 							+ " FROM university.coursesoffered"
 							+ " WHERE courseID= ? and TaughtBy= ? and SemesterID= ?";
-					statement = conn.prepareStatement(SQLSelect);
+					PreparedStatement statement = conn.prepareStatement(SQLSelect);
 					statement.setInt(1, courseID);
 					statement.setInt(2, profID);
 					statement.setInt(3, semesterID);
-					rs =  statement.executeQuery();
+					ResultSet rs =  statement.executeQuery();
 					
 					if(rs.first()){
 						//course offerings with the same courses exist
@@ -324,6 +322,9 @@ public class CourseOffered {
 					}
 					
 					else{
+						if(!CourseSchedule.isAnotherCourseSchedulable(capacity))
+							throw new CourseOfferingNotSchedulable();
+						
 						//add the object data to the courseOffered table
 						String SQLInsert = "Insert into university.coursesoffered"
 								+ "(CourseID,SemesterID,TotalCapacity,SeatsFilled,TaughtBy)"
@@ -467,7 +468,6 @@ public class CourseOffered {
 		
 	}
 	
-	//incomplete
 	//get all students in the current course offering object
 	public static ArrayList<Student> getAllStudentsInCourse(final CourseOffered courseOffered){
 		if(courseOffered == null) {
@@ -475,10 +475,108 @@ public class CourseOffered {
 		}
 		ArrayList<Student> students = new ArrayList<Student>();
 		
-		/*Code goes here*/
+		try{
+			Connection conn = Database.getConnection();
+			
+			try{
+				if(conn != null){
+					
+					//Retrieve the current semester ID
+					String studentSelect = "Select *"
+							+ " FROM university.studentenrollment"
+							+ " WHERE OfferID=?";
+					PreparedStatement statement = conn.prepareStatement(studentSelect);
+					statement.setInt(1, courseOffered.getOfferID());
+					ResultSet rs = statement.executeQuery();
+					
+					while(rs.next()){
+						int UIN = rs.getInt("UIN");
+						Student s = new Student(UIN);
+						if(s!=null)
+							students.add(s);
+					}
+					
+				}
+					
+					
+				else{
+					throw new CourseOfferingDoesNotExistException();
+				}
+										
+					
+				
+			}
+			
+			catch(Exception e){
+				System.out.println(e.getMessage());
+				e.printStackTrace();
+				
+			}			
+		}
+				
+		finally{
+		}
 		
 		return students;
 		
+	}
+	
+	//complete
+	public static ArrayList<CourseOffered> getCurrentProfessorCourses(Professor professor){
+		if(professor == null)
+			return null;
+		
+		ArrayList<CourseOffered> profCourses = new ArrayList<CourseOffered>();
+		int professorID = professor.getUIN();
+		int currentSemesterID = getCurrentSemesterID();
+		
+		try{
+			Connection conn = Database.getConnection();
+			
+			try{
+				if(conn != null){
+					
+					//Retrieve the current semester ID
+					String SemesterSelect = "Select *"
+							+ " FROM university.coursesoffered"
+							+ " WHERE TaughtBy=? and SemesterID= ?";
+					PreparedStatement statement = conn.prepareStatement(SemesterSelect);
+					statement.setInt(1, professorID);
+					statement.setInt(2, currentSemesterID);
+					ResultSet rs = statement.executeQuery();
+					
+					while(rs.next()){
+						CourseOffered c = new CourseOffered(rs.getInt("OfferID"));
+						profCourses.add(c);
+					}
+					
+				}
+					
+					
+				else{
+					throw new IllegalAccessException("Professor deos not exist");
+				}
+										
+					
+				
+			}
+			
+			catch(Exception e){
+				System.out.println(e.getMessage());
+				e.printStackTrace();
+				
+			}
+			
+		}
+		finally{
+		}
+		
+		return profCourses;
+	}
+	
+	//incomplete
+	public static ArrayList<CourseOffered> getAllTACourses(TA ta){
+		return null;
 	}
 	
 	//complete
@@ -637,6 +735,42 @@ public class CourseOffered {
 		return (semID == getCurrentSemesterID());
 	}
 	
+	//to check if the course can be registered by a student
+	public boolean isCourseRegistrableBy(Student student, int offerID){
+		
+		//check if the student is already registered
+		if(WaitList.isStudentRegistered(student, offerID)){
+			return false;
+		}
+		
+		//check if the course is full
+		try {
+			if(isCourseFull(new CourseOffered(offerID))){
+				return false;
+			}
+		} catch (CourseOfferingDoesNotExistException
+				| Course.CourseDoesNotExistException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		//check if the student is on the waitList
+		if(WaitList.isStudentOnWaitList(student, offerID)){
+			return false;
+		}
+		
+		if(!WaitList.isWaitListEmpty(offerID)){
+			return false;
+		}
+		
+		if(WaitList.isStudentEmailed(student, offerID)){
+			return true;
+		}
+		
+		return true;
+		
+	}
+	
 	//CourseDoesnotExist Exception
 	static class CourseOfferingDoesNotExistException extends Exception{
 		private static final long serialVersionUID = 1L;
@@ -715,6 +849,32 @@ public class CourseOffered {
 	    }
 	}
 
+	//CourseOfferingNotSchedulable Exception
+	static class CourseOfferingNotSchedulable extends Exception{
+			private static final long serialVersionUID = 1L;
+			private String message = null;
+			 
+		    public CourseOfferingNotSchedulable() {
+		        super();
+		        this.message = "Course offering not added as it is not schedulable";
+		    }
+		    
+		    public CourseOfferingNotSchedulable(final String message) {
+		        super();
+		        this.message = message;
+		    }
+		 
+		    @Override
+		    public String toString() {
+		        return message;
+		    }
+		 
+		    @Override
+		    public String getMessage() {
+		        return message;
+		    }
+		}
+
 	
 	public static void main(final String[] args){
 		try {
@@ -725,6 +885,9 @@ public class CourseOffered {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} catch (Course.CourseDoesNotExistException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (CourseOfferingNotSchedulable e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
