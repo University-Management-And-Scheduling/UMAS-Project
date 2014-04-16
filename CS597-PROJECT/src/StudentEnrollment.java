@@ -55,7 +55,8 @@ public class StudentEnrollment {
 		HashMap<CourseOffered, String> courseGrade = new HashMap<CourseOffered, String>();
 		String SQLGradeSelect = "Select offerID, grade FROM studentenrollment WHERE UIN = ?;";
 		try{
-			Connection conn = new Database().getConnection();
+			Connection conn = Database.getConnection();
+			
 			try{
 			
 				if(conn != null){
