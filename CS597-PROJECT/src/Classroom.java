@@ -4,6 +4,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 
 public class Classroom {
 	private ClassroomName classroomName;
@@ -87,7 +88,7 @@ public class Classroom {
 		}
 
 	}
-	
+		
 	public static void addNewClassroom(ClassroomName classroomName, ClassroomLocation classroomLocation, int capacity){
 		try{
 			Connection conn = Database.getConnection();
@@ -151,6 +152,7 @@ public class Classroom {
 		int size = emptySlots.size();
 		if(size>0){
 			System.out.println("--------------Found and empty time slot---------------");
+			Collections.shuffle(emptySlots);
 			return emptySlots.get(0);
 		}
 		
@@ -161,9 +163,10 @@ public class Classroom {
 		return (timeSlotType == 1 || timeSlotType == 2);
 	}
 	
-	public static Classroom getEmptyClassroom(ClassroomLocation location, int timeSlotType){
+	public static Classroom getEmptyClassroom(ClassroomLocation location, int timeSlotType, int expectedCapacity){
 		System.out.println("xxxxxxxxxxxxxxxxINSIDE getEmptyCLassroom FUNCTIONxxxxxxxxxxxxxx");
 		ArrayList<ClassroomName> names = new ArrayList<ClassroomName>(Arrays.asList(ClassroomName.values()));
+		Collections.shuffle(names);
 		Classroom c = null;
 		ArrayList<Timeslots> times = null;
 		for(ClassroomName name:names){
@@ -172,12 +175,16 @@ public class Classroom {
 				c = new Classroom(classID);
 				if(c!=null){
 					//System.out.println("Call findEmptySlotsForClassroom for just checking. Not retreiving");
-					times = findOpenSlotsForClassroom(c, timeSlotType);
-					if(times.size()>0){
-						System.out.println("Found a classroom with empty time slots:"+c.getClassroomName().toString()+" "
-								+ ""+ c.getClassroomLocation().toString());
-						break;
+					if(c.getClassroomCapacity() >= expectedCapacity){
+						times = findOpenSlotsForClassroom(c, timeSlotType);
+						if(times.size()>0){
+							System.out.println("Found a classroom with empty time slots:"+c.getClassroomName().toString()+" "
+									+ ""+ c.getClassroomLocation().toString());
+							break;
+						}
 					}
+					
+					c = null;
 				}
 			}
 		}
@@ -314,6 +321,19 @@ public class Classroom {
 		}
 		
 		return timeslots;
+	}
+	
+	public String toString(){
+		String toReturn = "";
+		toReturn+= "Classroom Location:"+this.getClassroomLocation().toString();
+		toReturn+= "\nClassroom Name:"+this.getClassroomName().toString();
+		toReturn+= "\nClassroomID:"+this.getClassroomID();
+		return toReturn;
+	}
+	
+	//to be implemented
+	public ArrayList<CourseOffered> getCourseScheduledInClassroom(){
+		return null;
 	}
 	
 	public static void main(String[] args){
