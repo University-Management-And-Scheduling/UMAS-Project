@@ -200,8 +200,15 @@ public class Login {
 		return passwordChanged;
 	}
 
-
-	public static void main(String[] args){
+	// To recover a user's password
+	public Login recoverPassword (String username){
+		Login user = null;
+		
+		return user;
+		
+	}
+	
+ 	public static void main(String[] args){
 		
 	}
 
