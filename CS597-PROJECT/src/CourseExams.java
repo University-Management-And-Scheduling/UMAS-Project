@@ -1,3 +1,6 @@
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
 import java.util.HashMap;
 
 
@@ -48,12 +51,48 @@ public class CourseExams {
 		this.examTotal = examTotal;
 	}
 
-	public static void createCourseExamMarksTable(CourseOffered course){
+	public static void createCourseExamMarksTable(CourseOffered offeredCourse){
 		
-		// DB code to create table to maintain students' exam mks
+		Course course = offeredCourse.getCourse();
+		String courseName = course.getCourseName();
+		int offerID= offeredCourse.getOfferID();
+		int semID = offeredCourse.getSemesterID();
 		
+		String tableName = courseName + Integer.toString(offerID) + Integer.toString(semID); 
 		
-		CourseExamStructure.createCourseExamStructureTable(course);
+//		@DBAnnotation (
+//				variable = {"tableName"},  
+//				table = "courseExamStructureTable", 
+//				column = {"Username","Password"}, 
+//				isSource = false)
+		String SQLExamCreate = "CREATE TABLE tableName (`StudentUIN` int(12) NOT NULL,`StudentEnrollmentID` int(12) NOT NULL, " +
+				" PRIMARY KEY (`StudentUIN`), KEY `StudentID_idx` (`StudentUIN`),  " + 
+				"KEY `StudentEnrollmentID_idx` (`StudentEnrollmentID`), " +
+				"CONSTRAINT `StudentEnrollmentID` FOREIGN KEY (`StudentEnrollmentID`) REFERENCES `studentenrollment` (`EnrollmentID`) ON DELETE NO ACTION ON UPDATE NO ACTION," +
+				"CONSTRAINT `StudentID` FOREIGN KEY (`StudentUIN`) REFERENCES `student` (`UIN`) ON DELETE CASCADE ON UPDATE CASCADE;" ;
+
+		
+		try {
+			Connection conn = Database.getConnection();
+			try {
+				if (conn != null) {
+				 
+					PreparedStatement statement = conn.prepareStatement(SQLExamCreate);
+					statement.setString(1, tableName);
+					statement.executeUpdate();
+					CourseExamStructure.createCourseExamStructureTable(offeredCourse);
+					Database.commitTransaction(conn);
+					
+				}	
+			} catch (SQLException e) {
+				System.out.println(e);
+				Database.rollBackTransaction(conn);
+			}
+
+		} catch (Exception e) {
+			System.out.println(e);
+		}
+		
 	}
 		
 	public static void addNewExamColumn(){
@@ -61,13 +100,15 @@ public class CourseExams {
 		// DB code to add new column for the exam in courseExam Table
 	}
 	
-	public void modifyExistingExamColumnName(String newExamName){
+	public static boolean modifyExistingExamColumnName(CourseExamStructure courseExamStructure, String newExamName){
+		boolean modifiedColumn = false;
 		
 		// DB code to modify name of the exam column in CourseExam table
 		
+		return modifiedColumn;
 	}	
 	
-	public void deleteExistingExamColumn(){
+	public static void deleteExistingExamColumn(){
 		
 		// DB code to delete existing column for the exam in courseExam Table
 	}
