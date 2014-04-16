@@ -249,7 +249,7 @@ public class JobApplication {
 	}
 	 
 	 
-	 public static ArrayList<Student> retreiveMatchingStudents(double workExp, boolean skill1, boolean skill2, boolean skill3, boolean skill4, boolean skill5){
+	 public static ArrayList<Student> retreiveMatchingStudents(double GPA, double workExp, boolean skill1, boolean skill2, boolean skill3, boolean skill4, boolean skill5){
 		
 		 ArrayList<Student> selectedStudents=new ArrayList<Student>();
 		 //Hashtable addSelectedStudents = new Hashtable();
@@ -262,18 +262,28 @@ public class JobApplication {
 				
 					if(conn != null){
 						//change the limit to 10 
-						SQLPeopleSelect = "Select ApplicantUIN, Scaledscore From applicationdetails where WorkExperience>=? and SkillSet1=? and SkillSet2=? and SkillSet3=? and SkillSet4=? and SkillSet5=? ORDER BY Scaledscore DESC LIMIT 3;";
+						SQLPeopleSelect = "Select applicationdetails.ApplicantUIN " +
+								"From university.applicationdetails inner join university.student on " +
+								"student.UIN=applicationdetails.ApplicantUIN where student.GPA>=? and " +
+								"applicationdetails.WorkExperience>=? and applicationdetails.SkillSet1=? and " +
+								"applicationdetails.SkillSet2=? and applicationdetails.SkillSet3=? and " +
+								"applicationdetails.SkillSet4=? and applicationdetails.SkillSet5=? " +
+								"and applicationdetails.ApplicantUIN not in " +
+								"(select UIN from university.employee where employee.UIN=applicationdetails.ApplicantUIN)" +
+								"ORDER BY " +
+								"applicationdetails.Scaledscore DESC LIMIT 10;";
 					}
 					
 					
 					
 					PreparedStatement stmtForSelect = conn.prepareStatement(SQLPeopleSelect);
-					stmtForSelect.setDouble(1, workExp);
-					stmtForSelect.setBoolean(2, skill1);
-					stmtForSelect.setBoolean(3, skill2);
-					stmtForSelect.setBoolean(4, skill3);
-					stmtForSelect.setBoolean(5, skill4);
-					stmtForSelect.setBoolean(6, skill5);
+					stmtForSelect.setDouble(1, GPA);
+					stmtForSelect.setDouble(2, workExp);
+					stmtForSelect.setBoolean(3, skill1);
+					stmtForSelect.setBoolean(4, skill2);
+					stmtForSelect.setBoolean(5, skill3);
+					stmtForSelect.setBoolean(6, skill4);
+					stmtForSelect.setBoolean(7, skill5);
 					
 					
 					
@@ -282,7 +292,7 @@ public class JobApplication {
 					while(rs.next()){
 						
 						int selectedUIN=rs.getInt("ApplicantUIN");
-						double scaledScore=rs.getDouble("Scaledscore");
+						//double scaledScore=rs.getDouble("Scaledscore");
 						counter++;	
 
 						Student chosenStudents=new Student(selectedUIN);
