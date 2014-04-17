@@ -104,7 +104,7 @@ public class CourseExamStructure {
 		String examName = this.examName;
 		int examTotal = this.examTotal;
 		
-		boolean isExamPresent = this.isExamPresent();
+		boolean isExamPresent = isExamPresent(tableName,examName);
 		if (isExamPresent == true){
 			System.out.println("Exam already present. Please try again.");
 		} else {
@@ -132,7 +132,7 @@ public class CourseExamStructure {
 						Database.commitTransaction(conn);
 					}
 					else{
-						System.out.println();
+						Database.rollBackTransaction(conn);
 					}
 				}	
 			} catch (SQLException e) {
@@ -147,19 +147,17 @@ public class CourseExamStructure {
 		return examAdded;
 	}
 		
-	private boolean isExamPresent() {
+	private boolean isExamPresent(String tableName, String examName) {
 		boolean isExamPresent = false;
-		
-		CourseOffered offeredCourse = this.offeredCourse;
-		Course course = offeredCourse.getCourse();
-		String courseName = course.getCourseName();
-		int offerID= offeredCourse.getOfferID();
-		int semID = offeredCourse.getSemesterID();
-		
-		String tableName = courseName + Integer.toString(offerID) + Integer.toString(semID) + "Structure";
-		
-		
-		String examName = this.examName;
+//		
+//		CourseOffered offeredCourse = this.offeredCourse;
+//		Course course = offeredCourse.getCourse();
+//		String courseName = course.getCourseName();
+//		int offerID= offeredCourse.getOfferID();
+//		int semID = offeredCourse.getSemesterID();
+//		
+//		String tableName = courseName + Integer.toString(offerID) + Integer.toString(semID) + "Structure";
+//	
 		
 		@DBAnnotation (
 				variable = {"tableExamName"},  
@@ -207,8 +205,10 @@ public class CourseExamStructure {
 		
 		String examName = this.examName;
 		
-		boolean isExamPresent = this.isExamPresent();
-		if (isExamPresent == true){
+		boolean isExamPresent = isExamPresent(tableName,examName);
+		boolean isNewExamPresent = isExamPresent(tableName,newExamName);
+		
+		if ((isExamPresent == true) && (isNewExamPresent == false)){
 			
 		@DBAnnotation (
 				variable = {"newExamName"},  
@@ -244,7 +244,7 @@ public class CourseExamStructure {
 		}
 		
 		} else {
-			System.out.println("Exam not present. Please try again.");
+			System.out.println("Old Exam name not present or New exam name already present. Please try again.");
 		} // End of Else
 		return nameModified;
 
@@ -264,7 +264,7 @@ public class CourseExamStructure {
 		String examName = this.examName;
 		//int examTotal = this.examTotal;
 		
-		boolean isExamPresent = this.isExamPresent();
+		boolean isExamPresent = this.isExamPresent(tableName,examName);
 		if (isExamPresent == true){
 			
 		@DBAnnotation (
@@ -316,7 +316,7 @@ public class CourseExamStructure {
 		String examName = this.examName;
 		int examTotal = this.examTotal;
 		
-		boolean isExamPresent = this.isExamPresent();
+		boolean isExamPresent = this.isExamPresent(tableName,examName);
 		if (isExamPresent == true){
 						
 		@DBAnnotation (
@@ -334,9 +334,14 @@ public class CourseExamStructure {
 					statement.setString(1, tableName);
 					statement.setString(2, examName);
 					statement.executeUpdate();
-					CourseExams.deleteExistingExamColumn();
-					Database.commitTransaction(conn);
-					examDeleted = true;
+					boolean examColumnDeleted = CourseExams.deleteExistingExamColumn(this);
+					if(examColumnDeleted == true){
+						Database.commitTransaction(conn);
+						examDeleted = true;
+					}
+					else{
+						Database.rollBackTransaction(conn);
+					}
 				}	
 			} catch (SQLException e) {
 				System.out.println(e);

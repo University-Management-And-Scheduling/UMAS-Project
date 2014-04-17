@@ -6,8 +6,11 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.HashMap;
-
+import java.util.Iterator;
+import java.util.List;
+import java.util.Set;
 
 
 public class CourseExams {
@@ -52,6 +55,14 @@ public class CourseExams {
 
 	public void setExamName(String examName) {
 		this.examName = examName;
+	}
+	
+	public HashMap getExamMarks() {
+		return examMarks;
+	}
+
+	public void setExamMarks(HashMap examMarks) {
+		this.examMarks = examMarks;
 	}
 
 	public static void createCourseExamMarksTable(CourseOffered offeredCourse){
@@ -193,49 +204,390 @@ public class CourseExams {
 	public static boolean modifyExistingExamColumnName(CourseExamStructure courseExamStructure, String newExamName){
 		boolean modifiedColumn = false;
 		
-		// DB code to modify name of the exam column in CourseExam table
+		CourseOffered offeredCourse = courseExamStructure.getOfferedCourse();
+		Course course = offeredCourse.getCourse();
+		String courseName = course.getCourseName();
+		int offerID= offeredCourse.getOfferID();
+		int semID = offeredCourse.getSemesterID();
+		
+		
+		String tableName = courseName + Integer.toString(offerID) + Integer.toString(semID); 
+	
+		String examName = courseExamStructure.getExamName();
+	
+		boolean isExamPresent = isExamPresent(tableName,examName);
+		boolean isNewExamPresent = isExamPresent(tableName,newExamName);
+		if ((isExamPresent == true) && (isNewExamPresent== false) ){
+						
+		@DBAnnotation (
+				variable = {"tableName","examName","newExamName"},  
+				table = "tableName", 
+				column = {"ExamName"}, 
+				isSource = false)
+		String SQLExamAlter = "ALTER TABLE `?` CHANGE COLUMN `?` `?` DECIMAL(4,1) NULL;";
+		
+		try {
+			Connection conn = Database.getConnection();
+			try {
+				if (conn != null) {
+				 
+					PreparedStatement statement = conn.prepareStatement(SQLExamAlter);
+					statement.setString(1, tableName);
+					statement.setString(2, examName);
+					statement.setString(3, newExamName);
+					statement.executeUpdate();					
+					modifiedColumn = true;
+				}	
+			} catch (SQLException e) {
+				System.out.println(e);
+				Database.rollBackTransaction(conn);
+			}
+
+		} catch (Exception e) {
+			System.out.println(e);
+		} 
+		
+		} else {
+			System.out.println("Old exam name not present or New exam name already present. Please try again.");
+		} 
 		
 		return modifiedColumn;
 	}	
 	
-	public static void deleteExistingExamColumn(){
+	public static boolean deleteExistingExamColumn(CourseExamStructure courseExamStructure){
+		boolean examDeleted = false;
 		
-		// DB code to delete existing column for the exam in courseExam Table
+		CourseOffered offeredCourse = courseExamStructure.getOfferedCourse();
+		Course course = offeredCourse.getCourse();
+		String courseName = course.getCourseName();
+		int offerID= offeredCourse.getOfferID();
+		int semID = offeredCourse.getSemesterID();
+		
+		String tableName = courseName + Integer.toString(offerID) + Integer.toString(semID);
+		
+		String examName = courseExamStructure.examName;
+		
+		boolean isExamPresent = isExamPresent(tableName,examName);
+		if (isExamPresent == true){
+						
+		@DBAnnotation (
+				variable = {"examName"},  
+				table = "tableName", 
+				column = {"ExamName"}, 
+				isSource = false)
+		String SQLExamDelete = "ALTER TABLE `?` DROP COLUMN `?` ;";
+		
+		try {
+			Connection conn = Database.getConnection();
+			try {
+				if (conn != null) {
+					PreparedStatement statement = conn.prepareStatement(SQLExamDelete);
+					statement.setString(1, tableName);
+					statement.setString(2, examName);
+					statement.executeUpdate();
+					examDeleted = true;
+				}	
+			} catch (SQLException e) {
+				System.out.println(e);
+				Database.rollBackTransaction(conn);
+			}
+
+		} catch (Exception e) {
+			System.out.println(e);
+		}
+		} else {
+			System.out.println("Exam not present. Please try again.");
+		} // End of Else
+		return examDeleted;
 	}
+
+		
+	public boolean addStudentMarks(){
+		boolean studentsMarksAdded = false;
+		
+		int offerID = this.getOfferID();
+		CourseOffered offeredCourse = null;
+		
+		try {
+			offeredCourse = new CourseOffered(offerID);
+		} catch (Course.CourseDoesNotExistException e1) {
+			e1.printStackTrace();
+		} catch (CourseOffered.CourseOfferingDoesNotExistException e1) {
+			e1.printStackTrace();
+		}
+		
+		Course course = offeredCourse.getCourse();
+		String courseName = course.getCourseName();
+		int semID = offeredCourse.getSemesterID();
+		
+		String tableName = courseName + Integer.toString(offerID) + Integer.toString(semID); 
 	
-	public void addStudentMarks(){
+		String examName = this.getExamName();
 		HashMap examMarks = this.examMarks;
-		
-		// DB code to add Student's mks in the CourseExam Table
-		
+		Set<Student> keys = examMarks.keySet();
+		Iterator<Student> keyIterator = keys.iterator();
+		while (keyIterator.hasNext()) {
+			Student student = keyIterator.next();
+			int UIN = student.getUIN();
+			
+			double marks = (double) examMarks.get(student); 
+			
+			// Step 1: Check if the student is enrolled for this course
+			boolean isStudentEnrolled = isStudentEnrolled(student,offerID);
+			
+			// Step 2: Get student Enrollment ID
+			int enrollmentID = StudentEnrollment.getStudentEnrollmentID(student,offerID);
+			
+			// If enrolled, add his marks
+			if (isStudentEnrolled == true){
+				
+				@DBAnnotation (
+						variable = {"marks","UIN"},  
+						table = "tableName", 
+						column = {"ExamName","StudentUIN"}, 
+						isSource = false)
+				String SQLExamUpdate = "UPDATE `?` SET `?`='?' WHERE `StudentUIN`='?';";
+				
+				try {
+					Connection conn = Database.getConnection();
+					try {
+						if (conn != null) {
+						 
+							PreparedStatement statement = conn.prepareStatement(SQLExamUpdate);
+							statement.setString(1, tableName);
+							statement.setString(2, examName);
+							statement.setDouble(3, marks);
+							statement.setInt(3, UIN);
+							statement.executeUpdate();					
+							Database.commitTransaction(conn);
+							studentsMarksAdded = true;
+						}	
+					} catch (SQLException e) {
+						System.out.println(e);
+						Database.rollBackTransaction(conn);
+					}
+
+				} catch (Exception e) {
+					System.out.println(e);
+				}
+				
+			} else {
+				System.out.println("The student " + student.getName() +" is not enrolled.");
+			}
+			
+		}
+		return studentsMarksAdded;
 	}
 	
-	public CourseExams getStudentMarks(){
-		int OfferID = this.offerID;
-		String examName = this.examName;
+	private boolean isStudentEnrolled(Student student, int offerID) {
+		boolean isStudentEnrolled = false;
+		
+		ArrayList<CourseOffered> coursesTaken = StudentEnrollment.getStudentsCourses(student);
+		
+		for(CourseOffered course : coursesTaken){
+			int courseOfferID = course.getOfferID();
+			if ( courseOfferID == offerID ){
+				isStudentEnrolled = true;
+				break;
+			}
+		}
+		
+		return isStudentEnrolled;
+	}
+
+	public  CourseExams getStudentMarks(){
+		int offerID = this.getOfferID();
+		HashMap<Student, Double> examMarks = new HashMap<Student,Double>();
+		
+		CourseOffered offeredCourse = null;
+		
+		try {
+			offeredCourse = new CourseOffered(offerID);
+		} catch (Course.CourseDoesNotExistException e1) {
+			e1.printStackTrace();
+		} catch (CourseOffered.CourseOfferingDoesNotExistException e1) {
+			e1.printStackTrace();
+		}
+		
+		Course course = offeredCourse.getCourse();
+		String courseName = course.getCourseName();
+		int semID = offeredCourse.getSemesterID();
+		
+		String tableName = courseName + Integer.toString(offerID) + Integer.toString(semID); 
+	
 		
 		int UIN = 0;
-		double studentMarks = 0.0;
+		double studentTotalMarks = 0.0;
 		
-		// DB code to get Student's mks from the CourseExam Table
+		@DBAnnotation (
+				variable = {"examName"},  
+				table = "tableName", 
+				column = {"ExamName"}, 
+				isSource = true)
+		String SQLExamSelect = "SELECT * FROM ? ;";
 		
-		Student student = new Student(UIN);
-		examMarks.put(student, studentMarks);
+		try {
+			Connection conn = Database.getConnection();
+			try {
+				if (conn != null) {
+					PreparedStatement statement = conn.prepareStatement(SQLExamSelect);
+					statement.setString(1, tableName);
+					ResultSet rs =  statement.executeQuery();
+					ArrayList<String> allExams = this.viewAllExams();
+					if(allExams.isEmpty()){
+						System.out.println("No exams entered yet");
+					} else {
+					
+						while(rs.next()){
+							UIN = rs.getInt("StudentUIN");
+							for(String examName:allExams){
+								studentTotalMarks = studentTotalMarks + rs.getDouble(examName);
+							}
+							Student student = new Student(UIN);
+							examMarks.put(student, studentTotalMarks);
+							
+						}
+					}
+				}	
+			} catch (SQLException e) {
+				System.out.println(e);
+			}
+
+		} catch (Exception e) {
+			System.out.println(e);
+		}
 		
-		CourseExams classExamMarks = new CourseExams(offerID,examName,examMarks);
-		return classExamMarks;
+		this.setExamMarks(examMarks);
+		// CourseExams classExamMarks = new CourseExams(offerID,examName,examMarks);
+		// return CourseExams;
+		return this;
 	}
 
-	public void modifyStudentMarks(Student student, Float newMarks){
-		int OfferID = this.offerID;
-		String examName = this.examName;
-		int UIN = student.getUIN();
+	public boolean modifyStudentMarks(){
+		boolean studentsMarksModified = false;
 		
-		// DB code to access CourseExam table and modify the examMarks  
+		int offerID = this.getOfferID();
+		String examName = this.getExamName();
+		HashMap examMarks = this.getExamMarks();
+
+		CourseOffered offeredCourse = null;
 		
+		try {
+			offeredCourse = new CourseOffered(offerID);
+		} catch (Course.CourseDoesNotExistException e1) {
+			e1.printStackTrace();
+		} catch (CourseOffered.CourseOfferingDoesNotExistException e1) {
+			e1.printStackTrace();
+		}
+		
+		Course course = offeredCourse.getCourse();
+		String courseName = course.getCourseName();
+		int semID = offeredCourse.getSemesterID();
+		
+		String tableName = courseName + Integer.toString(offerID) + Integer.toString(semID); 
+	
+		Set<Student> keys = examMarks.keySet();
+		Iterator<Student> keyIterator = keys.iterator();
+		while (keyIterator.hasNext()) {
+			Student student = keyIterator.next();
+			int UIN = student.getUIN();
+			
+			double marks = (double) examMarks.get(student); 
+			
+			// Step 1: Check if the student is enrolled for this course
+			boolean isStudentEnrolled = isStudentEnrolled(student,offerID);
+			
+			
+			// If enrolled, add his marks
+			if (isStudentEnrolled == true){
+				
+				@DBAnnotation (
+						variable = {"marks","UIN"},  
+						table = "tableName", 
+						column = {"ExamName","StudentUIN"}, 
+						isSource = false)
+				String SQLExamUpdate = "UPDATE `?` SET `?`='?' WHERE `StudentUIN`='?';";
+				
+				try {
+					Connection conn = Database.getConnection();
+					try {
+						if (conn != null) {
+						 
+							PreparedStatement statement = conn.prepareStatement(SQLExamUpdate);
+							statement.setString(1, tableName);
+							statement.setString(2, examName);
+							statement.setDouble(3, marks);
+							statement.setInt(3, UIN);
+							statement.executeUpdate();					
+							Database.commitTransaction(conn);
+							studentsMarksModified = true;
+						}	
+					} catch (SQLException e) {
+						System.out.println(e);
+						Database.rollBackTransaction(conn);
+					}
+
+				} catch (Exception e) {
+					System.out.println(e);
+				}
+				
+			} else {
+				System.out.println("The student " + student.getName() +" is not enrolled.");
+			}
+			
+		}
+		return studentsMarksModified;
 		
 	}
 
-
-
+	public ArrayList<String> viewAllExams(){
+		ArrayList<String> allExams = null;
+		
+		int offerID = this.getOfferID();
+		CourseOffered offeredCourse = null;
+		
+		try {
+			offeredCourse = new CourseOffered(offerID);
+		} catch (Course.CourseDoesNotExistException e1) {
+			e1.printStackTrace();
+		} catch (CourseOffered.CourseOfferingDoesNotExistException e1) {
+			e1.printStackTrace();
+		}
+		
+		Course course = offeredCourse.getCourse();
+		String courseName = course.getCourseName();
+		int semID = offeredCourse.getSemesterID();
+		
+		String tableName = courseName + Integer.toString(offerID) + Integer.toString(semID); 
+	
+		@DBAnnotation (
+				variable = {"examName"},  
+				table = "tableName", 
+				column = {"ExamName"}, 
+				isSource = true)
+		String SQLExamSelect = "SELECT ExamName FROM ? ;";
+		
+		try {
+			Connection conn = Database.getConnection();
+			try {
+				if (conn != null) {
+					PreparedStatement statement = conn.prepareStatement(SQLExamSelect);
+					statement.setString(1, tableName);
+					ResultSet rs =  statement.executeQuery();
+									
+					while(rs.next()){
+						String examName = rs.getString("ExamName");
+						if(examName != null)
+							allExams.add(examName);
+					}
+					
+				}	
+			} catch (SQLException e) {
+				System.out.println(e);
+			}
+		} catch (Exception e) {
+			System.out.println(e);
+		}
+		return allExams;
+	}
 }
