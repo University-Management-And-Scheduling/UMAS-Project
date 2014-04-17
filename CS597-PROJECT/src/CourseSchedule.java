@@ -10,7 +10,7 @@ public class CourseSchedule {
 	private int offerID;
 	private int classroomID;
 	private int timeSlotID;
-	private CourseOffered courseOffered;
+	//private CourseOffered courseOffered;
 	private Timeslots timeslot;
 	private Classroom classroom;
 	
@@ -57,22 +57,6 @@ public class CourseSchedule {
 	}
 
 	/**
-	 * @return the courseOffered
-	 */
-	public CourseOffered getCourseOffered() {
-		return courseOffered;
-	}
-
-	/**
-	 * @param courseOffered the courseOffered to set
-	 */
-	public void setCourseOffered(CourseOffered courseOffered) {
-		if(courseOffered == null)
-			throw new NullPointerException("CourseOffered is null");
-		this.courseOffered = courseOffered;
-	}
-
-	/**
 	 * @return the timeslot
 	 */
 	public Timeslots getTimeslot() {
@@ -105,11 +89,13 @@ public class CourseSchedule {
 	}
 
 	public CourseSchedule(int offerID){
+		
+		
 		try{
 			Connection conn = Database.getConnection();
 			
 			try{
-				if(conn != null){
+				if(conn != null && CourseOffered.checkIfExists(offerID)){
 					
 					//Retrieve the current semester ID
 					String courseSelect = "Select *"
@@ -123,12 +109,10 @@ public class CourseSchedule {
 						int offID = rs.getInt("OfferID");
 						int classroomID = rs.getInt("ClassroomID");
 						int timeSlotID = rs.getInt("TImeSlotID");
-						CourseOffered courseOffered = new CourseOffered(offerID);
 						Timeslots timeslot = new Timeslots(timeSlotID);
 						Classroom classroom = new Classroom(classroomID);
 						setClassroom(classroom);
 						setClassroomID(classroomID);
-						setCourseOffered(courseOffered);
 						setOfferID(offID);
 						setTimeslot(timeslot);
 						setTimeSlotID(timeSlotID);
@@ -147,12 +131,6 @@ public class CourseSchedule {
 			catch(SQLException e){
 				System.out.println("Error retreiving course");
 				System.out.println(e.getMessage());
-				e.printStackTrace();
-			} catch (Course.CourseDoesNotExistException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			} catch (CourseOffered.CourseOfferingDoesNotExistException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 			
