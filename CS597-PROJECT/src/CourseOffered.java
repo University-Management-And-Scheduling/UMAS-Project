@@ -34,7 +34,7 @@ public class CourseOffered {
 					
 					if(rs.first()){
 						//course offering exists
-						Course course = new Course(rs.getInt(2));
+						Course course = new Course(rs.getInt("CourseID"));
 						CourseSchedule courseSchedule = new CourseSchedule(offerID);
 						ArrayList<File> files = File.getFiles(offerID);
 						Professor professor = new Professor(rs.getInt(6));
@@ -689,6 +689,43 @@ public class CourseOffered {
 		return doesExist;
 	}
 	
+	public static boolean checkIfExists(int offerID){
+		boolean doesExist = false;
+		
+		try{
+			Connection conn = Database.getConnection();
+			
+			try{
+				if(conn != null){
+					
+					//Retrieve the current semester ID
+					String scheduleSelect = "Select *"
+							+ " FROM university.coursesoffered"
+							+ " WHERE OfferID= ?";
+					PreparedStatement statement = conn.prepareStatement(scheduleSelect);
+					statement.setInt(1, offerID);
+					ResultSet rs = statement.executeQuery();
+					
+					if(rs.first()){
+						doesExist = true;	
+					}							
+					
+				}
+			}
+			
+			catch(SQLException e){
+				System.out.println("Error in SQL");
+				System.out.println(e.getMessage());
+				e.printStackTrace();
+			}
+						
+		}
+		
+		finally{
+		}
+		
+		return doesExist;
+	}
 	//complete
 	//return current semesterID
 	public static int getCurrentSemesterID(){
@@ -736,7 +773,7 @@ public class CourseOffered {
 	}
 	
 	//to check if the course can be registered by a student
-	public boolean isCourseRegistrableBy(Student student, int offerID){
+	public static boolean isCourseRegistrableBy(Student student, int offerID){
 		
 		//check if the student is already registered
 		if(WaitList.isStudentRegistered(student, offerID)){
@@ -759,14 +796,14 @@ public class CourseOffered {
 			return false;
 		}
 		
-		if(!WaitList.isWaitListEmpty(offerID)){
-			return false;
-		}
-		
 		if(WaitList.isStudentEmailed(student, offerID)){
 			return true;
 		}
 		
+		if(!WaitList.isWaitListEmpty(offerID)){
+			return false;
+		}
+				
 		return true;
 		
 	}
@@ -877,20 +914,20 @@ public class CourseOffered {
 
 	
 	public static void main(final String[] args){
-		try {
-			CourseOffered.addCourseOfferingToDatabase(new Course(1), Professor.retrieveProfDetailsByUIN(1), 50);
-		} 
-		
-		catch (CourseOfferingAlreadyExistsException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (Course.CourseDoesNotExistException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (CourseOfferingNotSchedulable e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+//		try {
+//			CourseOffered.addCourseOfferingToDatabase(new Course(1), Professor.retrieveProfDetailsByUIN(1), 50);
+//		} 
+//		
+//		catch (CourseOfferingAlreadyExistsException e) {
+//			// TODO Auto-generated catch block
+//			e.printStackTrace();
+//		} catch (Course.CourseDoesNotExistException e) {
+//			// TODO Auto-generated catch block
+//			e.printStackTrace();
+//		} catch (CourseOfferingNotSchedulable e) {
+//			// TODO Auto-generated catch block
+//			e.printStackTrace();
+//		}
 	}
 
 }
