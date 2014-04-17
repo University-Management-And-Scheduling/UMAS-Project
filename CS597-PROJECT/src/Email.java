@@ -87,7 +87,7 @@ public class Email {
     	return email;
     }
 	
-    public void sendEmail(String toEmail, String subject, String body){
+    public boolean sendEmail(String toEmail, String subject, String body){
         try
         {
           MimeMessage msg = new MimeMessage(session);
@@ -110,9 +110,11 @@ public class Email {
           System.out.println("Sending");
           Transport.send(msg); 
           System.out.println("Email Sent Successfully!!");
+          return true;
         }
         catch (Exception e) {
           e.printStackTrace();
+          return false;
         }
     }
 
