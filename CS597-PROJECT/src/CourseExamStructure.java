@@ -78,8 +78,6 @@ public class CourseExamStructure {
 					PreparedStatement statement = conn.prepareStatement(SQLExamStructureCreate);
 					statement.setString(1, tableName);
 					statement.executeUpdate();
-					
-					
 				}	
 			} catch (SQLException e) {
 				System.out.println(e);
@@ -128,10 +126,14 @@ public class CourseExamStructure {
 					statement.setString(2, examName);
 					statement.setInt(3, examTotal);
 					statement.executeUpdate();
-					CourseExams.addNewExamColumn();
 					
-					Database.commitTransaction(conn);
-					examAdded = true;
+					examAdded = CourseExams.addNewExamColumn(this);
+					if (examAdded == true){
+						Database.commitTransaction(conn);
+					}
+					else{
+						System.out.println();
+					}
 				}	
 			} catch (SQLException e) {
 				System.out.println(e);
@@ -226,8 +228,11 @@ public class CourseExamStructure {
 					statement.setString(3, examName);
 					statement.executeUpdate();
 					boolean modifiedColumn = CourseExams.modifyExistingExamColumnName(this, newExamName);
-					Database.commitTransaction(conn);
-					nameModified = true;
+					if (modifiedColumn == true){
+						Database.commitTransaction(conn);
+						nameModified = true;
+					}
+					
 				}	
 			} catch (SQLException e) {
 				System.out.println(e);
