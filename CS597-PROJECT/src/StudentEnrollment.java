@@ -302,6 +302,9 @@ public class StudentEnrollment {
 		
 		// Step 1: Check if student is already enrolled for this course
 		boolean isStudentCurrentlyEnrolled = this.isStudentEnrolled(UIN, offerID);
+		if(isStudentCurrentlyEnrolled == true){
+			System.out.println("The student is already enrolled");
+		}
 		
 		// Step 2: if student is not enrolled, check whether there are any seats left.
 		boolean isSeatAvailable = this.isSeatAvailable();
@@ -318,11 +321,96 @@ public class StudentEnrollment {
 	private boolean isStudentEnrolled(int UIN,int offerID){
 		boolean isStudentEnrolled = false;
 		
+		@DBAnnotation (
+				variable = {"UIN","offerID"},  
+				table = "studentenrollment", 
+				column = {"UIN","OfferID"}, 
+				isSource = true)
+		
+		String SQLStudentEnrollSelect = "Select UIN FROM studentenrollment WHERE UIN = ? AND OfferID = ?;";
+		
+		try{
+			Connection conn = Database.getConnection();
+			
+			try{
+			
+				if(conn != null){
+					
+					PreparedStatement statement = conn.prepareStatement(SQLStudentEnrollSelect);
+					statement.setInt(1, UIN);
+					statement.setInt(2, offerID);
+					
+					ResultSet rs = statement.executeQuery();
+				
+					while(rs.next()){
+						//Retrieve by column name
+				        int tableUIN = rs.getInt("UIN");
+				         
+				        if (UIN == tableUIN){
+				        	isStudentEnrolled = true;
+				        }
+					}      
+				}
+			}
+			catch(SQLException e){
+				System.out.println(e);
+			}
+				
+		}
+		catch(Exception e){
+			System.out.println(e);
+		}
+		
+		
 		return isStudentEnrolled;
 	}
 		
 	private boolean isSeatAvailable(){
 		boolean isSeatAvailable = false;
+		
+		int offerID = this.getOfferID();
+		
+		@DBAnnotation (
+				variable = {"offerID"},  
+				table = "coursesoffered", 
+				column = {"OfferID"}, 
+				isSource = true)
+		
+		String SQLStudentEnrollSelect = "Select OfferID FROM coursesoffered " +
+										"WHERE SeatsFilled < TotalCapacity " +
+										"AND OfferID = ?;";
+		
+		try{
+			Connection conn = Database.getConnection();
+			
+			try{
+			
+				if(conn != null){
+					
+					PreparedStatement statement = conn.prepareStatement(SQLStudentEnrollSelect);
+					statement.setInt(1, offerID);
+					
+					ResultSet rs = statement.executeQuery();
+				
+					while(rs.next()){
+						//Retrieve by column name
+				        int tableOfferID = rs.getInt("OfferID");
+				         
+				        if (offerID == tableOfferID){
+				        	isSeatAvailable = true;
+				        }
+					}      
+				}
+			}
+			catch(SQLException e){
+				System.out.println(e);
+			}
+				
+		}
+		catch(Exception e){
+			System.out.println(e);
+		}
+		
 		
 		return isSeatAvailable;
 	}
