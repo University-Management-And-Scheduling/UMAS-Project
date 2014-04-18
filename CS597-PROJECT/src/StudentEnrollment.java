@@ -105,7 +105,15 @@ public class StudentEnrollment {
 //		return grade;
 //	}
 	
-	public ArrayList<Student> getStudentsInCourse(CourseOffered courseOffered) {
+	public static ArrayList<CourseOffered> getStudentsCourses(Student student){
+		ArrayList<CourseOffered> coursesTaken = new ArrayList<CourseOffered>();
+		
+		
+		return coursesTaken;
+		
+	}
+	
+ 	public ArrayList<Student> getStudentsInCourse(CourseOffered courseOffered) {
 		ArrayList<Student> enrolledStudents = new ArrayList<Student>();
 		
 		// DB Code
@@ -129,5 +137,11 @@ public class StudentEnrollment {
 	//			int totalCapacity, int currentlyFilled);
 	//	enrolledCourses.add(courseEnrolled);
 		return enrolledCourses;
+	}
+
+	
+	public static int getStudentEnrollmentID(Student student, int offerID) {
+		// TODO Auto-generated method stub
+		return 0;
 	}
 }

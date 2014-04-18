@@ -1,3 +1,11 @@
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.HashMap;
 
 
@@ -7,6 +15,14 @@ public class CourseCurve {
 	HashMap<String, Integer> curvingCriteria;
 	HashMap<Student,String> courseCurve;
 	
+	@Target({ElementType.LOCAL_VARIABLE})
+	@Retention(RetentionPolicy.RUNTIME)
+	public @interface DBAnnotation {
+	 String[] variable () default "";
+	 String[] table () default "";
+	 String[] column () default "";
+	 boolean[] isSource () default false; 
+	}
 	
 	public CourseCurve(int offerID, HashMap<String, Integer> curvingCriteria) {
 		super();
@@ -14,37 +30,25 @@ public class CourseCurve {
 		this.curvingCriteria = curvingCriteria;
 	}
 	
-
-
 	public int getOfferID() {
 		return offerID;
 	}
 	
-
-
 	public void setOfferID(int offerID) {
 		this.offerID = offerID;
 	}
-	
-
 
 	public HashMap<String, Integer> getCurvingCriteria() {
 		return curvingCriteria;
 	}
-	
-
 
 	public void setCurvingCriteria(HashMap<String, Integer> curvingCriteria) {
 		this.curvingCriteria = curvingCriteria;
 	}
-	
-
 
 	public HashMap<Student, String> getCourseCurve() {
 		return courseCurve;
 	}
-	
-
 
 	public void setCourseCurve(HashMap<Student, String> courseCurve) {
 		this.courseCurve = courseCurve;
@@ -53,7 +57,50 @@ public class CourseCurve {
 	private int getTotalCourseMarks(){
 		int totalCourseMarks = 0;
 		
-		// DB code to get total CourseMarks from CourseStructure Table
+		int offerID = this.getOfferID();
+		
+		CourseOffered offeredCourse = null;
+		
+		try {
+			offeredCourse = new CourseOffered(offerID);
+		} catch (Course.CourseDoesNotExistException e1) {
+			e1.printStackTrace();
+		} catch (CourseOffered.CourseOfferingDoesNotExistException e1) {
+			e1.printStackTrace();
+		}
+		
+		Course course = offeredCourse.getCourse();
+		String courseName = course.getCourseName();
+		int semID = offeredCourse.getSemesterID();
+		
+		String tableName = courseName + Integer.toString(offerID) + Integer.toString(semID) + "Structure";
+		
+			@DBAnnotation (
+				variable = {""},  
+				table = "tableName", 
+				column = {"TotalMarks"}, 
+				isSource = false)
+		String SQLExamStructureSelect = "Select sum(TotalMarks) TotalMarks FROM ?;";
+		try {
+			Connection conn = Database.getConnection();
+			try {
+				if (conn != null) {
+				 
+					PreparedStatement statement = conn.prepareStatement(SQLExamStructureSelect);
+					statement.setString(1, tableName);
+					ResultSet rs = statement.executeQuery();
+					
+					while(rs.next()){
+						totalCourseMarks = rs.getInt("TotalMarks");
+					}
+				}	
+			} catch (SQLException e) {
+				System.out.println(e);
+			}
+
+		} catch (Exception e) {
+			System.out.println(e);
+		}
 		
 		return totalCourseMarks;
 		

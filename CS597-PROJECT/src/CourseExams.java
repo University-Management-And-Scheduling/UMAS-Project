@@ -35,7 +35,7 @@ public class CourseExams {
 		this.examMarks = examMarks;
 	}
 
-	public CourseExams(int offerID, String examName) {
+	public CourseExams(int offerID) {
 		super();
 		this.offerID = offerID;
 		this.examName = examName;
@@ -301,7 +301,6 @@ public class CourseExams {
 		return examDeleted;
 	}
 
-		
 	public boolean addStudentMarks(){
 		boolean studentsMarksAdded = false;
 		
@@ -558,7 +557,7 @@ public class CourseExams {
 		String courseName = course.getCourseName();
 		int semID = offeredCourse.getSemesterID();
 		
-		String tableName = courseName + Integer.toString(offerID) + Integer.toString(semID); 
+		String tableName = courseName + Integer.toString(offerID) + Integer.toString(semID) + "Structure"; 
 	
 		@DBAnnotation (
 				variable = {"examName"},  
