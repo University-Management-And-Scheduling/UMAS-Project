@@ -9,12 +9,79 @@ import javax.xml.crypto.Data;
 
 
 public class Employee extends People {
+	
+	double salary;
+	String officeAddress;
+	String officeHours;
 
 	public Employee(int UIN) {
 		super(UIN);
+		
+		
+		try{
+			Connection conn = Database.getConnection();
+			String SQLPeopleSelect="";
+			
+			try{
+				
+				SQLPeopleSelect = "Select UIN From employee where UIN=?;";
+				PreparedStatement stmt = conn.prepareStatement(SQLPeopleSelect);
+				stmt.setInt(1, UIN);
+				ResultSet rs =  stmt.executeQuery();
+				
+					if(rs.first()){
+				         System.out.println(UIN+"already exists");
+				         
+				         	int retrievedEmployeeUIN = rs.getInt("UIN");
+					        double retrievedEmployeeSalary = rs.getDouble("Salary");
+					        String retrievedOfficeAddress = rs.getString("OfficeAddress");
+					        String retrievedOfficeHours = rs.getString("OfficeHours");
+					     
+							
+					         this.UIN=retrievedEmployeeUIN;
+					         this.salary=retrievedEmployeeSalary;
+					         this.officeAddress=retrievedOfficeAddress;
+					         this.officeHours=retrievedOfficeHours;
+				         
+				         
+				         
+					}
+					
+					else
+					{
+						
+						System.out.println(UIN+"does not exist");
+						
+					}
+					
+			}
+			
+			catch(SQLException e){
+				System.out.println("Error adding/updating to database");
+				e.printStackTrace();
+				System.out.println(e);	
+			}
+			
+			finally{
+				//System.out.println("retrieved");
+				//Database.closeConnection(conn);
+			}
+		}
+		
+		catch(Exception e){
+			System.out.println("Connection failed");
+			e.printStackTrace();
+			System.out.println(e);
+			
+		}
+		
+		finally{
+			
+			//System.out.println("retrieved");
+		}
+		
 		// TODO Auto-generated constructor stub
 	}
-	
 	
 
 	public Employee(String name, String userName, int deptID, int positionID) {
@@ -430,13 +497,7 @@ public class Employee extends People {
 	
 	public static void main(String[] args){
 		
-		//updateEmpDetails(28,"off","off");
-		try {
-			giveBonus(28, 34.0);
-		} catch (bonusNotValidException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+
 	}
 }
 	
