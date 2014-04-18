@@ -42,7 +42,14 @@ public class StudentEnrollment {
 		this.UIN = UIN;
 	}
 
-	
+	// Constructor to create objects of studentenrollment before inserting into 
+	// the database for the first time
+	public StudentEnrollment(int offerID, int UIN) {
+		super();
+		this.offerID = offerID;
+		this.grade = 'A'; // Default grade at the time of enrollment
+		this.UIN = UIN;
+	}
 	
 	public int getUIN() {
 		return UIN;
@@ -319,5 +326,7 @@ public class StudentEnrollment {
 		
 		return isSeatAvailable;
 	}
+	
+	
 	
 }
