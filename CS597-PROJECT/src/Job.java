@@ -115,6 +115,7 @@ public class Job {
 		
 		boolean isAdded=false;
 		int retreivedJobID=-1;
+		ArrayList<Student> listOfEmails=new ArrayList<>();
 		
 		boolean checkLevel=checkEligibility(postedByUIN);
 		
@@ -166,6 +167,10 @@ public class Job {
 					
 					for(Student student:retrievedList){
 						System.out.println(student.getUIN());
+						
+						listOfEmails.add(student);
+
+						// add to job roster only if email is sent.
 						
 						boolean ifadded=addToJobRoster(student.getUIN(),retreivedJobID);
 						Database.commitTransaction(conn);
@@ -370,6 +375,29 @@ public class Job {
 		return isAdded;
 
 	}
+	
+	
+	public static String getEmail(Student student){
+		
+		if(student!=null){
+		
+		String studentUserName=student.getUserName();
+		
+		String studentEmail=studentUserName+"@gmail.com";
+		
+		return studentEmail;
+		}
+
+		else{
+		
+		
+		return null;
+		}
+		
+	}
+	
+	
+	
 	
 	
 	
