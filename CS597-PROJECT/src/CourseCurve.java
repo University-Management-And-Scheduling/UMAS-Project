@@ -7,6 +7,8 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Set;
 
 
 public class CourseCurve {
@@ -109,7 +111,10 @@ public class CourseCurve {
 	private HashMap<Student,Double> getStudentTotalMarks(){
 		HashMap<Student,Double> studentTotalMarks = new HashMap<Student,Double>();
 		
-		// DB code to get Student-TotalMarks from CourseExams' Table
+		int offerID = this.getOfferID();
+		CourseExams exams = new CourseExams(offerID);
+		
+		studentTotalMarks = exams.getStudentMarks().getExamMarks();
 		
 		return studentTotalMarks;
 		
@@ -134,7 +139,14 @@ public class CourseCurve {
 		// the curvingCriteria selected by the professor 
 		HashMap<Student,String> courseCurve = null;
 		
-		// Algo to calculate curve
+		Set<Student> keys = studentTotalMarks.keySet();
+		Iterator<Student> keyIterator = keys.iterator();
+		while (keyIterator.hasNext()) {
+			Student student = keyIterator.next();
+			int UIN = student.getUIN();
+			double marks = (double) studentTotalMarks.get(student);
+			
+		}	
 		
 		curve.setCourseCurve(courseCurve);
 		return curve;

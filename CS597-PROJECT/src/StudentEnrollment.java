@@ -1,3 +1,7 @@
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -5,13 +9,20 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-
 public class StudentEnrollment {
 	int enrollmentID; // Unique id per enrollment
 	int offerID; //OfferID of course offered in a sem
 	char grade; //Student Grade = 'A', 'B','C', 'D' and 'F'
 	int UIN;
 	
+	@Target({ElementType.LOCAL_VARIABLE})
+	@Retention(RetentionPolicy.RUNTIME)
+	public @interface DBAnnotation {
+	 String[] variable () default "";
+	 String[] table () default "";
+	 String[] column () default "";
+	 boolean[] isSource () default false; 
+	}
 	
 	// Stud obbj
 	//CREATE HashMap OF hashmap 3 nodes enrollmentID, offerID,grade
@@ -53,6 +64,13 @@ public class StudentEnrollment {
 	public HashMap<CourseOffered, String> getAllGradesOfStudent (Student student) {
 		int UIN = student.getUIN();
 		HashMap<CourseOffered, String> courseGrade = new HashMap<CourseOffered, String>();
+		
+		@DBAnnotation (
+				variable = {"UIN"},  
+				table = "studentenrollment", 
+				column = {"UIN"}, 
+				isSource = true)
+		
 		String SQLGradeSelect = "Select offerID, grade FROM studentenrollment WHERE UIN = ?;";
 		try{
 			Connection conn = Database.getConnection();
@@ -63,14 +81,22 @@ public class StudentEnrollment {
 					
 					PreparedStatement statement = conn.prepareStatement(SQLGradeSelect);
 					statement.setInt(1, UIN);
-					ResultSet rs = null;
-					rs =  statement.executeQuery();
+					ResultSet rs = statement.executeQuery();
 				
 					while(rs.next()){
-				         //Retrieve by column name
-				         int offerID = rs.getInt("offerID");
-				         String grade = rs.getString("grade");
-				         CourseOffered studentCourse = new CourseOffered(offerID); 
+						//Retrieve by column name
+				        int offerID = rs.getInt("offerID");
+				        String grade = rs.getString("grade");
+				        CourseOffered studentCourse = null;
+				 		
+				 		try {
+				 			studentCourse = new CourseOffered(offerID);
+				 		} catch (Course.CourseDoesNotExistException e1) {
+				 			e1.printStackTrace();
+				 		} catch (CourseOffered.CourseOfferingDoesNotExistException e1) {
+				 			e1.printStackTrace();
+				 		}
+				         
 				         courseGrade.put(studentCourse, grade);
 //				         Item item = new Item(itemID, itemName,itemQuantity, itemCost);
 //				         items.add(item);
@@ -79,15 +105,10 @@ public class StudentEnrollment {
 			}
 			catch(SQLException e){
 				System.out.println(e);
-				conn.rollback();
 			}
-		
-			finally{
-				// conn.close();
-			}   
-		
+				
 		}
-		catch(SQLException e){
+		catch(Exception e){
 			System.out.println(e);
 		}
 
@@ -105,32 +126,143 @@ public class StudentEnrollment {
 //		return grade;
 //	}
 	
-	public static ArrayList<CourseOffered> getStudentsCourses(Student student){
+	public static ArrayList<CourseOffered> getStudentsAllCourses(Student student){
 		ArrayList<CourseOffered> coursesTaken = new ArrayList<CourseOffered>();
 		
+		int UIN = student.getUIN();
+		
+		@DBAnnotation (
+				variable = {"UIN"},  
+				table = "studentenrollment", 
+				column = {"UIN"}, 
+				isSource = true)
+		
+		String SQLGradeSelect = "Select offerID FROM studentenrollment WHERE UIN = ?;";
+		try{
+			Connection conn = Database.getConnection();
+			
+			try{
+			
+				if(conn != null){
+					
+					PreparedStatement statement = conn.prepareStatement(SQLGradeSelect);
+					statement.setInt(1, UIN);
+					ResultSet rs = statement.executeQuery();
+				
+					while(rs.next()){
+						//Retrieve by column name
+				        int offerID = rs.getInt("OfferID");
+				        CourseOffered studentCourse = null;
+				 		
+				 		try {
+				 			studentCourse = new CourseOffered(offerID);
+				 		} catch (Course.CourseDoesNotExistException e1) {
+				 			e1.printStackTrace();
+				 		} catch (CourseOffered.CourseOfferingDoesNotExistException e1) {
+				 			e1.printStackTrace();
+				 		}
+				         
+				 		coursesTaken.add(studentCourse);
+					}      
+				}
+			} catch(SQLException e){
+				System.out.println(e);
+			}
+				
+		} catch(Exception e){
+			System.out.println(e);
+		}
 		
 		return coursesTaken;
-		
 	}
 	
  	public ArrayList<Student> getStudentsInCourse(CourseOffered courseOffered) {
 		ArrayList<Student> enrolledStudents = new ArrayList<Student>();
 		
-		// DB Code
+		int offerID = courseOffered.getOfferID();
 		
-		Student student = new Student();
-		enrolledStudents.add(student);
+		@DBAnnotation (
+				variable = {"offerID"},  
+				table = "studentenrollment", 
+				column = {"OfferID"}, 
+				isSource = true)
+		
+		String SQLGradeSelect = "Select UIN FROM studentenrollment WHERE OfferID = ?;";
+		try{
+			Connection conn = Database.getConnection();
+			
+			try{
+			
+				if(conn != null){
+					
+					PreparedStatement statement = conn.prepareStatement(SQLGradeSelect);
+					statement.setInt(1, offerID);
+					ResultSet rs = statement.executeQuery();
+				
+					while(rs.next()){
+						//Retrieve by column name
+				        int UIN = rs.getInt("UIN");
+				        Student student = new Student(UIN);
+						enrolledStudents.add(student);
+					}      
+				}
+			} catch(SQLException e){
+				System.out.println(e);
+			}
+				
+		} catch(Exception e){
+			System.out.println(e);
+		}
 		return enrolledStudents;
-		
 	}
 	
-	public ArrayList<CourseOffered> getAllCoursesOfStudent (Student student) {
+	public ArrayList<CourseOffered> getCurrentCoursesOfStudent (Student student) {
 		ArrayList<CourseOffered> enrolledCourses = new ArrayList<CourseOffered>();
-		// DB COde
 		
+		int UIN = student.getUIN();
 		
+		@DBAnnotation (
+				variable = {"UIN"},  
+				table = "studentenrollment", 
+				column = {"UIN"}, 
+				isSource = true)
 		
-		
+		String SQLGradeSelect = "Select offerID FROM studentenrollment WHERE UIN = ?;";
+		try{
+			Connection conn = Database.getConnection();
+			
+			try{
+			
+				if(conn != null){
+					
+					PreparedStatement statement = conn.prepareStatement(SQLGradeSelect);
+					statement.setInt(1, UIN);
+					ResultSet rs = statement.executeQuery();
+				
+					while(rs.next()){
+						//Retrieve by column name
+				        int offerID = rs.getInt("OfferID");
+				        CourseOffered studentCourse = null;
+				 		
+				 		try {
+				 			studentCourse = new CourseOffered(offerID);
+				 		} catch (Course.CourseDoesNotExistException e1) {
+				 			e1.printStackTrace();
+				 		} catch (CourseOffered.CourseOfferingDoesNotExistException e1) {
+				 			e1.printStackTrace();
+				 		}
+				         
+				 		coursesTaken.add(studentCourse);
+					}      
+				}
+			} catch(SQLException e){
+				System.out.println(e);
+			}
+				
+		} catch(Exception e){
+			System.out.println(e);
+		}
+				
 		
 	//	CourseOffered courseEnrolled = new CourseOffered(Course course, CourseSchedule courseSchedule,
 	//			CourseFiles courseFiles, int offerID, String semester, Calendar year,
