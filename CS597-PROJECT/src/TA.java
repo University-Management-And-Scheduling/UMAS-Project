@@ -2,6 +2,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
 
 
 
@@ -175,5 +176,60 @@ public class TA extends Student {
 		
 	}
 
+	public static ArrayList<TA> getAllTAs() {
+		//if(Professor == null)
+			//throw new NullPointerException();
+		
+		ArrayList<TA> getAllTAs = new ArrayList<TA>();
+		
+		try{
+			Connection conn = Database.getConnection();
+			
+			try{
+				if(conn != null){
+					
+					
+					
+					//Retrieve all the professors from one department
+					String ProfessorSelect = "Select *"
+							+ " FROM university.people"
+							+ " WHERE PositionID=4";
+					PreparedStatement statement = conn.prepareStatement(ProfessorSelect);
+					ResultSet rs = statement.executeQuery();
+					
+					while(rs.next()){
+						
+						
+						int retreivedTAUIN=rs.getInt("UIN");
+						//System.out.println(retreivedProfUserNames);
+						TA teachingAssistant=new TA(retreivedTAUIN);
+						getAllTAs.add(teachingAssistant);
+						System.out.println(teachingAssistant.getUserName());						
+					}
+					
+				}
+					
+			}
+			
+			catch(SQLException e){
+				System.out.println("Error fetching all the professors");
+				System.out.println(e.getMessage());
+				e.printStackTrace();
+				
+			}
+			
+				
+			finally{
+				//Database.commitTransaction(conn);
+			}
+			
+		
+			return getAllTAs;
+		}
+		
+		finally{
+		}
+		
+	}
 
 }

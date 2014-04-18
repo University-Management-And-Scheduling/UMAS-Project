@@ -473,8 +473,6 @@ public class Professor extends Employee {
 		
 	}
 	
-	
-	
 	public static ArrayList<Professor> getAllProf() {
 		//if(Professor == null)
 			//throw new NullPointerException();
