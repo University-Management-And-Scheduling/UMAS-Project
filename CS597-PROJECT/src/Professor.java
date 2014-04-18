@@ -511,7 +511,7 @@ public class Professor extends People {
 		
 		try {
 			Department dept=new Department(2);
-			addProfToDb("priyanka", dept);
+			addProfToDb("Simant", dept);
 		} catch (Department.DepartmentDoesNotExistException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
