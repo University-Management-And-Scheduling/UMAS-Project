@@ -59,7 +59,7 @@ public class TA extends Student {
 							System.out.println("Inserted");
 							isAdded=true;
 							
-							
+							addTAtoTAtable(UIN, offerID);
 							
 						}
 						
@@ -102,7 +102,75 @@ public class TA extends Student {
 	}
 	
 	
-	public static void addTAtoTAtable(int UIN, int offerID){
+	public static boolean addTAtoTAtable(int UIN, int offerID){
+		
+		boolean isAdded=false;
+		
+		
+		try{
+			Connection conn = Database.getConnection();
+			String SQLPeopleSelect="";
+			
+			try{
+				
+				SQLPeopleSelect = "Select TaUIN From employee where OfferID=?;";
+				PreparedStatement stmt = conn.prepareStatement(SQLPeopleSelect);
+				stmt.setInt(1, UIN);
+				ResultSet rs =  stmt.executeQuery();
+				
+					if(rs.first()){
+				         System.out.println(UIN+"already exists as a TA for the offer ID: "+offerID);
+				         //Insert a update query to update the values of the database....NOT ADD
+					}
+					
+					else
+					{
+						
+						System.out.println("Adding new data into the database");
+						String SQLPeopleInsert= "Insert into teachingassistant (TaUIN, OfferID) Values (?,?);";
+						stmt = conn.prepareStatement(SQLPeopleInsert);
+						stmt.setInt(1, UIN);
+						stmt.setInt(2, offerID);
+						int i = stmt.executeUpdate();
+						System.out.println(i);
+						System.out.println("Inserted");
+						isAdded=true;
+						
+						Database.commitTransaction(conn);
+						
+						
+						
+					}
+					
+			}
+			
+			catch(SQLException e){
+				System.out.println("Error adding/updating to database");
+				e.printStackTrace();
+				System.out.println(e);	
+			}
+			
+			finally{
+				//System.out.println("retrieved");
+				//Database.closeConnection(conn);
+			}
+		}
+		
+		catch(Exception e){
+			System.out.println("Connection failed");
+			e.printStackTrace();
+			System.out.println(e);
+			
+		}
+		
+		finally{
+			
+			//System.out.println("retrieved");
+		}
+
+	
+	return isAdded;
+		
 		
 		
 	}

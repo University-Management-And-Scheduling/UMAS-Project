@@ -465,7 +465,7 @@ public class Student extends People {
 		
 		
 		try {
-			updateGPA(28, 3.5);
+			updateGPA(28, 3.7);
 		} catch (GPAnotValidException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

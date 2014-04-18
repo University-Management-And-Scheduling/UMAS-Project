@@ -509,21 +509,21 @@ public class Professor extends People {
 	
 	public static void main(String[] args){
 		
-		try {
-			Department dept=new Department(2);
-			addProfToDb("Simant", dept);
-		} catch (Department.DepartmentDoesNotExistException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		
+//		try {
+//			Department dept=new Department(2);
+//			addProfToDb("Simant", dept);
+//		} catch (Department.DepartmentDoesNotExistException e) {
+//			// TODO Auto-generated catch block
+//			e.printStackTrace();
+//		}
+//		
 		
 		
 		//Professor x = new Professor("priyanka", "maravapa", 2);
 		
 		//x.addProfToDb();
 		
-		//retrieveProfDetailsByUserName("maravapa");
+		retrieveProfDetailsByUserName("maravapa");
 		
 //		try {
 //			getAllProfInADept("aksh");
