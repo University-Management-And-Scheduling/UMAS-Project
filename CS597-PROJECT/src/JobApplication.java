@@ -336,15 +336,94 @@ public class JobApplication {
 			return selectedStudents;
 		}
 	
+	 public static boolean updateApplication(int UIN, double workExp, boolean skill1, boolean skill2, boolean skill3, boolean skill4, boolean skill5){
 		 
+		 boolean isUpdated=false;
+		 
+		 try{
+				Connection conn = Database.getConnection();
+				String SQLPeopleSelect="";
+				
+				try{
+					
+					SQLPeopleSelect = "Select ApplicantUIN From applicationdetails where ApplicantUIN=?;";
+					PreparedStatement stmt = conn.prepareStatement(SQLPeopleSelect);
+					stmt.setInt(1, UIN);
+					ResultSet rs =  stmt.executeQuery();
+					
+						if(rs.first()){
+							
+							double newScaledScore=calculateScaledScore(UIN, workExp, skill1, skill2, skill3, skill4, skill5);
+					         
+					         //Insert a update query to update the values of the database....NOT ADD
+					         	System.out.println("Updating the application details in the database");
+								String SQLupdateAppdetails= "UPDATE university.applicationdetails SET WorkExperience=?, Skillset1=?, Skillset2=?, Skillset3=?, Skillset4=?, Skillset5=?, Scaledscore=? where ApplicantUIN=?;";
+								stmt = conn.prepareStatement(SQLupdateAppdetails);
+								stmt.setDouble(1, workExp);
+								stmt.setBoolean(2,skill1);
+								stmt.setBoolean(3,skill2);
+								stmt.setBoolean(4,skill3);
+								stmt.setBoolean(5,skill4);
+								stmt.setBoolean(6,skill5);
+								stmt.setDouble(7, newScaledScore);
+								stmt.setInt(8, UIN);
+								System.out.println(stmt);
+								int i = stmt.executeUpdate();
+								System.out.println(i);
+								System.out.println("Updated");
+								isUpdated=true;
+								
+								
+								
+								//Connection conn=Database.getConnection();
+								Database.commitTransaction(conn);
+										
+							
+						}
+						
+						else
+						{
+							System.out.println(UIN+" does not exist");
+							
+							
+						}
+						
+				}
+				
+				catch(SQLException e){
+					System.out.println("Error adding/updating to database");
+					e.printStackTrace();
+					System.out.println(e);	
+				}
+				
+				finally{
+					//System.out.println("retrieved");
+					//Database.closeConnection(conn);
+				}
+			}
+			
+			catch(Exception e){
+				System.out.println("Connection failed");
+				e.printStackTrace();
+				System.out.println(e);
+				
+			}
+			
+			finally{
+				
+				//System.out.println("retrieved");
+			}
+		 
+		 
+		 return isUpdated;
+	 }
 		 
 	 
 	
 	 public static void main(String[] args)
 		{
 		 
-		 addApplicationDetails(28, 1.5, false, false, true, true, true);
-		 //retreiveMatchingStudents(1.5, false, false, true, true, true);
+		 //updateApplication(17, 4.0, false, false, true, true, false);
 		 
 		}
 	 

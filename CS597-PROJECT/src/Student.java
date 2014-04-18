@@ -2,6 +2,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
 
 
 
@@ -400,6 +401,61 @@ public class Student extends People {
 		return updateGPA;
 	}
 
+	public static ArrayList<Student> getAllStudents() {
+		//if(Professor == null)
+			//throw new NullPointerException();
+		
+		ArrayList<Student> allStudents = new ArrayList<Student>();
+		
+		try{
+			Connection conn = Database.getConnection();
+			
+			try{
+				if(conn != null){
+					
+					
+					
+					//Retrieve all the professors from one department
+					String ProfessorSelect = "Select *"
+							+ " FROM university.people"
+							+ " WHERE PositionID=3";
+					PreparedStatement statement = conn.prepareStatement(ProfessorSelect);
+					ResultSet rs = statement.executeQuery();
+					
+					while(rs.next()){
+						
+						
+						String retreivedStudentUserNames=rs.getString("Username");
+						//System.out.println(retreivedProfUserNames);
+						Student stud=new Student(retreivedStudentUserNames);
+						allStudents.add(stud);
+						System.out.println(stud.getUserName());						
+					}
+					
+				}
+					
+			}
+			
+			catch(SQLException e){
+				System.out.println("Error fetching all the professors");
+				System.out.println(e.getMessage());
+				e.printStackTrace();
+				
+			}
+			
+				
+			finally{
+				//Database.commitTransaction(conn);
+			}
+			
+		
+			return allStudents;
+		}
+		
+		finally{
+		}
+		
+	}
 
 	static class levelNotExistException extends Exception{
 		private static final long serialVersionUID = 1L;
@@ -464,13 +520,14 @@ public class Student extends People {
 //		}
 		
 		
-		try {
-			updateGPA(28, 3.7);
-		} catch (GPAnotValidException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+//		try {
+//			updateGPA(28, 3.7);
+//		} catch (GPAnotValidException e) {
+//			// TODO Auto-generated catch block
+//			e.printStackTrace();
+//		}
 		
+		//getAllStudents();
 		
 	}
 	

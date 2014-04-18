@@ -5,7 +5,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 
 
-public class Professor extends People {
+public class Professor extends Employee {
 	
 	/* Due to some unknown error some functions and some updates have been deleted. I am writing them and updating them as i remember
 	 * 
@@ -472,6 +472,64 @@ public class Professor extends People {
 		}
 		
 	}
+	
+	
+	
+	public static ArrayList<Professor> getAllProf() {
+		//if(Professor == null)
+			//throw new NullPointerException();
+		
+		ArrayList<Professor> allProfs = new ArrayList<Professor>();
+		
+		try{
+			Connection conn = Database.getConnection();
+			
+			try{
+				if(conn != null){
+					
+					
+					
+					//Retrieve all the professors from one department
+					String ProfessorSelect = "Select *"
+							+ " FROM university.people"
+							+ " WHERE PositionID=2";
+					PreparedStatement statement = conn.prepareStatement(ProfessorSelect);
+					ResultSet rs = statement.executeQuery();
+					
+					while(rs.next()){
+						
+						
+						String retreivedProfUserNames=rs.getString("Username");
+						//System.out.println(retreivedProfUserNames);
+						Professor prof=new Professor(retreivedProfUserNames);
+						allProfs.add(prof);
+						System.out.println(prof.getUserName());						
+					}
+					
+				}
+					
+			}
+			
+			catch(SQLException e){
+				System.out.println("Error fetching all the professors");
+				System.out.println(e.getMessage());
+				e.printStackTrace();
+				
+			}
+			
+				
+			finally{
+				//Database.commitTransaction(conn);
+			}
+			
+		
+			return allProfs;
+		}
+		
+		finally{
+		}
+		
+	}
 		
 	//add files
 	
@@ -523,7 +581,7 @@ public class Professor extends People {
 		
 		//x.addProfToDb();
 		
-		retrieveProfDetailsByUserName("maravapa");
+		//retrieveProfDetailsByUserName("maravapa");
 		
 //		try {
 //			getAllProfInADept("aksh");
@@ -532,6 +590,7 @@ public class Professor extends People {
 //			e.printStackTrace();
 //		}
 		
+		getAllProf();
 		
 		
 		
