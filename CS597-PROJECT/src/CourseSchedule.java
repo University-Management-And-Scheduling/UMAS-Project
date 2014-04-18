@@ -159,6 +159,40 @@ public class CourseSchedule {
 		//If none of the above steps throw an error schedule the course
 	}
 	
+	public static ArrayList<CourseSchedule> getAllScheduledCourses(){
+		ArrayList<CourseSchedule> courseSchedule = new ArrayList<CourseSchedule>();
+		try{
+			Connection conn = Database.getConnection();
+			
+			try{
+				if(conn != null){
+					
+					String SQLSelect= "Select *"
+							+ " FROM university.courseschedule";
+					PreparedStatement statement = conn.prepareStatement(SQLSelect);
+					ResultSet rs =  statement.executeQuery();
+					
+					while(rs.next()){
+						CourseSchedule cs = new CourseSchedule(rs.getInt("OfferID"));
+						courseSchedule.add(cs);
+					}
+					
+				}
+			}
+			
+			catch(SQLException e){
+				System.out.println("Error getting");
+				System.out.println(e.getMessage());
+			}
+			
+		}
+		
+		finally{
+		}
+		
+		return courseSchedule;
+	}
+	
 	public static void scheduleCourse(CourseOffered courseOffered){
 		//Check if the course is already scheduled
 		System.out.println("xxxxxxxxxxxxxxxxINSIDE SCHEDULE COURSE FUNCTIONxxxxxxxxxxxxxx");

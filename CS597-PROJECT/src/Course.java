@@ -2,6 +2,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
 
 
 public class Course {
@@ -212,6 +213,42 @@ public class Course {
 		
 	}
 	
+	public static ArrayList<Course> getAllCourses(){
+		ArrayList<Course> courses = new ArrayList<Course>();
+		try{
+			Connection conn = Database.getConnection();
+			
+			try{
+				if(conn != null){
+					
+					String SQLSelect= "Select *"
+							+ " FROM university.courses";
+					PreparedStatement statement = conn.prepareStatement(SQLSelect);
+					ResultSet rs =  statement.executeQuery();
+					
+					while(rs.next()){
+						Course c = new Course(rs.getInt("CourseID"));
+						courses.add(c);
+					}
+					
+				}
+			}
+			
+			catch(SQLException e){
+				System.out.println("Error updating/adding");
+				System.out.println(e.getMessage());
+			} catch (CourseDoesNotExistException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			
+		}
+		
+		finally{
+		}
+		
+		return courses;
+	}
 	//CourseDoesnotExist Exception
 	static class CourseDoesNotExistException extends Exception{
 		/**

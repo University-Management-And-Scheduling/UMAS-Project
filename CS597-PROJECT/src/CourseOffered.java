@@ -192,7 +192,45 @@ public class CourseOffered {
 		this.currentlyFilled = currentlyFilled;
 	}
 
+	public String getCourseName(){
+		Course c = getCourse();
+		return c.getCourseName();
+	}
 	
+	public String getProfessorName(){
+		Professor p = getProfessor();
+		return p.getName();
+	}
+	
+	public String getDepartmentName(){
+		Course c = getCourse();
+		Department d = c.getDepartment();
+		return d.getDepartmentName();
+	}
+	
+	public String getClassRoomName(){
+		CourseSchedule cs = getCourseSchedule();
+		Classroom cr = cs.getClassroom();
+		ClassroomName cn = cr.getClassroomName();
+		return cn.toString();
+	}
+	
+	public String getClassRoomLocation(){
+		CourseSchedule cs = getCourseSchedule();
+		Classroom cr = cs.getClassroom();
+		ClassroomLocation cl = cr.getClassroomLocation();
+		return cl.toString();
+	}
+	
+	public String getTiming(){
+		CourseSchedule cs = getCourseSchedule();
+		Timeslots ts = cs.getTimeslot();
+		String times = "";
+		times += ts.getStartHour()+"00 TO ";
+		times += ts.getEndHour()+"00";
+		return times;
+		
+	}
 	//get all current current course offerings
 	public static ArrayList<CourseOffered> getAllCurrentlyOfferedCourses(){
 		ArrayList<CourseOffered> currentOffering = new ArrayList<CourseOffered>();
