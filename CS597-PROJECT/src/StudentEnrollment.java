@@ -42,6 +42,13 @@ public class StudentEnrollment {
 		this.UIN = UIN;
 	}
 
+	public StudentEnrollment(int offerID, char grade, int UIN) {
+		super();
+		this.offerID = offerID;
+		this.grade = grade;
+		this.UIN = UIN;
+	}
+	
 	// Constructor to create objects of studentenrollment before inserting into 
 	// the database for the first time
 	public StudentEnrollment(int offerID, int UIN) {
@@ -304,20 +311,139 @@ public class StudentEnrollment {
 		boolean isStudentCurrentlyEnrolled = this.isStudentEnrolled(UIN, offerID);
 		if(isStudentCurrentlyEnrolled == true){
 			System.out.println("The student is already enrolled");
+		} else{
+			// Step 2: if student is not enrolled, check whether there are any seats left.
+			boolean isSeatAvailable = this.isSeatAvailable();
+			if(isSeatAvailable == false){
+				System.out.println("Seats not available.");
+			} else{
+				
+				// Step 3: If student is not enrolled currently AND 
+				// if a seat is available, Enroll the student
+			
+				
+				@DBAnnotation (
+						variable = {"UIN","offerID"},  
+						table = "studentenrollment", 
+						column = {"UIN","OfferID"}, 
+						isSource = false)
+				String SQLStudentEnrollInsert = "INSERT INTO studentenrollment VALUES(?,?,A) ;";
+				
+				try {
+					Connection conn = Database.getConnection();
+					try {
+						if (conn != null) {
+						 
+							PreparedStatement statement = conn.prepareStatement(SQLStudentEnrollInsert);
+							statement.setInt(1, UIN);
+							statement.setInt(2, offerID);
+							statement.executeUpdate();
+							Database.commitTransaction(conn);
+							isStudentEnrolled = true;
+						}	
+					} catch (SQLException e) {
+						System.out.println(e);
+						Database.rollBackTransaction(conn);
+					}
+
+				} catch (Exception e) {
+					System.out.println(e);
+				}
+			}	
 		}
-		
-		// Step 2: if student is not enrolled, check whether there are any seats left.
-		boolean isSeatAvailable = this.isSeatAvailable();
-		
-		// Step 3: If student is not enrolled currently AND 
-		// if a seat is available, Enroll the student
-		
-		
-		// Db code
-		
 		return isStudentEnrolled;
 	}
 	
+	public boolean updateStudentGrade(){
+		boolean isGradeUpdated = false;
+		int UIN = this.getUIN();
+		int offerID = this.getOfferID();
+		
+		// Step 1: Check if student is already enrolled for this course
+		boolean isStudentCurrentlyEnrolled = this.isStudentEnrolled(UIN, offerID);
+		if(isStudentCurrentlyEnrolled == false){
+			System.out.println("The student is not enrolled");
+		} else{
+			
+			int enrollmentID = this.getStudentEnrollmentID();	
+			// Step 2: If student is enrolled currently, update their grade.
+			
+			@DBAnnotation (
+					variable = {"UIN","offerID"},  
+					table = "studentenrollment", 
+					column = {"UIN","OfferID"}, 
+					isSource = false)
+			String SQLStudentEnrollInsert = "UPDATE `studentenrollment` SET `Grade`='?' WHERE `EnrollmentID`='?';";
+			
+			try {
+				Connection conn = Database.getConnection();
+				try {
+					if (conn != null) {
+					 
+						PreparedStatement statement = conn.prepareStatement(SQLStudentEnrollInsert);
+						statement.setInt(1, UIN);
+						statement.setInt(2, offerID);
+						statement.executeUpdate();
+						Database.commitTransaction(conn);
+						isGradeUpdated = true;
+					}	
+				} catch (SQLException e) {
+					System.out.println(e);
+					Database.rollBackTransaction(conn);
+				}
+
+			} catch (Exception e) {
+				System.out.println(e);
+			}
+		}
+		
+		return isGradeUpdated;
+	}
+	
+	private int getStudentEnrollmentID() {
+		int enrollmentID = 0;
+		int UIN = this.getUIN();
+		int offerID = this.getOfferID();
+		
+		@DBAnnotation (
+				variable = {"UIN","offerID","enrollmentID"},  
+				table = "studentenrollment", 
+				column = {"UIN","OfferID","EnrollmentID"}, 
+				isSource = true)
+		
+		String SQLStudentEnrollSelect = "Select EnrollmentID FROM studentenrollment WHERE UIN = ? AND OfferID = ?;";
+		
+		try{
+			Connection conn = Database.getConnection();
+			
+			try{
+			
+				if(conn != null){
+					
+					PreparedStatement statement = conn.prepareStatement(SQLStudentEnrollSelect);
+					statement.setInt(1, UIN);
+					statement.setInt(2, offerID);
+					
+					ResultSet rs = statement.executeQuery();
+				
+					while(rs.next()){
+				        enrollmentID = rs.getInt("EnrollmentID");
+					}      
+					this.setEnrollmentID(enrollmentID);
+				}
+			}
+			catch(SQLException e){
+				System.out.println(e);
+			}
+				
+		}
+		catch(Exception e){
+			System.out.println(e);
+		}
+		
+		return enrollmentID;
+	}
+
 	private boolean isStudentEnrolled(int UIN,int offerID){
 		boolean isStudentEnrolled = false;
 		
