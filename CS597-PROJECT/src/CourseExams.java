@@ -335,7 +335,7 @@ public class CourseExams {
 			boolean isStudentEnrolled = isStudentEnrolled(student,offerID);
 			
 			// Step 2: Get student Enrollment ID
-			int enrollmentID = StudentEnrollment.getStudentEnrollmentID(student,offerID);
+			//int enrollmentID = StudentEnrollment.getStudentEnrollmentID(student,offerID);
 			
 			// If enrolled, add his marks
 			if (isStudentEnrolled == true){
@@ -381,7 +381,7 @@ public class CourseExams {
 	private boolean isStudentEnrolled(Student student, int offerID) {
 		boolean isStudentEnrolled = false;
 		
-		ArrayList<CourseOffered> coursesTaken = StudentEnrollment.getStudentsCourses(student);
+		ArrayList<CourseOffered> coursesTaken = StudentEnrollment.getStudentsAllCourses(student);
 		
 		for(CourseOffered course : coursesTaken){
 			int courseOfferID = course.getOfferID();

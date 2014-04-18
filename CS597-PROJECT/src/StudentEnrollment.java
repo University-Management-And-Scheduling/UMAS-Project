@@ -11,9 +11,10 @@ import java.util.HashMap;
 
 public class StudentEnrollment {
 	int enrollmentID; // Unique id per enrollment
+	int UIN;		// Student UIN
 	int offerID; //OfferID of course offered in a sem
 	char grade; //Student Grade = 'A', 'B','C', 'D' and 'F'
-	int UIN;
+	
 	
 	@Target({ElementType.LOCAL_VARIABLE})
 	@Retention(RetentionPolicy.RUNTIME)
@@ -41,6 +42,17 @@ public class StudentEnrollment {
 		this.UIN = UIN;
 	}
 
+	
+	
+	public int getUIN() {
+		return UIN;
+	}
+
+	public void setUIN(int uIN) {
+		UIN = uIN;
+	}
+
+	
 	public int getOfferID() {
 		return offerID;
 	}
@@ -57,9 +69,14 @@ public class StudentEnrollment {
 		this.offerID = offerID;
 	}
 
-	public void setStudentGrade(char grade) {
+	public char getGrade() {
+		return grade;
+	}
+
+	public void setGrade(char grade) {
 		this.grade = grade;
 	}
+
 	
 	public HashMap<CourseOffered, String> getAllGradesOfStudent (Student student) {
 		int UIN = student.getUIN();
@@ -227,7 +244,12 @@ public class StudentEnrollment {
 				column = {"UIN"}, 
 				isSource = true)
 		
-		String SQLGradeSelect = "Select offerID FROM studentenrollment WHERE UIN = ?;";
+		String SQLGradeSelect = "SELECT studentenrollment.OfferID " +  
+								"FROM university.studentenrollment JOIN coursesoffered JOIN semester " +
+								"Where studentenrollment.UIN = ? " +
+								"AND studentenrollment.OfferID = coursesoffered.OfferID " + 
+								"AND coursesoffered.SemesterID = semester.SemesterID " +
+								"AND semester.IsCurrent = 1;";
 		try{
 			Connection conn = Database.getConnection();
 			
@@ -252,7 +274,7 @@ public class StudentEnrollment {
 				 			e1.printStackTrace();
 				 		}
 				         
-				 		coursesTaken.add(studentCourse);
+				 		enrolledCourses.add(studentCourse);
 					}      
 				}
 			} catch(SQLException e){
@@ -262,18 +284,40 @@ public class StudentEnrollment {
 		} catch(Exception e){
 			System.out.println(e);
 		}
-				
 		
-	//	CourseOffered courseEnrolled = new CourseOffered(Course course, CourseSchedule courseSchedule,
-	//			CourseFiles courseFiles, int offerID, String semester, Calendar year,
-	//			int totalCapacity, int currentlyFilled);
-	//	enrolledCourses.add(courseEnrolled);
 		return enrolledCourses;
 	}
 
-	
-	public static int getStudentEnrollmentID(Student student, int offerID) {
-		// TODO Auto-generated method stub
-		return 0;
+	public synchronized boolean enrollStudents(){
+		boolean isStudentEnrolled = false;
+		int UIN = this.getUIN();
+		int offerID = this.getOfferID();
+		
+		// Step 1: Check if student is already enrolled for this course
+		boolean isStudentCurrentlyEnrolled = this.isStudentEnrolled(UIN, offerID);
+		
+		// Step 2: if student is not enrolled, check whether there are any seats left.
+		boolean isSeatAvailable = this.isSeatAvailable();
+		
+		// Step 3: If student is not enrolled currently AND 
+		// if a seat is available, Enroll the student
+		
+		
+		// Db code
+		
+		return isStudentEnrolled;
 	}
+	
+	private boolean isStudentEnrolled(int UIN,int offerID){
+		boolean isStudentEnrolled = false;
+		
+		return isStudentEnrolled;
+	}
+		
+	private boolean isSeatAvailable(){
+		boolean isSeatAvailable = false;
+		
+		return isSeatAvailable;
+	}
+	
 }
