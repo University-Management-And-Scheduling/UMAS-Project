@@ -4,6 +4,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 
 
 public class CourseSchedule {
@@ -148,15 +149,51 @@ public class CourseSchedule {
 		if(courseoffered == null || classroom == null || timeslots == null){
 			return;
 		}
-		
+				
 		//Check if the course offering is already scheduled
 		boolean isAlreadyScheduled = courseoffered.checkIfScheduled();
-		if(courseoffered.checkIfCurrent()){
-			//Check if the course offering can be scheduled in the classroom mentioned including timeslot type etc
+		boolean isEmpty = Classroom.isEmpty(classroom, timeslots);
+		if(isAlreadyScheduled && isEmpty){
+			try{
+				Connection conn = Database.getConnection();
+				
+				try{
+					if(conn != null){
+						String scheduleInsert = "UPDATE university.courseschedule "
+								+ "SET TimeSlotID= ? , ClassroomID=? "
+								+ "WHERE OfferID= ?";
+						PreparedStatement statement = conn.prepareStatement(scheduleInsert, ResultSet.CONCUR_UPDATABLE);
+						statement.setInt(3, courseoffered.getOfferID());
+						statement.setInt(1, timeslots.getTimeSlotID());
+						statement.setInt(2, classroom.getClassroomID());
+						statement.executeUpdate();
+						Database.commitTransaction(conn);
+					}
+				}
+				
+				catch(SQLException e){
+					System.out.println("Error updating schedule");
+					System.out.println(e.getMessage());
+					//e.printStackTrace();
+				}
+				
+			}
+			
+			finally{
+			}
 			
 		}
 		
 		//If none of the above steps throw an error schedule the course
+	}
+	
+	public static HashMap<Integer, CourseSchedule> getHaspMapForSchedule(){
+		HashMap<Integer, CourseSchedule> cs = new HashMap<Integer, CourseSchedule>();
+		for(CourseSchedule c: getAllScheduledCourses()){
+			cs.put(c.getOfferID(), c);
+		}
+		
+		return cs;
 	}
 	
 	public static ArrayList<CourseSchedule> getAllScheduledCourses(){
@@ -200,7 +237,7 @@ public class CourseSchedule {
 		Timeslots t = null;
 		int timeSlotType = 1;
 		
-		if(isScheduled(courseOffered)){
+		if(isScheduled(courseOffered.getOfferID())){
 			System.out.println("Course is already scheduled");
 			return;
 		}
@@ -240,9 +277,53 @@ public class CourseSchedule {
 		
 		//Commit the schedule
 	}
+
+	public static boolean scheduleCourseUsingID(int offerID, int capacity){
+		Classroom c = null;
+		Timeslots t = null;
+		int timeSlotType = 1;
+		boolean addFlag = false;
+		
+		if(isScheduled(offerID)){
+			System.out.println("Course is already scheduled");
+			return false;
+		}
+		
+		//Find a classroom with empty slot
+		classroomFind:while(timeSlotType<=2){
+			System.out.println("--------------------------------------------------------------"
+					+ "\n LOOKING FOR TIMESLOTS WITH TYPE:"+timeSlotType);
+			
+			for(ClassroomLocation location:ClassroomLocation.values()){
+				System.out.println("-----------------------------------------------------------"
+						+ "\n LOOKING AT LOCATION:"+location.toString());
+				
+				c = Classroom.getEmptyClassroom(location, timeSlotType, capacity);
+				//System.out.println("Got classroom:"+c.getClassroomName().toString()+" at location:"+location.toString()+" repeat:"+c.getClassroomLocation().toString());
+				if(c!=null){
+					System.out.println("Returning classroom:"+c.getClassroomName().toString()+" at location:"+location.toString()+" repeat:"+c.getClassroomLocation().toString());
+					break classroomFind;
+				}
+			}
+			
+			timeSlotType++;
+		}
+		
+		if(c==null)
+			System.out.println("Cannot schedule this course");
+		
+		if(c!=null){
+			t = Classroom.getEmptySlot(c, timeSlotType);				
+			//Schedule the course in the empty slot
+			int classroomID = c.getClassroomID();
+			int timeslotID = t.getTimeSlotID();
+			addFlag = addSchedule(offerID, classroomID, timeslotID);
+		}
+		
+		return addFlag;
+	}
 	
-	public static boolean isScheduled(CourseOffered courseOffered){
-		int offerID = courseOffered.getOfferID();
+	public static boolean isScheduled(int offerID){
 		boolean isScheduled = false;
 		try{
 			Connection conn = Database.getConnection();
@@ -290,7 +371,8 @@ public class CourseSchedule {
 		return isScheduled;
 	}
 	
-	private static void addSchedule(int offerID, int classroomID, int timeslotID){
+	private static boolean addSchedule(int offerID, int classroomID, int timeslotID){
+		boolean addFlag = false;
 		
 		try{
 			Connection conn = Database.getConnection();
@@ -307,6 +389,7 @@ public class CourseSchedule {
 					statement.executeUpdate();
 					System.out.println("Adding course schedule with offerID:"+offerID+" ClassroomID:"+classroomID+" TimeslotID:"+timeslotID);
 					//Database.commitTransaction(conn);
+					addFlag = true;
 				}
 			}
 			
@@ -316,14 +399,12 @@ public class CourseSchedule {
 				//e.printStackTrace();
 			}
 			
-			finally{
-				//Database.commitTransaction(conn);
-			}
-			
 		}
 		
 		finally{
 		}
+		
+		return addFlag;
 	}
 	
 	public static void scheduleAllCurrentCourses(){
@@ -349,11 +430,7 @@ public class CourseSchedule {
 		
 		Database.commitTransaction(Database.getConnection());
 	}
-	
-	public void updateCourseSchedule(Classroom classroom, Timeslots timeslots){
 		
-	}
-	
 	private static void deleteAllCourseSchedule(){
 		try{
 			Connection conn = Database.getConnection();
@@ -410,6 +487,12 @@ public class CourseSchedule {
 	}
 	
 	public static void main(String args[]) throws Course.CourseDoesNotExistException, CourseOffered.CourseOfferingDoesNotExistException{
-		scheduleAllCurrentCourses();
+		//scheduleAllCurrentCourses();
+		try {
+			updateCourseSchedule(new CourseOffered(295), new Classroom(10), new Timeslots(31));
+		} catch (CourseOffered.CourseOfferingNotCurrentException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 }

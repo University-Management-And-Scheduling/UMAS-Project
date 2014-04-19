@@ -271,9 +271,7 @@ public class Timeslots {
 	}
 	
 	public static void main(String args[]){
-		Timeslots t1 = new Timeslots(31);
-		Timeslots t2 = new Timeslots(38);
-		System.out.println(isConflict(t1, t2));
+		Timeslots t1 = new Timeslots(1);
 	}
 	
 }

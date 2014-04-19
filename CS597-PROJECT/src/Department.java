@@ -3,6 +3,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 
 public class Department {
 	private String departmentName;
@@ -292,6 +293,45 @@ public class Department {
 		toReturn+="\nDepartment name:"+this.getDepartmentName();
 		toReturn+="\nDepartment ID:"+this.getDepartmentName();
 		return toReturn;
+	}
+	
+
+	public static ArrayList<Department> getAllDepartments(){
+		ArrayList<Department> departments = new ArrayList<Department>();
+		try{
+			Connection conn = Database.getConnection();
+			
+			try{
+				if(conn != null){
+					String SQLSelect= "Select *"
+							+ " FROM university.department";
+					PreparedStatement statement = conn.prepareStatement(SQLSelect);
+					ResultSet rs =  statement.executeQuery();
+					
+					while(rs.next()){
+						try {
+							Department d = new Department(rs.getInt("DepartmentID"));
+							departments.add(d);
+						} catch (DepartmentDoesNotExistException e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+						}
+						
+					}
+					
+				}
+			}
+			
+			catch(SQLException e){
+				System.out.println("Error updating/adding");
+				System.out.println(e.getMessage());
+			}			
+		}
+		
+		finally{
+		}
+		
+		return departments;
 	}
 	
 	//DepartmentDoesnotExist Exception
