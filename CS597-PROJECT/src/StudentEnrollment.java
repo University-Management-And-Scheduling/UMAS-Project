@@ -321,12 +321,21 @@ public class StudentEnrollment {
 				} catch (CourseOffered.CourseOfferingDoesNotExistException e1) {
 					e1.printStackTrace();
 				}
+				
+				Course course = offeredCourse.getCourse();
+				String courseName = course.getCourseName();
+				int semID = offeredCourse.getSemesterID();
+				
+				String tableName = courseName + Integer.toString(offerID) + Integer.toString(semID); 
 			
+				
 				@DBAnnotation (
 						variable = {"UIN","offerID"},  
 						table = "studentenrollment", 
 						column = {"UIN","OfferID"}, 
 						isSource = false)
+				
+				String SQLCourseExamsInsert = "INSERT INTO ? (StudentUIN,StudentEnrollmentID) VALUES(?,?) ;";
 				String SQLStudentEnrollInsert = "INSERT INTO studentenrollment VALUES(?,?,?) ;";
 				
 				try {
@@ -334,11 +343,27 @@ public class StudentEnrollment {
 					try {
 						if (conn != null) {
 						 
-							PreparedStatement statement = conn.prepareStatement(SQLStudentEnrollInsert);
+							String key[] = { "EnrollmentID" };
+							PreparedStatement statement = conn.prepareStatement(SQLStudentEnrollInsert,key);
 							statement.setInt(1, UIN);
 							statement.setInt(2, offerID);
 							statement.setString(2, grade);
 							statement.executeUpdate();
+							
+							ResultSet rs = statement.getGeneratedKeys();
+							int generatedEnrollmentID = 0;
+							// To get the database auto-generated EnrollmentID of
+							// the student enrollment just inserted
+							if (rs.next()) {
+								generatedEnrollmentID= rs.getInt(1);
+							}
+							
+							statement = conn.prepareStatement(SQLCourseExamsInsert);
+							statement.setString(1, tableName);
+							statement.setInt(2, UIN);
+							statement.setInt(3, generatedEnrollmentID);
+							statement.executeUpdate();
+							
 							CourseOffered.addOneSeatFilledToCourseOffered(offeredCourse);
 							Database.commitTransaction(conn);
 							isStudentEnrolled = true;
@@ -495,19 +520,33 @@ public class StudentEnrollment {
 				e1.printStackTrace();
 			}
 			
+			Course course = offeredCourse.getCourse();
+			String courseName = course.getCourseName();
+			int semID = offeredCourse.getSemesterID();
+			
+			String tableName = courseName + Integer.toString(offerID) + Integer.toString(semID); 
+		
+			
 			@DBAnnotation (
-					variable = {"EnrollmentID"},  
-					table = "studentenrollment", 
-					column = {"UIN","OfferID"}, 
+					variable = {"EnrollmentID","UIN"},  
+					table = {"studentenrollment","tableName"}, 
+					column = {"UIN","OfferID","All"}, 
 					isSource = true)
-			String SQLStudentEnrollDelete= "DELETE FROM `studentenrollment` WHERE `EnrollmentID`='?';";
+			
+			String SQLCourseExamsDelete = "DELETE FROM `?` WHERE `StudentUIN`='?';";
+			String SQLStudentEnrollDelete = "DELETE FROM `studentenrollment` WHERE `EnrollmentID`='?';";
 			
 			try {
 				Connection conn = Database.getConnection();
 				try {
 					if (conn != null) {
 					 
-						PreparedStatement statement = conn.prepareStatement(SQLStudentEnrollDelete);
+						PreparedStatement statement = conn.prepareStatement(SQLCourseExamsDelete);
+						statement.setString(1, tableName);
+						statement.setInt(2, UIN);
+						statement.executeUpdate();
+						
+						statement = conn.prepareStatement(SQLStudentEnrollDelete);
 						statement.setInt(1, enrollmentID);
 						statement.executeUpdate();
 						this.removeOneSeatFromCourseOffered(offeredCourse);
