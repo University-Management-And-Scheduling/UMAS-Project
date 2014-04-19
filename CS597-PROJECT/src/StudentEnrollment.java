@@ -89,7 +89,6 @@ public class StudentEnrollment {
 	public void setGrade(String grade) {
 		this.grade = grade;
 	}
-
 	
 	public HashMap<CourseOffered, String> getAllGradesOfStudent (Student student) {
 		int UIN = student.getUIN();
