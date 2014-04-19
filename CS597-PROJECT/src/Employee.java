@@ -24,7 +24,7 @@ public class Employee extends People {
 			
 			try{
 				
-				SQLPeopleSelect = "Select UIN From employee where UIN=?;";
+				SQLPeopleSelect = "Select * From employee where UIN=?;";
 				PreparedStatement stmt = conn.prepareStatement(SQLPeopleSelect);
 				stmt.setInt(1, UIN);
 				ResultSet rs =  stmt.executeQuery();
