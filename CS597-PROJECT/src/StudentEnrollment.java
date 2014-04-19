@@ -8,12 +8,15 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Set;
+
 
 public class StudentEnrollment {
 	int enrollmentID; // Unique id per enrollment
 	int UIN;		// Student UIN
 	int offerID; //OfferID of course offered in a sem
-	char grade; //Student Grade = 'A', 'B','C', 'D' and 'F'
+	String grade; //Student Grade = 'A', 'B','C', 'D' and 'F'
 	
 	
 	@Target({ElementType.LOCAL_VARIABLE})
@@ -34,15 +37,15 @@ public class StudentEnrollment {
 		return enrollmentID;
 	}
 
-	public StudentEnrollment(int enrollmentID, int offerID, char grade, int UIN) {
+	public StudentEnrollment(int enrollmentID, int UIN, int offerID, String grade) {
 		super();
 		this.enrollmentID = enrollmentID;
+		this.UIN = UIN;
 		this.offerID = offerID;
 		this.grade = grade;
-		this.UIN = UIN;
 	}
 
-	public StudentEnrollment(int offerID, char grade, int UIN) {
+	public StudentEnrollment(int UIN, int offerID, String grade) {
 		super();
 		this.offerID = offerID;
 		this.grade = grade;
@@ -54,7 +57,7 @@ public class StudentEnrollment {
 	public StudentEnrollment(int offerID, int UIN) {
 		super();
 		this.offerID = offerID;
-		this.grade = 'A'; // Default grade at the time of enrollment
+		this.grade = "A"; // Default grade at the time of enrollment
 		this.UIN = UIN;
 	}
 	
@@ -71,10 +74,6 @@ public class StudentEnrollment {
 		return offerID;
 	}
 
-	public char getStudentgrade() {
-		return grade;
-	}
-
 	public void setEnrollmentID(int enrollmentID) {
 		this.enrollmentID = enrollmentID;
 	}
@@ -83,11 +82,11 @@ public class StudentEnrollment {
 		this.offerID = offerID;
 	}
 
-	public char getGrade() {
+	public String getGrade() {
 		return grade;
 	}
 
-	public void setGrade(char grade) {
+	public void setGrade(String grade) {
 		this.grade = grade;
 	}
 
@@ -147,15 +146,6 @@ public class StudentEnrollment {
 		return courseGrade;
 	
 	}
-
-//	public String getGradeforCourse (CourseOffered courseOffered) {
-//
-//		String grade = "A";
-//		
-//		//DB Code
-//		
-//		return grade;
-//	}
 	
 	public static ArrayList<CourseOffered> getStudentsAllCourses(Student student){
 		ArrayList<CourseOffered> coursesTaken = new ArrayList<CourseOffered>();
@@ -306,6 +296,7 @@ public class StudentEnrollment {
 		boolean isStudentEnrolled = false;
 		int UIN = this.getUIN();
 		int offerID = this.getOfferID();
+		String grade = this.getGrade();
 		
 		// Step 1: Check if student is already enrolled for this course
 		boolean isStudentCurrentlyEnrolled = this.isStudentEnrolled(UIN, offerID);
@@ -320,14 +311,23 @@ public class StudentEnrollment {
 				
 				// Step 3: If student is not enrolled currently AND 
 				// if a seat is available, Enroll the student
-			
 				
+				CourseOffered offeredCourse = null;
+				
+				try {
+					offeredCourse = new CourseOffered(offerID);
+				} catch (Course.CourseDoesNotExistException e1) {
+					e1.printStackTrace();
+				} catch (CourseOffered.CourseOfferingDoesNotExistException e1) {
+					e1.printStackTrace();
+				}
+			
 				@DBAnnotation (
 						variable = {"UIN","offerID"},  
 						table = "studentenrollment", 
 						column = {"UIN","OfferID"}, 
 						isSource = false)
-				String SQLStudentEnrollInsert = "INSERT INTO studentenrollment VALUES(?,?,A) ;";
+				String SQLStudentEnrollInsert = "INSERT INTO studentenrollment VALUES(?,?,?) ;";
 				
 				try {
 					Connection conn = Database.getConnection();
@@ -337,7 +337,9 @@ public class StudentEnrollment {
 							PreparedStatement statement = conn.prepareStatement(SQLStudentEnrollInsert);
 							statement.setInt(1, UIN);
 							statement.setInt(2, offerID);
+							statement.setString(2, grade);
 							statement.executeUpdate();
+							CourseOffered.addOneSeatFilledToCourseOffered(offeredCourse);
 							Database.commitTransaction(conn);
 							isStudentEnrolled = true;
 						}	
@@ -354,10 +356,34 @@ public class StudentEnrollment {
 		return isStudentEnrolled;
 	}
 	
+	public boolean updateAllStudentGrade(HashMap<Student,String> studentGrades, CourseOffered offeredCourse){
+		boolean isGradeUpdated = false;
+		
+		int offerID = offeredCourse.getOfferID();
+		Set<Student> keys = studentGrades.keySet();
+		Iterator<Student> keyIterator = keys.iterator();
+		while (keyIterator.hasNext()) {
+			Student student = keyIterator.next();
+			int UIN = student.getUIN();
+			String grade = studentGrades.get(student);
+			
+			StudentEnrollment enrollStudent = new StudentEnrollment(UIN,offerID,grade);
+			boolean updateStudentGrade = enrollStudent.updateStudentGrade();
+			
+			if(updateStudentGrade == false){
+				System.out.println("Student " + student.getName() + "'s grade not updated");
+			}
+			
+		}
+		
+		return isGradeUpdated;
+	}
+	
 	public boolean updateStudentGrade(){
 		boolean isGradeUpdated = false;
 		int UIN = this.getUIN();
 		int offerID = this.getOfferID();
+		String grade = this.getGrade();
 		
 		// Step 1: Check if student is already enrolled for this course
 		boolean isStudentCurrentlyEnrolled = this.isStudentEnrolled(UIN, offerID);
@@ -369,9 +395,9 @@ public class StudentEnrollment {
 			// Step 2: If student is enrolled currently, update their grade.
 			
 			@DBAnnotation (
-					variable = {"UIN","offerID"},  
+					variable = {"grade","enrollmentID"},  
 					table = "studentenrollment", 
-					column = {"UIN","OfferID"}, 
+					column = {"Grade","EnrollmentID"}, 
 					isSource = false)
 			String SQLStudentEnrollInsert = "UPDATE `studentenrollment` SET `Grade`='?' WHERE `EnrollmentID`='?';";
 			
@@ -381,8 +407,8 @@ public class StudentEnrollment {
 					if (conn != null) {
 					 
 						PreparedStatement statement = conn.prepareStatement(SQLStudentEnrollInsert);
-						statement.setInt(1, UIN);
-						statement.setInt(2, offerID);
+						statement.setString(1, grade);
+						statement.setInt(2, enrollmentID);
 						statement.executeUpdate();
 						Database.commitTransaction(conn);
 						isGradeUpdated = true;
@@ -444,6 +470,63 @@ public class StudentEnrollment {
 		return enrollmentID;
 	}
 
+	public boolean unregisterStudent(){
+		boolean studentUnregistered = false;
+		
+		int UIN = this.getUIN();
+		int offerID = this.getOfferID();
+		
+		// Step 1: Check if student is enrolled for this course
+		boolean isStudentCurrentlyEnrolled = this.isStudentEnrolled(UIN, offerID);
+		if(isStudentCurrentlyEnrolled == false){
+			System.out.println("The student is not enrolled");
+		} else{
+			
+			// Step 2: If enroll, delete the student record
+			int enrollmentID = this.getStudentEnrollmentID();
+			
+			CourseOffered offeredCourse = null;
+			
+			try {
+				offeredCourse = new CourseOffered(offerID);
+			} catch (Course.CourseDoesNotExistException e1) {
+				e1.printStackTrace();
+			} catch (CourseOffered.CourseOfferingDoesNotExistException e1) {
+				e1.printStackTrace();
+			}
+			
+			@DBAnnotation (
+					variable = {"EnrollmentID"},  
+					table = "studentenrollment", 
+					column = {"UIN","OfferID"}, 
+					isSource = true)
+			String SQLStudentEnrollDelete= "DELETE FROM `studentenrollment` WHERE `EnrollmentID`='?';";
+			
+			try {
+				Connection conn = Database.getConnection();
+				try {
+					if (conn != null) {
+					 
+						PreparedStatement statement = conn.prepareStatement(SQLStudentEnrollDelete);
+						statement.setInt(1, enrollmentID);
+						statement.executeUpdate();
+						this.removeOneSeatFromCourseOffered(offeredCourse);
+						Database.commitTransaction(conn);
+						studentUnregistered = true;
+					}	
+				} catch (SQLException e) {
+					System.out.println(e);
+					Database.rollBackTransaction(conn);
+				}
+
+			} catch (Exception e) {
+				System.out.println(e);
+			}
+		}
+		
+		return studentUnregistered;
+	}
+	
 	private boolean isStudentEnrolled(int UIN,int offerID){
 		boolean isStudentEnrolled = false;
 		
@@ -541,6 +624,49 @@ public class StudentEnrollment {
 		return isSeatAvailable;
 	}
 	
-	
+	private  boolean removeOneSeatFromCourseOffered(CourseOffered courseOffered) throws CourseOffered.CourseOfferingDoesNotExistException{
+		boolean seatRemoved = false;
+		
+		int offerID = this.getOfferID();
+		try{
+			Connection conn = Database.getConnection();
+			try{
+				if(conn != null){
+					
+					@DBAnnotation (
+							variable = {"offerID"},  
+							table = "coursesoffered", 
+							column = {"OfferID"}, 
+							isSource = true)
+					String SQLcoursesOfferedSelect = "Select * FROM coursesoffered WHERE OfferID= ?;";
+					PreparedStatement statement = conn.prepareStatement(SQLcoursesOfferedSelect);
+					statement.setInt(1, offerID);
+					ResultSet rs = statement.executeQuery();
+					if(rs.first()){
+						int currentlyFilled = rs.getInt(5);
+						currentlyFilled -= 1;
+						rs.updateInt(5, currentlyFilled);
+						Database.commitTransaction(conn);
+						seatRemoved = true;
+					}
+					else{
+						throw new CourseOffered.CourseOfferingDoesNotExistException();
+					}
+					
+				}						
+					
+			} catch(SQLException e){
+				System.out.println("Error addind course offering");
+				System.out.println(e.getMessage());
+				e.printStackTrace();
+				Database.rollBackTransaction(conn);
+			}
+		} catch (Exception e) {
+			System.out.println(e);
+		}
+			
+		return seatRemoved ;
+	}
+		
 	
 }
