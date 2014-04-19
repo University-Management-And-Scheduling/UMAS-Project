@@ -56,7 +56,6 @@ public void setFileLocation(String fileLocation) {
 	this.fileLocation = fileLocation;
 }
 
-
 public int getOfferID() {
 	return offerID;
 }
@@ -68,6 +67,7 @@ public void setOfferID(int offerID) {
 // Add a new file to file table in the database
 public static boolean addFileToDB(String fileName, String fileLocation, int offerID){
 	boolean fileAdded = false;
+	
 	String newFileLocation = fileLocation.replace("/","//");
 	@DBAnnotation (
 			variable = {"fileName","newfileLocation", "offerID"},  
@@ -85,14 +85,13 @@ public static boolean addFileToDB(String fileName, String fileLocation, int offe
 				
 				// Check if file is already present. 
 				
-				boolean isFilePresent = checkInDatabase(fileName, newFileLocation, offerID);
+				boolean isFilePresent = isFilePresent(fileName, newFileLocation, offerID);
 				
 				// If present, confirm whether it needs to be replaced
-				
 				String addFileToDB = "yes";
-				Scanner in = new Scanner(System.in);
-			
+				
 				if(isFilePresent = true){
+					Scanner in = new Scanner(System.in);
 					System.out.println("File already Present. Do you want to Replace it? Yes/No: ");
 					addFileToDB = in.next();
 				}
@@ -121,14 +120,15 @@ public static boolean addFileToDB(String fileName, String fileLocation, int offe
 		
 }
 
-private static boolean checkInDatabase(String fileName, String fileLocation, int offerID){
+private static boolean isFilePresent(String fileName, String fileLocation, int offerID){
+	boolean isFilePresent = false;
+	
 	@DBAnnotation (
 			variable = "fileName",  
 			table = "files", 
 			column = "FileName", 
 			isSource = true)
 	
-	boolean isFilePresent = false;
 	String SQLFileSelect = "SELECT FileName FROM files WHERE OfferID = ? AND FileLocation = ?;";
 	
 	try {
@@ -159,6 +159,128 @@ private static boolean checkInDatabase(String fileName, String fileLocation, int
 	}
 	
 	return isFilePresent;
+}
+
+public boolean deleteFileFromDB(){
+	boolean fileDeleted = false;
+	
+	int fileID = this.getFileID();
+	String fileName = this.getFileName();
+	String fileLocation = this.getFileLocation();
+	int offerID = this.getOfferID();
+	
+	boolean isFilePresent = isFilePresent(fileName,fileLocation,offerID);
+	if(isFilePresent == false){
+		System.out.println("The file is not present");
+	} else {
+		@DBAnnotation (
+				variable = {"fileID"},  
+				table = "files", 
+				column = {"FileID"}, 
+				isSource = false)
+		
+		String SQLFileSelect = "DELETE FROM files WHERE FileID = ?;";
+		try {
+			Connection conn = Database.getConnection();
+			try {
+				if (conn != null) {
+					PreparedStatement statement = conn.prepareStatement(SQLFileSelect);
+					statement.setInt(1, fileID);				
+					statement.executeUpdate();
+					Database.closeConnection(conn);
+					fileDeleted = true;
+				}
+			} catch (SQLException e) {
+				System.out.println(e);
+				Database.rollBackTransaction(conn);
+			}
+
+		} catch (Exception e) {
+			System.out.println(e);
+		}
+
+	}
+	
+	return fileDeleted;
+}
+
+public boolean modifyFileLocation(String newFileLocation){
+	boolean fileLocationModified = false;
+	
+	int fileID = this.getFileID();
+	
+	String fileName = this.getFileName();
+	String fileLocation = this.getFileLocation();
+	int offerID = this.getOfferID();
+	boolean isFilePresent = isFilePresent(fileName,fileLocation,offerID);
+	if(isFilePresent == false){
+		System.out.println("The file is not present");
+	} else {
+		@DBAnnotation (
+				variable = {"fileID","newFileLocation"},  
+				table = "files", 
+				column = {"FileID","FileLocation"}, 
+				isSource = false)
+		
+		String SQLFileSelect = "UPDATE files SET `FileLocation`= ? WHERE `FileID`= ? ;";
+		try {
+			Connection conn = Database.getConnection();
+			try {
+				if (conn != null) {
+					PreparedStatement statement = conn.prepareStatement(SQLFileSelect);
+					statement.setString(1, newFileLocation);
+					statement.setInt(2, fileID);				
+					statement.executeUpdate();
+					Database.closeConnection(conn);
+					fileLocationModified = true;
+				}
+			} catch (SQLException e) {
+				System.out.println(e);
+				Database.rollBackTransaction(conn);
+			}
+
+		} catch (Exception e) {
+			System.out.println(e);
+		}
+
+	}
+
+	return fileLocationModified;
+}
+
+public int getFileIDFromDB(String fileName,String fileLocation){
+	int fileID = 0;
+	
+	@DBAnnotation (
+			variable = {"fileID", "fileName","fileLocation"},  
+			table = "files", 
+			column = {"FileID","FileName","FileLocation"}, 
+			isSource = {true})
+	
+	String SQLFileSelect = "SELECT FileID FROM files WHERE FileName = ?, FileLocation = ?;";
+	try {
+		Connection conn = Database.getConnection();
+		try {
+			if (conn != null) {
+				PreparedStatement statement = conn.prepareStatement(SQLFileSelect);
+				statement.setString(1, fileName);
+				statement.setString(1, fileLocation);
+				
+				ResultSet rs = statement.executeQuery();
+				
+				while(rs.next()){
+					fileID = rs.getInt("FileID");
+				}
+			}
+		} catch (SQLException e) {
+			System.out.println(e);
+		}
+
+	} catch (Exception e) {
+		System.out.println(e);
+	}
+	
+	return fileID;
 }
 
 // Get a list of files for a single course
