@@ -47,6 +47,7 @@ public String getFileName() {
 public void setFileName(String fileName) {
 	this.fileName = fileName;
 }
+
 public String getFileLocation() {
 	return fileLocation;
 }
