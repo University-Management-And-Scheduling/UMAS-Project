@@ -7,6 +7,7 @@ import java.util.ArrayList;
 
 public class Professor extends Employee {
 	
+	
 	/* Due to some unknown error some functions and some updates have been deleted. I am writing them and updating them as i remember
 	 * 
 	 *  
@@ -588,7 +589,8 @@ public class Professor extends Employee {
 //			e.printStackTrace();
 //		}
 		
-		getAllProf();
+		Professor prof=new Professor(28);
+		
 		
 		
 		

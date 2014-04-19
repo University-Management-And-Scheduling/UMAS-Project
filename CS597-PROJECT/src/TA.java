@@ -230,6 +230,15 @@ public class TA extends Student {
 		finally{
 		}
 		
+		
+	}
+	
+	public static void main(String[] args){
+		
+		
+		getAllTAs();
+		
+		
 	}
 
 }

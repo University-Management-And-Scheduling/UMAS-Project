@@ -1,20 +1,22 @@
 import java.sql.Connection;
-import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 
-import javax.mail.SendFailedException;
-
 import org.joda.time.Period;
-
 
 public class WaitList {
 	int offerID;
 	int UIN;
 	int queuePos;
+	
+	private WaitList(){
+		//Wait List class cannot be initialized directly
+	}
+	
+	
 	/**
 	 * @return the offerID
 	 */
@@ -52,7 +54,7 @@ public class WaitList {
 		this.queuePos = queuePos;
 	}
 
-	public static void addStudentToWaitList(Student student, int offerID){
+	public static void addStudentToWaitList(Student student, int offerID) throws Course.CourseDoesNotExistException, CourseOffered.CourseOfferingDoesNotExistException{
 		if(canBeAddedToWaitList(student, offerID)){
 			//add to wait list
 			int queuePos = getLastQueuePos(offerID) + 1;
@@ -240,10 +242,10 @@ public class WaitList {
 		
 	}
 	
- 	public static boolean canBeAddedToWaitList(Student student, int offerID){
+ 	public static boolean canBeAddedToWaitList(Student student, int offerID) throws Course.CourseDoesNotExistException, CourseOffered.CourseOfferingDoesNotExistException{
 		boolean canBeAdded = false;
-		
-		if(CourseOffered.isCourseRegistrableBy(student, offerID)){
+		CourseOffered courseOffered = new CourseOffered(offerID);
+		if(courseOffered.isCourseRegistrableBy(student)){
 			canBeAdded = false;
 		}
 		

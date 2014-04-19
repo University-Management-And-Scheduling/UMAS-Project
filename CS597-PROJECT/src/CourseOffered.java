@@ -420,7 +420,7 @@ public class CourseOffered {
 						statement.setInt(3, totalCap);
 						statement.setInt(4, 0);
 						statement.setInt(5, profID);
-						int i = statement.executeUpdate();
+						//int i = statement.executeUpdate();
 						ResultSet generatedSet = statement.getGeneratedKeys();
 						int generatedID = -1;
 						if(generatedSet.first())

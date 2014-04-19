@@ -5,7 +5,6 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.LinkedHashMap;
 
 public class Classroom {
@@ -143,14 +142,14 @@ public class Classroom {
 		}
 	}
 	
-	public static Timeslots getEmptySlot(Classroom classroom, int timeSlotType){
+	public Timeslots getEmptySlot(int timeSlotType){
 		if(!checkTimeSlotType(timeSlotType)){
 			System.out.println("Timeslot type is incorrect");
 			return null;
 		}
 		
 		
-		ArrayList<Timeslots> emptySlots = findOpenSlotsForClassroom(classroom, timeSlotType);
+		ArrayList<Timeslots> emptySlots = findOpenSlotsForClassroom(timeSlotType);
 		int size = emptySlots.size();
 		if(size>0){
 			System.out.println("--------------Found and empty time slot---------------");
@@ -178,7 +177,7 @@ public class Classroom {
 				if(c!=null){
 					//System.out.println("Call findEmptySlotsForClassroom for just checking. Not retreiving");
 					if(c.getClassroomCapacity() >= expectedCapacity){
-						times = findOpenSlotsForClassroom(c, timeSlotType);
+						times = c.findOpenSlotsForClassroom(timeSlotType);
 						if(times.size()>0){
 							System.out.println("Found a classroom with empty time slots:"+c.getClassroomName().toString()+" "
 									+ ""+ c.getClassroomLocation().toString());
@@ -261,7 +260,7 @@ public class Classroom {
 				if(c!=null){
 					//System.out.println("Call findEmptySlotsForClassroom for just checking. Not retreiving");
 					if(c.getClassroomCapacity() >= expectedCapacity){
-						times = findOpenSlotsForClassroom(c, timeSlotType);
+						times = c.findOpenSlotsForClassroom(timeSlotType);
 						if(times.size()>0){
 							System.out.println("Found a classroom with empty time slots:"+c.getClassroomName().toString()+" "
 									+ ""+ c.getClassroomLocation().toString());
@@ -275,16 +274,14 @@ public class Classroom {
 		return classrooms;
 	}
 	
-	public static ArrayList<Timeslots> findOpenSlotsForClassroom(Classroom classroom, int timeSlotType){
-		if(classroom == null)
-			return null;
+	public ArrayList<Timeslots> findOpenSlotsForClassroom(int timeSlotType){
 		if(timeSlotType < 1 || timeSlotType > 2)
 			return null;
 		
-		System.out.println("Looking for open time slots in classroom:"+classroom.getClassroomName().toString()+" at location:"+classroom.getClassroomLocation().toString());
+		System.out.println("Looking for open time slots in classroom:"+this.getClassroomName().toString()+" at location:"+this.getClassroomLocation().toString());
 		
 		ArrayList<Timeslots> timeslots = new ArrayList<Timeslots>();
-		int classroomID = classroom.getClassroomID();
+		int classroomID = this.getClassroomID();
 		try{
 			Connection conn = Database.getConnection();
 			
