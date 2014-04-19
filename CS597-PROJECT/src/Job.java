@@ -3,6 +3,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 
 import com.mysql.jdbc.Statement;
 
@@ -157,32 +158,35 @@ public class Job {
 					System.out.println(i);
 					System.out.println("Inserted");
 					isAdded=true;
+					
+					Database.commitTransaction(conn);
 
 					
 					
 					
 					// get the students and put it in the job roster
 					
-					ArrayList<Student> retrievedList = JobApplication.retreiveMatchingStudents(reqdMinimumGPA, reqdMinimumWorkExperience, skillset1, skillset2, skillset3, skillset4, skillset5);
+					LinkedHashMap<Integer,Student> retrievedList = JobApplication.retreiveMatchingStudents(reqdMinimumGPA, reqdMinimumWorkExperience, skillset1, skillset2, skillset3, skillset4, skillset5);
 					
-					for(Student student:retrievedList){
-						System.out.println(student.getUIN());
+					for(Integer k:retrievedList.keySet()){
+						Student s=retrievedList.get(k);
+						System.out.println(s.getUIN());
 						
-						listOfEmails.add(student);
+						//listOfEmails.add(student);
 
 						// add to job roster only if email is sent.
 						
-						boolean ifadded=addToJobRoster(student.getUIN(),retreivedJobID);
+						//boolean ifadded=addToJobRoster(s.getUIN(),retreivedJobID);
 						Database.commitTransaction(conn);
 						
-						if(ifadded){
-							System.out.println("added to job roster");
-						}
-						else{
+						//if(ifadded){
+							//System.out.println("added to job roster");
+					//	}
+						//else{
 							
-							throw new NotAddedToJobRosterException();
+							//throw new NotAddedToJobRosterException();
 							
-						}
+						//}
 						
 					}
 					
@@ -377,30 +381,199 @@ public class Job {
 	}
 	
 	
-	public static String getEmail(Student student){
+	public static boolean sendEmail(int jobID, Student student){
 		
 		if(student!=null){
 		
 		String studentUserName=student.getUserName();
 		
-		String studentEmail=studentUserName+"@gmail.com";
+		String studentEmail=studentUserName+"@xyz.com";
 		
-		return studentEmail;
+		Email email = Email.getInstance("umas.uic@gmail.com", "cs597project");
+		String body = "You match our requirments. Please contact us at (xxx) xxx-xxxx for further interview steps";
+		String subject = "Job Match";
+		String receipients = ""+studentEmail+"";
+		boolean ifSent=email.sendEmail(receipients, subject, body);
+		
+		if(ifSent)
+			return true;
+			boolean addedToJobRoster=addToJobRoster(student.getUIN(), jobID);
+				if(addedToJobRoster){
+					return true;
+				}
+				else{
+					return false;
+				}
+				
+	}
+		
+		
+		return false;
 		}
-
-		else{
+	
+	public static LinkedHashMap<Integer,Job> getAllJobsBySingleProfessor(Professor prof){
 		
+		LinkedHashMap<Integer, Job> getAllJobs=new LinkedHashMap<Integer, Job>();
 		
-		return null;
+		if(prof==null){
+			
+			throw new NullPointerException();
 		}
 		
+		try{
+			Connection conn = Database.getConnection();
+			String SQLPeopleSelect="";
+			try{
+			
+				if(conn != null){
+					
+					SQLPeopleSelect = "Select JobID From jobpostings where PostedByUIN=?;";
+				}
+				
+				
+				
+				PreparedStatement stmtForSelect = conn.prepareStatement(SQLPeopleSelect);
+				stmtForSelect.setInt(1, prof.getUIN());
+				
+				ResultSet rs =  stmtForSelect.executeQuery();
+					
+					while(rs.next())
+					{
+						
+						 int retreivedjobID = rs.getInt("JobID"); 
+						 Job jobs=new Job(retreivedjobID);
+						 
+						 getAllJobs.put(jobs.getJobID(), jobs);
+					
+	
+				    
+					}
+					
+				
+			
+		
+	}
+			
+			catch(SQLException e){
+				e.printStackTrace();
+				System.out.println(e);
+				
+			}
+			
+			finally{
+				
+				//System.out.println("retrieved");
+			}
+		}
+		
+		catch(Exception e){
+			e.printStackTrace();
+			System.out.println(e);
+			
+		}
+		
+		finally{
+			
+			//System.out.println("retrieved");
+		}
+		
+		
+		
+		
+		
+	
+		
+		return getAllJobs;
 	}
 	
 	
 	
 	
 	
-	
+	public int getJobID() {
+		return jobID;
+	}
+
+	public void setJobID(int jobID) {
+		this.jobID = jobID;
+	}
+
+	public int getPostedByUIN() {
+		return postedByUIN;
+	}
+
+	public void setPostedByUIN(int postedByUIN) {
+		this.postedByUIN = postedByUIN;
+	}
+
+	public String getJobInDepartment() {
+		return jobInDepartment;
+	}
+
+	public void setJobInDepartment(String jobInDepartment) {
+		this.jobInDepartment = jobInDepartment;
+	}
+
+	public double getReqdMinimumGPA() {
+		return reqdMinimumGPA;
+	}
+
+	public void setReqdMinimumGPA(double reqdMinimumGPA) {
+		this.reqdMinimumGPA = reqdMinimumGPA;
+	}
+
+	public double getReqdMinimumWorkExperience() {
+		return reqdMinimumWorkExperience;
+	}
+
+	public void setReqdMinimumWorkExperience(double reqdMinimumWorkExperience) {
+		this.reqdMinimumWorkExperience = reqdMinimumWorkExperience;
+	}
+
+	public boolean isSkillset1() {
+		return skillset1;
+	}
+
+	public void setSkillset1(boolean skillset1) {
+		this.skillset1 = skillset1;
+	}
+
+	public boolean isSkillset2() {
+		return skillset2;
+	}
+
+	public void setSkillset2(boolean skillset2) {
+		this.skillset2 = skillset2;
+	}
+
+	public boolean isSkillset3() {
+		return skillset3;
+	}
+
+	public void setSkillset3(boolean skillset3) {
+		this.skillset3 = skillset3;
+	}
+
+	public boolean isSkillset4() {
+		return skillset4;
+	}
+
+	public void setSkillset4(boolean skillset4) {
+		this.skillset4 = skillset4;
+	}
+
+	public boolean isSkillset5() {
+		return skillset5;
+	}
+
+	public void setSkillset5(boolean skillset5) {
+		this.skillset5 = skillset5;
+	}
+
+
+
+
+
 	static class NoPermissionException extends Exception{
 		private static final long serialVersionUID = 1L;
 		private String message = null;
@@ -456,7 +629,7 @@ public class Job {
 	public static void main(String[] args){
 		
 		try {
-			postJob(11, 2, 2.0, 1.0, true, true, true, true, true);
+			postJob(17, 2, 2.0, 1.0, true, true, true, true, true);
 		} catch (NoPermissionException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

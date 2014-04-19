@@ -5,6 +5,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Hashtable;
+import java.util.LinkedHashMap;
 import java.util.List;
 
 import javax.xml.crypto.Data;
@@ -21,12 +22,14 @@ public class JobApplication {
 	protected boolean skill4;
 	protected boolean skill5;
 	protected float scaledScore;
+	String SQLPeopleSelect="";
+	String SQLPeopleReSelect="";
 	
 	public JobApplication(int UIN){
 	
 		try{
 			Connection conn = Database.getConnection();
-			String SQLPeopleSelect="";
+			
 			try{
 			
 				if(conn != null){
@@ -249,9 +252,9 @@ public class JobApplication {
 	}
 	 
 	 //retreive matching details
-	 public static ArrayList<Student> retreiveMatchingStudents(double GPA, double workExp, boolean skill1, boolean skill2, boolean skill3, boolean skill4, boolean skill5){
+	 public static LinkedHashMap<Integer,Student> retreiveMatchingStudents(double GPA, double workExp, boolean skill1, boolean skill2, boolean skill3, boolean skill4, boolean skill5){
 		
-		 ArrayList<Student> selectedStudents=new ArrayList<Student>();
+		 LinkedHashMap<Integer,Student> selectedStudents=new LinkedHashMap<Integer,Student>();
 		 //Hashtable addSelectedStudents = new Hashtable();
 		 int counter=0;
 		 
@@ -296,7 +299,7 @@ public class JobApplication {
 						counter++;	
 
 						Student chosenStudents=new Student(selectedUIN);
-						selectedStudents.add(chosenStudents);
+						selectedStudents.put(chosenStudents.getUIN(),chosenStudents);
 						System.out.println(chosenStudents.getUIN());
 						
 						
@@ -336,6 +339,252 @@ public class JobApplication {
 			return selectedStudents;
 		}
 	
+	 
+	 public static LinkedHashMap<Integer,Student> rePost(double GPA, double workExp, boolean skill1, boolean skill2, boolean skill3, boolean skill4, boolean skill5, Job job){
+			
+		 LinkedHashMap<Integer,Student> selectedStudents=new LinkedHashMap<Integer,Student>();
+		 //Hashtable addSelectedStudents = new Hashtable();
+		 int counter=0;
+		 
+		 try{
+				Connection conn = Database.getConnection();
+				String SQLPeopleSelect="";
+				try{
+				
+					if(conn != null){
+						//change the limit to 10 
+						SQLPeopleSelect = "Select applicationdetails.ApplicantUIN " +
+								"From university.applicationdetails inner join university.student on " +
+								"student.UIN=applicationdetails.ApplicantUIN where student.GPA>=? and " +
+								"applicationdetails.WorkExperience>=? and applicationdetails.SkillSet1=? and " +
+								"applicationdetails.SkillSet2=? and applicationdetails.SkillSet3=? and " +
+								"applicationdetails.SkillSet4=? and applicationdetails.SkillSet5=? " +
+								"and applicationdetails.ApplicantUIN not in " +
+								"(select UIN from university.employee where employee.UIN=applicationdetails.ApplicantUIN)" +
+								" and applicationdetails.ApplicantUIN not in "+
+								"(select UIN from university.jobroster where applicationdetails.ApplicantUIN=jobroster.UIN and JobID=?)"+
+								"ORDER BY " +
+								"applicationdetails.Scaledscore DESC LIMIT 2;";
+					}
+					
+					
+					
+					PreparedStatement stmtForSelect = conn.prepareStatement(SQLPeopleSelect);
+					stmtForSelect.setDouble(1, GPA);
+					stmtForSelect.setDouble(2, workExp);
+					stmtForSelect.setBoolean(3, skill1);
+					stmtForSelect.setBoolean(4, skill2);
+					stmtForSelect.setBoolean(5, skill3);
+					stmtForSelect.setBoolean(6, skill4);
+					stmtForSelect.setBoolean(7, skill5);
+					stmtForSelect.setInt(8,job.getJobID());
+					
+					
+					
+					ResultSet rs =  stmtForSelect.executeQuery();
+					
+					while(rs.next()){
+						
+						int selectedUIN=rs.getInt("ApplicantUIN");
+						//double scaledScore=rs.getDouble("Scaledscore");
+						counter++;	
+
+						Student chosenStudents=new Student(selectedUIN);
+						selectedStudents.put(chosenStudents.getUIN(),chosenStudents);
+						System.out.println(chosenStudents.getUIN());
+						
+						
+					}
+					
+					
+						
+						
+					}
+					
+					
+						
+						
+				
+				catch(SQLException e){
+					System.out.println(e);
+					
+				}
+				
+				finally{
+					
+					//System.out.println("retrieved");
+			}
+			}
+			
+			catch(Exception e){
+				System.out.println(e);
+				
+			}
+			
+			finally{
+				
+				//System.out.println("retrieved");
+			}
+			
+
+			return selectedStudents;
+		}
+	 
+	 
+	 
+	 
+	 
+//	 public static LinkedHashMap<Integer,Student> repostJob(int jobID){
+//		 
+//		 int retrievedUIN=0;
+//         double retrievedWorkEx=0.0;
+//         boolean retreivedSkill1=false;
+//         boolean retreivedSkill2=false;
+//         boolean retreivedSkill3=false;
+//         boolean retreivedSkill4=false;
+//         boolean retreivedSkill5=false;
+//         double retreivedScaledScore=0.0;
+//         double retreivedReqdGPA=0.0;
+//         
+//		 LinkedHashMap<Integer,Student> selectedStudents=new LinkedHashMap<Integer,Student>();
+//		 //Hashtable addSelectedStudents = new Hashtable();
+//		 int counter=0;
+//		 
+//		 try{
+//				Connection conn = Database.getConnection();
+//				String SQLPeopleSelect="";
+//				try{
+//				
+//					if(conn != null){
+//						
+//						try{
+//							
+//								
+//							SQLPeopleSelect = "Select ReqdWorkExperience, ReqdMinimumGPA, ReqdSkillset1, ReqdSkillset2, ReqdSkillset3, ReqdSkillset4, ReqdSkillset5 From " +
+//									"jobpostings where JobID=?;";
+//
+//							PreparedStatement stmtForSelect = conn.prepareStatement(SQLPeopleSelect);
+//							stmtForSelect.setInt(1, jobID);
+//							
+//							ResultSet rs =  stmtForSelect.executeQuery();
+//								
+//								if(rs.first())
+//								{
+//									
+//									 //retrievedUIN = rs.getInt("ApplicantUIN");
+//							         retrievedWorkEx = rs.getDouble("ReqdWorkExperience");
+//							         retreivedReqdGPA = rs.getDouble("ReqdMinimumGPA");
+//							         retreivedSkill1=rs.getBoolean("ReqdSkillset1");
+//							         retreivedSkill2=rs.getBoolean("ReqdSkillset2");
+//							         retreivedSkill3=rs.getBoolean("ReqdSkillset3");
+//							         retreivedSkill4=rs.getBoolean("ReqdSkillset4");
+//							         retreivedSkill5=rs.getBoolean("ReqdSkillset5");
+//								}
+//							         
+//							         
+//							         
+//							         
+//
+//								else
+//								{
+//									
+//									System.out.println("UIN does not exist");
+//
+//								}
+//								
+//
+//				}
+//						
+//						catch(SQLException e){
+//							e.printStackTrace();
+//							System.out.println(e);
+//							
+//						}
+//						
+//						finally{
+//							
+//							//System.out.println("retrieved");
+//						}
+//					
+//						
+//						//change the limit to 10 
+//						SQLPeopleReSelect = "Select applicationdetails.ApplicantUIN " +
+//								"From university.applicationdetails inner join university.student on " +
+//								"student.UIN=applicationdetails.ApplicantUIN where student.GPA>=? and " +
+//								"applicationdetails.WorkExperience>=? and applicationdetails.SkillSet1=? and " +
+//								"applicationdetails.SkillSet2=? and applicationdetails.SkillSet3=? and " +
+//								"applicationdetails.SkillSet4=? and applicationdetails.SkillSet5=? " +
+//								"and applicationdetails.ApplicantUIN not in " +
+//								"(select UIN from university.employee where employee.UIN=applicationdetails.ApplicantUIN)" +
+//								" not in " +
+//								"(select UIN from university.jobroster where applicationdetails.ApplicantUIN=jobroster.UIN)" +
+//								"ORDER BY " +
+//								"applicationdetails.Scaledscore DESC LIMIT 10;";
+//					}
+//					
+//					
+//					
+//					PreparedStatement stmtForReSelect = conn.prepareStatement(SQLPeopleReSelect);
+//					stmtForReSelect.setDouble(1, retreivedReqdGPA);
+//					stmtForReSelect.setDouble(2, retrievedWorkEx);
+//					stmtForReSelect.setBoolean(3, retreivedSkill1);
+//					stmtForReSelect.setBoolean(4, retreivedSkill2);
+//					stmtForReSelect.setBoolean(5, retreivedSkill3);
+//					stmtForReSelect.setBoolean(6, retreivedSkill4);
+//					stmtForReSelect.setBoolean(7, retreivedSkill5);
+//					
+//					
+//					
+//					ResultSet rs =  stmtForReSelect.executeQuery();
+//					
+//					while(rs.next()){
+//						
+//						int selectedUIN=rs.getInt("ApplicantUIN");
+//						//double scaledScore=rs.getDouble("Scaledscore");
+//						counter++;	
+//
+//						Student chosenStudents=new Student(selectedUIN);
+//						selectedStudents.put(chosenStudents.getUIN(),chosenStudents);
+//						System.out.println(chosenStudents.getUIN());
+//						
+//						
+//					}
+//					
+//					
+//						
+//						
+//					}
+//					
+//					
+//						
+//						
+//				
+//				catch(SQLException e){
+//					System.out.println(e);
+//					
+//				}
+//				
+//				finally{
+//					
+//					//System.out.println("retrieved");
+//			}
+//			}
+//			
+//			catch(Exception e){
+//				System.out.println(e);
+//				
+//			}
+//			
+//			finally{
+//				
+//				//System.out.println("retrieved");
+//			}
+//			
+//
+//			return selectedStudents;
+//		}
+	 
+	 
 	 public static boolean updateApplication(int UIN, double workExp, boolean skill1, boolean skill2, boolean skill3, boolean skill4, boolean skill5){
 		 
 		 boolean isUpdated=false;
@@ -423,7 +672,9 @@ public class JobApplication {
 	 public static void main(String[] args)
 		{
 		 
-		 //updateApplication(17, 4.0, false, false, true, true, false);
+		 Job job=new Job(22);
+		 //updateApplication(7, 4.0, false, false, true, true, false);
+		 rePost(1.5, 1.5, true, true, true, true, true, job);
 		 
 		}
 	 
