@@ -149,8 +149,10 @@ public class CourseCurve {
 		//(30,40,30) = (9,12,9) / 30
 		HashMap<Student,String> courseCurve = null;
 		int initialStudents = 0;
-		int thirtypercent = (int) Math.ceil(0.7 * 30);
+		//int thirtypercent = (int) Math.ceil(0.7 * 30);
 		int numberOfStudents = sortedstudentTotalMarks.size();
+		int numberOfGrades = curvingCriteria.size();
+		
 		for (int percentStudents: curvingCriteria) {
 			
 			//int percentStudents = curvingCriteria.get(initialStudents);
