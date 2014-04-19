@@ -5,6 +5,8 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
 
 public class Classroom {
 	private ClassroomName classroomName;
@@ -245,6 +247,34 @@ public class Classroom {
 		return id;
 	}
 	
+	public static LinkedHashMap<Integer, Classroom> getAllEmptyClassroom(ClassroomLocation location, int timeSlotType, int expectedCapacity){
+		ArrayList<ClassroomName> names = new ArrayList<ClassroomName>(Arrays.asList(ClassroomName.values()));
+		LinkedHashMap<Integer, Classroom> classrooms = new LinkedHashMap<Integer, Classroom>();
+		Collections.shuffle(names);
+		Classroom c = null;
+		ArrayList<Timeslots> times = null;
+		for(ClassroomName name:names){
+			c = null;
+			int classID = getClassID(name, location);
+			if(classID != -1){
+				c = new Classroom(classID);
+				if(c!=null){
+					//System.out.println("Call findEmptySlotsForClassroom for just checking. Not retreiving");
+					if(c.getClassroomCapacity() >= expectedCapacity){
+						times = findOpenSlotsForClassroom(c, timeSlotType);
+						if(times.size()>0){
+							System.out.println("Found a classroom with empty time slots:"+c.getClassroomName().toString()+" "
+									+ ""+ c.getClassroomLocation().toString());
+							classrooms.put(c.getClassroomID(), c);
+						}
+					}
+				}
+			}
+		}
+		
+		return classrooms;
+	}
+	
 	public static ArrayList<Timeslots> findOpenSlotsForClassroom(Classroom classroom, int timeSlotType){
 		if(classroom == null)
 			return null;
@@ -323,6 +353,50 @@ public class Classroom {
 		return timeslots;
 	}
 	
+	public static boolean isEmpty(Classroom classroom, Timeslots t){
+		int classroomID = classroom.getClassroomID();
+		int timeslotID = t.getTimeSlotID();
+		boolean isEmpty= false;
+		try{
+			Connection conn = Database.getConnection();
+			
+			try{
+				if(conn != null){
+					String ClassroomSelect = "Select *"
+							+ " FROM university.courseschedule"
+							+ " WHERE classroomID= ? and TimeSlotID= ?";
+					PreparedStatement statement = conn.prepareStatement(ClassroomSelect);
+					statement.setInt(1, classroomID);
+					statement.setInt(2, timeslotID);
+					ResultSet rs = statement.executeQuery();
+					
+					if(rs.first()){
+						isEmpty = false;
+					}
+					
+					else{
+						isEmpty = true;
+					}
+										
+					
+				}
+			}
+			
+			catch(SQLException e){
+				System.out.println("Error");
+				System.out.println(e.getMessage());
+				e.printStackTrace();
+			}
+		}
+		
+		finally{
+			
+		}
+		
+		return isEmpty;
+		
+	}
+	
 	public String toString(){
 		String toReturn = "";
 		toReturn+= "Classroom Location:"+this.getClassroomLocation().toString();
@@ -330,12 +404,38 @@ public class Classroom {
 		toReturn+= "\nClassroomID:"+this.getClassroomID();
 		return toReturn;
 	}
-	
+		
 	//to be implemented
 	public ArrayList<CourseOffered> getCourseScheduledInClassroom(){
 		return null;
 	}
 	
 	public static void main(String[] args){
+		System.out.println(isEmpty(new Classroom(20), new Timeslots(16)));
 	}
+
+	/* (non-Javadoc)
+	 * @see java.lang.Object#equals(java.lang.Object)
+	 */
+	@Override
+	public boolean equals(Object obj) {
+		if(obj instanceof Classroom){
+			Classroom c = (Classroom)obj;
+			if(this.getClassroomID() == c.getClassroomID())
+				return true;
+			else return false;
+		}
+		
+		else return false;
+	}
+
+	/* (non-Javadoc)
+	 * @see java.lang.Object#hashCode()
+	 */
+	@Override
+	public int hashCode() {
+		return (this.getClassroomID()*31);
+	}
+	
+	
 }
