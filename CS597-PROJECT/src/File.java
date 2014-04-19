@@ -67,8 +67,9 @@ public void setOfferID(int offerID) {
 // Add a new file to file table in the database
 public static boolean addFileToDB(String fileName, String fileLocation, int offerID){
 	boolean fileAdded = false;
+	String newFileLocation = fileLocation.replace("/","//");
 	@DBAnnotation (
-			variable = {"fileName","fileLocation", "offerID"},  
+			variable = {"fileName","newfileLocation", "offerID"},  
 			table = "files", 
 			column = {"FileName","FileLocation", "OfferID"}, 
 			isSource = false)
@@ -83,7 +84,7 @@ public static boolean addFileToDB(String fileName, String fileLocation, int offe
 				
 				// Check if file is already present. 
 				
-				boolean isFilePresent = checkInDatabase(fileName, fileLocation, offerID);
+				boolean isFilePresent = checkInDatabase(fileName, newFileLocation, offerID);
 				
 				// If present, confirm whether it needs to be replaced
 				
@@ -99,7 +100,7 @@ public static boolean addFileToDB(String fileName, String fileLocation, int offe
 				if(addFileToDB.toLowerCase() == "yes"){
 					PreparedStatement statement = conn.prepareStatement(SQLFileInsert);
 					statement.setString(1, fileName);
-					statement.setString(2, fileLocation);
+					statement.setString(2, newFileLocation);
 					statement.setInt(3, offerID);
 					statement.executeUpdate();
 					Database.commitTransaction(conn);
