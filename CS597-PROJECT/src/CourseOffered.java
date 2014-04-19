@@ -671,17 +671,16 @@ public class CourseOffered {
 	}
 	
 	//complete
-	public static boolean isCourseFull(final CourseOffered courseOffered) throws CourseOfferingDoesNotExistException{
-		if(courseOffered == null) {
-			throw new CourseOfferingDoesNotExistException();
-		}
-		
-		return ((courseOffered.getTotalCapacity() - courseOffered.getCurrentlyFilled()) <= 0);
+	public boolean isCourseFull() throws CourseOfferingDoesNotExistException{
+		return ((this.getTotalCapacity() - this.getCurrentlyFilled()) <= 0);
 	}
 	
 	//complete
-	public static void addOneSeatFilledToCourseOffered(final CourseOffered courseOffered) throws CourseOfferingDoesNotExistException{
-		
+	public boolean addOneSeatFilledToCourseOffered() throws CourseOfferingNotCurrentException{
+		boolean success = false;
+		if(!checkIfCurrent()){
+			throw new CourseOfferingNotCurrentException("This course offering is not current");
+		}
 		try{
 			Connection conn = Database.getConnection();
 			
@@ -693,37 +692,27 @@ public class CourseOffered {
 							+ " FROM university.coursesoffered"
 							+ " WHERE OfferID= ?";
 					PreparedStatement statement = conn.prepareStatement(SemesterSelect);
-					statement.setInt(1, courseOffered.getOfferID());
+					statement.setInt(1, this.getOfferID());
 					ResultSet rs = statement.executeQuery();
 					
 					if(rs.first()){
 						int currentlyFilled = rs.getInt(5);
 						currentlyFilled += 1;
 						rs.updateInt(5, currentlyFilled);
+						Database.commitTransaction(conn);
+						success = true;
 					}
-					
-				}
-					
-					
-				else{
-					throw new CourseOfferingDoesNotExistException();
-					
-				}
 										
-					
+				}					
 				
 			}
 			
 			catch(Exception e){
-				System.out.println("Error addind course offering");
+				System.out.println("Error in adding one seat");
 				System.out.println(e.getMessage());
-				e.printStackTrace();
-				
+				e.printStackTrace();	
 			}
-				
-			finally{
-				Database.commitTransaction(conn);
-			}
+			
 			
 		}
 		
@@ -731,12 +720,13 @@ public class CourseOffered {
 		
 		finally{
 		}
-			
+		
+		return success;
 	}
 	
-	private static boolean removeOneSeatFromCourseOffered(CourseOffered courseOffered) throws CourseOffered.CourseOfferingDoesNotExistException{
+	public boolean removeOneSeatFromCourseOffered() throws CourseOffered.CourseOfferingDoesNotExistException{
 		boolean seatRemoved = false;
-		int offerID = courseOffered.getOfferID();
+		int offerID = this.getOfferID();
 		try{
 			Connection conn = Database.getConnection();
 			try{
@@ -903,7 +893,7 @@ public class CourseOffered {
 	}
 	
 	//to check if the course can be registered by a student
-	public static boolean isCourseRegistrableBy(Student student, int offerID){
+	public boolean isCourseRegistrableBy(Student student){
 		
 		//check if the student is already registered
 		if(WaitList.isStudentRegistered(student, offerID)){
@@ -912,11 +902,10 @@ public class CourseOffered {
 		
 		//check if the course is full
 		try {
-			if(isCourseFull(new CourseOffered(offerID))){
+			if(isCourseFull()){
 				return false;
 			}
-		} catch (CourseOfferingDoesNotExistException
-				| Course.CourseDoesNotExistException e) {
+		} catch (CourseOfferingDoesNotExistException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
