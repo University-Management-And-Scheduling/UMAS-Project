@@ -3,7 +3,6 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
-import java.util.LinkedHashMap;
 
 public class Department {
 	private String departmentName;
@@ -182,7 +181,8 @@ public class Department {
 	}
 	
 	//Delete specified department
-	public static void deleteDepartment(String departmentName) throws DepartmentDoesNotExistException{
+	@SuppressWarnings("unused")
+	private static void deleteDepartment(String departmentName) throws DepartmentDoesNotExistException{
 		boolean isDeleteSuccessfull = false;
 		try{
 			Connection conn = Database.getConnection();
@@ -209,7 +209,7 @@ public class Department {
 						ResultSet courseSetToDelete = statementForCourse.executeQuery();
 						while(courseSetToDelete.next()){
 							System.out.println("Deleting course:"+courseSetToDelete.getString(2));
-							Course.removeCourse(courseSetToDelete.getInt(1));
+							Course c = new Course(courseSetToDelete.getInt("CourseID"));
 						}
 						
 						rs.deleteRow();	
@@ -230,10 +230,8 @@ public class Department {
 			catch(SQLException e){
 				System.out.println("Error updating");
 				System.out.println(e.getMessage());
-			}
-			
-			finally{
-				//Database.closeConnection(conn);
+			} catch (Course.CourseDoesNotExistException e) {
+				e.printStackTrace();
 			}
 			
 		}

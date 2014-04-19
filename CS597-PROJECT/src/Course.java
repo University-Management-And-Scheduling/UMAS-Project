@@ -156,15 +156,52 @@ public class Course {
 		this.courseName = courseName;
 	}
 
-	
 	//Add a course to the database
-	public static void addCourse(String courseName, Department department) throws CourseAlreadyExistsException{
-		if(department == null || courseName == null )
-			return;
+	public boolean addCourse(String courseName, Department department) throws CourseAlreadyExistsException{
+		boolean isAdded = false;
+		
+		if(department == null || courseName.length()<1 || courseName == null)
+			return isAdded;
 		
 		//Check if the course with the same name exists
 		System.out.println("Searching for course with name:"+courseName);
 		
+		if(isExists(courseName, department))
+			throw new CourseAlreadyExistsException();
+		
+		try{
+			Connection conn = Database.getConnection();
+			
+			try{
+				if(conn != null){
+					//add the data to the course table
+					System.out.println("Inserting new course");
+					String SQLInsert= "Insert into university.courses (CourseName, DepartmentID) Values (?,?);";
+					PreparedStatement statement;
+					statement = conn.prepareStatement(SQLInsert);
+					statement.setString(1, courseName);
+					statement.setInt(2, department.getDepartmentID());
+					statement.execute();
+					Database.commitTransaction(conn);
+					isAdded = true;
+				}
+			}
+			
+			catch(SQLException e){
+				System.out.println("Error adding");
+				System.out.println(e.getMessage());
+			}
+						
+		}
+		
+		finally{
+		}
+		
+		return isAdded; 
+	}
+
+	private boolean isExists(String courseName, Department department){
+		boolean isExists = false;
 		try{
 			Connection conn = Database.getConnection();
 			
@@ -180,40 +217,25 @@ public class Course {
 					
 					if(rs.first()){
 						System.out.println("Course Already exists");
-						throw new CourseAlreadyExistsException();
-					}
-					
-					else{
-						//add the data to the course table
-						System.out.println("Inserting new course");
-						String SQLInsert= "Insert into university.courses (CourseName, DepartmentID) Values (?,?);";
-						statement.close();
-						statement = conn.prepareStatement(SQLInsert);
-						statement.setString(1, courseName);
-						statement.setInt(2, department.getDepartmentID());
-						statement.execute();
-						Database.commitTransaction(conn);
+						isExists = true;
 					}
 				}
 			}
 			
 			catch(SQLException e){
-				System.out.println("Error updating/adding");
+				System.out.println("Error retrieving");
 				System.out.println(e.getMessage());
-			}
-			
-			finally{
-				//Database.closeConnection(conn);
-			}
-			
+			}			
 		}
 		
 		finally{
 		}
+		
+		return isExists;
 	}
-
-	//Remove a course from the course table, also trigger removing the courses from courses-offered table related to this course
-	public static void removeCourse(int courseID){
+	
+	@SuppressWarnings("unused")
+	private static void removeCourse(int courseID){
 		//check if the course to be removed exists
 		//Remove the courses-offered related to this course
 		try{

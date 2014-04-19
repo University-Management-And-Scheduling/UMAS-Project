@@ -11,7 +11,6 @@ public class CourseSchedule {
 	private int offerID;
 	private int classroomID;
 	private int timeSlotID;
-	//private CourseOffered courseOffered;
 	private Timeslots timeslot;
 	private Classroom classroom;
 	
@@ -263,10 +262,10 @@ public class CourseSchedule {
 		}
 		
 		if(c==null)
-			System.out.println("Cannot schedule this course");
+			System.out.println("Cannot schedule this course, no empty class found");
 		
 		if(c!=null){
-			t = Classroom.getEmptySlot(c, timeSlotType);				
+			t = c.getEmptySlot(timeSlotType);				
 			//Schedule the course in the empty slot
 			int offerID = courseOffered.getOfferID();
 			int classroomID = c.getClassroomID();
@@ -310,10 +309,10 @@ public class CourseSchedule {
 		}
 		
 		if(c==null)
-			System.out.println("Cannot schedule this course");
+			System.out.println("Cannot schedule this course, no empty classroom found");
 		
 		if(c!=null){
-			t = Classroom.getEmptySlot(c, timeSlotType);				
+			t = c.getEmptySlot(timeSlotType);				
 			//Schedule the course in the empty slot
 			int classroomID = c.getClassroomID();
 			int timeslotID = t.getTimeSlotID();
@@ -462,10 +461,6 @@ public class CourseSchedule {
 		
 		finally{
 		}
-	}
-		
-	public static boolean hasConflict(){
-		return false;
 	}
 	
 	public static boolean isAnotherCourseSchedulable(int courseCapacity){
