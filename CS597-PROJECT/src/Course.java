@@ -200,6 +200,51 @@ public class Course {
 		return isAdded; 
 	}
 
+	public boolean updateCourse(String courseName, Department department){
+		boolean isUpdated = false;
+		if(department == null || courseName.length()<1 || courseName == null)
+			return isUpdated;
+		
+		if(!isExists(courseName, department))
+			return isUpdated;
+		
+		try{
+			Connection conn = Database.getConnection();
+			
+			try{
+				if(conn != null){
+					//add the data to the course table
+					System.out.println("Updating course");
+					String SQLupdate= "UPDATE university.course "
+							+ "SET CourseName= ?, DepartmentID= ? "
+							+ "WHERE CourseID= ?";
+					PreparedStatement statement;
+					statement = conn.prepareStatement(SQLupdate, ResultSet.CONCUR_UPDATABLE);
+					statement.setString(1, courseName);
+					statement.setInt(2, department.getDepartmentID());
+					statement.setInt(3, this.getCourseID());
+					statement.executeUpdate();
+					this.courseName = courseName;
+					this.department = department;
+					Database.commitTransaction(conn);
+					isUpdated = true;
+				}
+			}
+			
+			catch(SQLException e){
+				System.out.println("Error updating");
+				System.out.println(e.getMessage());
+			}
+						
+		}
+		
+		finally{
+		}
+		
+		return isUpdated;
+
+	}
+	
 	private boolean isExists(String courseName, Department department){
 		boolean isExists = false;
 		try{
