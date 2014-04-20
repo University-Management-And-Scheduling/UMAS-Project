@@ -38,7 +38,7 @@ public class CourseExams {
 	public CourseExams(int offerID) {
 		super();
 		this.offerID = offerID;
-		this.examName = examName;
+		//this.examName = examName;
 	}
 
 	public int getOfferID() {
@@ -462,7 +462,7 @@ public class CourseExams {
 		return this;
 	}
 
-	public boolean modifyStudentMarks(){
+ 	public boolean modifyStudentMarks(){
 		boolean studentsMarksModified = false;
 		
 		int offerID = this.getOfferID();

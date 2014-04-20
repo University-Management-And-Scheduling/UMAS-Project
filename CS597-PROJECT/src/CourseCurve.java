@@ -127,6 +127,28 @@ public class CourseCurve {
 		
 	}
 	
+	public double getLastStudentPercent(){
+		double percent = 0.0;
+		HashMap<Student,Double> studentTotalMarks = new HashMap<Student,Double>();
+		
+		int offerID = this.getOfferID();
+		CourseExams exams = new CourseExams(offerID);
+		
+		int totalCourseMarks = this.getTotalCourseMarks();
+		studentTotalMarks = exams.getStudentMarks().getExamMarks();
+		
+		HashMap<Student,Double> sortedstudentTotalMarks = sortHashMap(studentTotalMarks);
+		
+		List<Student> keys = (List<Student>) sortedstudentTotalMarks.keySet();
+		Student lastKey = keys.get(keys.size()-1);
+		double totalMarks = sortedstudentTotalMarks.get(lastKey);
+		
+		percent = (totalMarks / totalCourseMarks) * 100;
+		
+		return percent;
+	}
+	
+	
 	// 3 ways to Calculate the Curve
 
 	// HashMap<String,Integer> = HashMap<Grade,Percentage of students in the grade>
@@ -182,10 +204,20 @@ public class CourseCurve {
 	}
 
 	// HashMap<String,Integer> = HashMap<Grade,CutofPercentage>
-	// Example: <'A',90> = Students with total mks at or above 90-100% would be given 'A' grade
-	// <'B',75> = Students with total mks between 75-89% would be given 'B' grade
+	// Example: <90,75,60> = Students with total mks at or above 90-100% would be given grade at level 1
+	// Students with total mks between 75-89% would be given grade at level 2
+	// Students with total mks between 60-74% would be given grade at level 3
 	public static CourseCurve calculateAbsoluteCurve(int offerID, List<Integer> curvingCriteria){
 		CourseCurve curve = new CourseCurve(offerID,curvingCriteria);
+		
+		int size = curvingCriteria.size();
+		int lastCriteria = curvingCriteria.get(size-1);
+		double lastStudentPercent = curve.getLastStudentPercent();
+		int floorlastStudentPercent= (int) Math.floor(lastStudentPercent);
+		if(floorlastStudentPercent < lastCriteria ){
+			System.out.println("There are students below the last criteria. " + 
+								"Reduce the last criteria or add one more with value less than " + floorlastStudentPercent);
+		} else{
 		
 		// STEP 1: Get total CourseMarks from CourseStructure Table
 		int totalCourseMarks = curve.getTotalCourseMarks();
@@ -200,17 +232,40 @@ public class CourseCurve {
 		// the curvingCriteria selected by the professor 
 		HashMap<Student,String> courseCurve = null;
 		
+		int numberOfStudents = sortedstudentTotalMarks.size();
+		int numberOfGrades = curvingCriteria.size();
+		int studentsLeft = numberOfStudents;
+		
+				
 		Set<Student> keys = sortedstudentTotalMarks.keySet();
 		Iterator<Student> keyIterator = keys.iterator();
-		while (keyIterator.hasNext()) {
-			Student student = keyIterator.next();
-			int UIN = student.getUIN();
-			double marks = (double) sortedstudentTotalMarks.get(student);
+		
+		for (int gradeLevel=1; gradeLevel<= numberOfGrades;gradeLevel++){
+			GradeSystem grade = GradeSystem.getGradeForGradeLevel(gradeLevel);
+			String studentGrade = grade.getGrade();
+		
+			int cutOffPercent = curvingCriteria.get(gradeLevel);
+			while (keyIterator.hasNext()) {
+				Student student = keyIterator.next();
+				int UIN = student.getUIN();
+				double marks = (double) sortedstudentTotalMarks.get(student);
+				
+				double studentPercentage = (marks/ totalCourseMarks) * 100;
+		
+				if(studentPercentage >= cutOffPercent){
+					courseCurve.put(student, studentGrade);
+				} else {
+					break;
+				}
+			}
 			
 		}
 		
 		curve.setCourseCurve(courseCurve);
+		
+		} // Else ends here
 		return curve;
+		
 	}
 	
 	
