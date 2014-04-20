@@ -210,6 +210,11 @@ public class CourseCurve {
 	public static CourseCurve calculateAbsoluteCurve(int offerID, List<Integer> curvingCriteria){
 		CourseCurve curve = new CourseCurve(offerID,curvingCriteria);
 		
+		// STEP 1: If the criteria is <90,75,60> and there is a student with 
+		// less than 60% then that student will not get a grade. 
+		// This step checks whether the last criteria is less than the percent of the 
+		// last student in class
+		
 		int size = curvingCriteria.size();
 		int lastCriteria = curvingCriteria.get(size-1);
 		double lastStudentPercent = curve.getLastStudentPercent();
@@ -219,22 +224,22 @@ public class CourseCurve {
 								"Reduce the last criteria or add one more with value less than " + floorlastStudentPercent);
 		} else{
 		
-		// STEP 1: Get total CourseMarks from CourseStructure Table
+		// STEP 2: Get total CourseMarks from CourseStructure Table
 		int totalCourseMarks = curve.getTotalCourseMarks();
 		
-		// STEP 2: get totalMarks for each student from CourseExams' Table
+		// STEP 3: get totalMarks for each student from CourseExams' Table
 		HashMap<Student,Double> studentTotalMarks = curve.getStudentTotalMarks();
 		
-		// STEP 3: Sort the hashmap in descending order
+		// STEP 4: Sort the hashmap in descending order
 		HashMap<Student,Double> sortedstudentTotalMarks = sortHashMap(studentTotalMarks);
 		
-		// STEP 4: Calculate curve for the courseOffered based on
+		// STEP 5: Calculate curve for the courseOffered based on
 		// the curvingCriteria selected by the professor 
 		HashMap<Student,String> courseCurve = null;
 		
 		int numberOfStudents = sortedstudentTotalMarks.size();
 		int numberOfGrades = curvingCriteria.size();
-		int studentsLeft = numberOfStudents;
+		// int studentsLeft = numberOfStudents;
 		
 				
 		Set<Student> keys = sortedstudentTotalMarks.keySet();
@@ -257,8 +262,7 @@ public class CourseCurve {
 				} else {
 					break;
 				}
-			}
-			
+			}	
 		}
 		
 		curve.setCourseCurve(courseCurve);
@@ -289,17 +293,68 @@ public class CourseCurve {
 		HashMap<Student,String> courseCurve = null;
 		
 		// Algo to calculate curve
-		// 1. Sort students in decreasing order of total mks
+		// 1. Sort students in decreasing order of total mks -- Done in step 3
 		// 2. Skip over minimum students and give them the first grade
 		// 3. Keep track of difference between total marks of students students
 		// 4. Find 1st instance where difference increases. 
 		// 5. That is the cut-off point.
 		// 6. Move on to the next grade
 		
+		int numberOfStudents = sortedstudentTotalMarks.size();
+		int numberOfGrades = curvingCriteria.size();
+		
+		Set<Student> keys = sortedstudentTotalMarks.keySet();
+		Iterator<Student> keyIterator = keys.iterator();
+		
+		boolean nextGraded = false;
+		for (int gradeLevel=1; gradeLevel <= numberOfGrades;gradeLevel++){
+			GradeSystem grade = GradeSystem.getGradeForGradeLevel(gradeLevel);
+			String studentGrade = grade.getGrade();
+			int gradedStudents = 0;
+			int minimumPeople = curvingCriteria.get(gradeLevel);
+			
+			if(nextGraded==true){
+				minimumPeople--;
+				nextGraded = false;
+			}
+			
+			int UIN = 0;
+			double marks = 0.0;
+			while ((keyIterator.hasNext()) && gradedStudents <= minimumPeople ) {
+				Student student = keyIterator.next();
+				UIN = student.getUIN();
+				marks = (double) sortedstudentTotalMarks.get(student);
+				courseCurve.put(student, studentGrade);
+				gradedStudents++;
+			}
+			
+			Student student = keyIterator.next();
+			int nextUIN = student.getUIN();
+			double nextMarks = (double) sortedstudentTotalMarks.get(student);
+			
+			double difference = nextMarks - marks;
+			
+			while(keyIterator.hasNext() && (gradeLevel< numberOfGrades)) {
+				Student nextstudent = keyIterator.next();
+				nextUIN = student.getUIN();
+				nextMarks = (double) sortedstudentTotalMarks.get(student);
+				double nextDifference = nextMarks - marks;
+				if(nextDifference > difference){
+					courseCurve.put(student, studentGrade);
+				} else if (nextDifference < difference){
+					GradeSystem nextGrade = GradeSystem.getGradeForGradeLevel(gradeLevel+1);
+					String nextStudentGrade = grade.getGrade();
+					courseCurve.put(nextstudent, nextStudentGrade);
+					nextGraded = true;
+				}
+				
+			} 
+		}
 		curve.setCourseCurve(courseCurve);
 		return curve;
 	}
 	
+
 	private static HashMap<Student, Double> sortHashMap(HashMap<Student, Double> unsortedStudentTotalMarks)
     {
 
