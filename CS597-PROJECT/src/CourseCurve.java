@@ -274,8 +274,8 @@ public class CourseCurve {
 	
 	
 	// HashMap<String,Integer> = HashMap<Grade,Minimum Number of students in that grade>
-	// Example: <'A',10> = Atleast top 10 students get 'A' grade 
-	// <'B',10> = After all 'A' grades, atleast 10 students will be given 'B' grade
+	// Example: <10,10,10> = Atleast top 10 students get grade at level 1 
+	// After all level 1 grades, atleast 10 students will be given grade at level 2
 	public static CourseCurve calculateMaxGapCurve(int offerID, List<Integer> curvingCriteria){
 		CourseCurve curve = new CourseCurve(offerID,curvingCriteria);
 		
@@ -314,7 +314,7 @@ public class CourseCurve {
 			int minimumPeople = curvingCriteria.get(gradeLevel);
 			
 			if(nextGraded==true){
-				minimumPeople--;
+				minimumPeople-=2;
 				nextGraded = false;
 			}
 			
@@ -341,9 +341,11 @@ public class CourseCurve {
 				double nextDifference = nextMarks - marks;
 				if(nextDifference > difference){
 					courseCurve.put(student, studentGrade);
+					
 				} else if (nextDifference < difference){
 					GradeSystem nextGrade = GradeSystem.getGradeForGradeLevel(gradeLevel+1);
 					String nextStudentGrade = grade.getGrade();
+					courseCurve.put(student, nextStudentGrade);
 					courseCurve.put(nextstudent, nextStudentGrade);
 					nextGraded = true;
 				}

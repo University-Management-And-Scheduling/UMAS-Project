@@ -165,10 +165,10 @@ public class Login {
 	}
 
 	// To change the password for a user who is logged in
-	public boolean changePassword(Login user, String newPassword){
+	public boolean changePassword(String newPassword){
 		
 		boolean passwordChanged = false;
-		String username = user.getUsername();
+		String username = this.getUsername();
 		
 		@DBAnnotation (
 			variable = {"username","newPassword"},  
@@ -203,6 +203,53 @@ public class Login {
 	// To recover a user's password
 	public Login recoverPassword (String username){
 		Login user = null;
+		
+		boolean isUserPresent = checkUsernameInDatabase(username);
+		if (isUserPresent == false){
+			System.out.println("Username not present");
+		}
+		else {
+			@DBAnnotation (
+					variable = {"username","password"},  
+					table = "logindetails",
+					column = {"Username", "Password"}, 
+					isSource = true)
+			
+			String SQLFileSelect = "SELECT Password FROM logindetails WHERE Username = ?;";
+			
+			try {
+				Connection conn = Database.getConnection();
+				try {
+					if (conn != null) {
+						
+						// Check if file is already present. 
+						PreparedStatement statement = conn.prepareStatement(SQLFileSelect);
+						statement.setString(1, username);
+						ResultSet rs = statement.executeQuery();
+						while (rs.next()) {
+							// Retrieve by column name
+							String password = rs.getString("Password");
+							this.setPassword(password);
+							Email email = Email.getInstance("UMAS.UIC", password);
+							String subject = "UMAS Password";
+							String body = "Your password is " + password + 
+											". /n Please change your password after you login";
+							
+							boolean mailSent = email.sendEmail(username, subject, body);
+							if (mailSent == true){
+								System.out.println("Mail containing password sent to the user.");
+							}
+						}
+					}	
+				} catch (SQLException e) {
+					System.out.println(e);
+				}
+
+			} catch (Exception e) {
+				System.out.println(e);
+			}
+
+		}
 		
 		return user;
 		
