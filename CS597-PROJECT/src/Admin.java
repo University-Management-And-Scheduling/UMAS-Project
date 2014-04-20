@@ -93,10 +93,135 @@ public class Admin extends Employee {
 		
 	}
 	
-public static void main(String[] args){
+
+	public boolean updateAdminUserName(String userName){
+		
+		boolean isUpdated=false;
+		
+		try{
+			Connection conn = Database.getConnection();
+			
+			try{
+				
+				boolean ifAddedInLogin=People.updateUserNameIntoLoginTable(userName, this.getUserName());
+				if(ifAddedInLogin)
+					isUpdated=true;
+					
+			}
+			
+			catch(Exception e){
+				System.out.println("Error adding/updating to database");
+				e.printStackTrace();
+				System.out.println(e);	
+			}
+			
+		}
+		
+		catch(Exception e){
+			System.out.println("Connection failed");
+			e.printStackTrace();
+			System.out.println(e);
+			
+		}
+		
+		finally{
+			
+			//System.out.println("retrieved");
+		}
+
+		return isUpdated;
+				
+	}
+	
+
+	public boolean updateAdminName(String name){
+		
+		boolean isUpdated=false;
+		
+		try{
+			Connection conn = Database.getConnection();
+			
+			try{
+				
+				boolean ifUpdatedInLogin=People.updateNameIntoPeopleTable(name, this.getUIN());
+				if(ifUpdatedInLogin)
+					isUpdated=true;
+				
+					
+			}
+			
+			catch(Exception e){
+				System.out.println("Error adding/updating to database");
+				e.printStackTrace();
+				System.out.println(e);	
+			}
+			
+		}
+		
+		catch(Exception e){
+			System.out.println("Connection failed");
+			e.printStackTrace();
+			System.out.println(e);
+			
+		}
+		
+		finally{
+			
+			//System.out.println("retrieved");
+		}
+
+		return isUpdated;
+				
+	}
+	
+public boolean updateAdminDept(int deptID){
+		
+		boolean isUpdated=false;
+		
+		try{
+			Connection conn = Database.getConnection();
+			
+			try{
+				
+				boolean ifUpdatedInPeople=People.updateDeptIntoPeopleTable(deptID, this.getUIN());
+				if(ifUpdatedInPeople)
+					isUpdated=true;
+				
+					
+			}
+			
+			catch(Exception e){
+				System.out.println("Error adding/updating to database");
+				e.printStackTrace();
+				System.out.println(e);	
+			}
+			
+		}
+		
+		catch(Exception e){
+			System.out.println("Connection failed");
+			e.printStackTrace();
+			System.out.println(e);
+			
+		}
+		
+		finally{
+			
+			//System.out.println("retrieved");
+		}
+
+		return isUpdated;
+				
+	}
+	
+	public static void main(String[] args){
 		
 		
-		getAllAdmin();
+		//getAllAdmin();
+		
+		Admin ad= new Admin(1);
+		
+		ad.updateAdminDept(1);
 		
 		
 	}

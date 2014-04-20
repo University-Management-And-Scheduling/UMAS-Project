@@ -103,26 +103,23 @@ public class Employee extends People {
 		
 		try{
 			Connection conn = Database.getConnection();
-			String SQLPeopleSelect="";
+			
 			
 			try{
 				
-				SQLPeopleSelect = "Select UIN From employee where UIN=?;";
-				PreparedStatement stmt = conn.prepareStatement(SQLPeopleSelect);
-				stmt.setInt(1, UIN);
-				ResultSet rs =  stmt.executeQuery();
+				boolean isExisting=addEmployeeCheck(UIN);
 				
-					if(rs.first()){
-				         System.out.println(UIN+"already exists");
-				         //Insert a update query to update the values of the database....NOT ADD
+				if(isExisting){
+					return false;
+					
 					}
 					
 					else
 					{
 						
 						System.out.println("Adding new data into the database");
-						String SQLPeopleInsert= "Insert into employee (UIN, Salary, OfficeAddress, OfficeHours) Values (?,?,?,?);";
-						stmt = conn.prepareStatement(SQLPeopleInsert);
+						String SQLEmployeeInsert= "Insert into employee (UIN, Salary, OfficeAddress, OfficeHours) Values (?,?,?,?);";
+						PreparedStatement stmt = conn.prepareStatement(SQLEmployeeInsert);
 						stmt.setInt(1, UIN);
 						stmt.setDouble(2, salary);
 						stmt.setString(3, Office_address);
@@ -165,26 +162,73 @@ public class Employee extends People {
 		
 	}
 	
+	public static boolean addEmployeeCheck(int UIN){
+		
+		boolean isExisting=false;
+		
+		try{
+			Connection conn = Database.getConnection();
+			String SQLEmployeeSelect="";
+			
+			try{
+				
+				SQLEmployeeSelect = "Select UIN From employee where UIN=?;";
+				PreparedStatement stmt = conn.prepareStatement(SQLEmployeeSelect);
+				stmt.setInt(1, UIN);
+				ResultSet rs =  stmt.executeQuery();
+				
+					if(rs.first()){
+				         System.out.println(UIN+"already exists");
+				         return true;
+				         //Insert a update query to update the values of the database....NOT ADD
+					}
+
+			}
+			
+			catch(SQLException e){
+				System.out.println("Error adding/updating to database");
+				e.printStackTrace();
+				System.out.println(e);	
+			}
+			
+			finally{
+				//System.out.println("retrieved");
+				//Database.closeConnection(conn);
+			}
+		}
+		
+		catch(Exception e){
+			System.out.println("Connection failed");
+			e.printStackTrace();
+			System.out.println(e);
+			
+		}
+		
+		finally{
+			
+			//System.out.println("retrieved");
+		}
+		
+		return isExisting;
+		
+	}
+	
 	public static boolean updateEmpDetails(int UIN, String officeAddress, String officeHours){
 		
 		boolean  isUpdated=false;
 		try{
 			Connection conn = Database.getConnection();
-			String SQLselectEmp="";
 			
 			try{
 				
-				SQLselectEmp = "Select UIN From employee where UIN=?;";
-				PreparedStatement stmt = conn.prepareStatement(SQLselectEmp);
-				stmt.setInt(1, UIN);
-				ResultSet rs =  stmt.executeQuery();
+				boolean isExisting=updateEmpDetailscheck(UIN);
 				
-					if(rs.first()){
+					if(isExisting){
 				        
 				         //Insert a update query to update the values of the database....NOT ADD
 						System.out.println("Updating the emp details in the database");
 						String SQLPeopleInsert= "UPDATE employee SET OfficeAddress=?, OfficeHours=? where UIN=?;";
-						stmt = conn.prepareStatement(SQLPeopleInsert);
+						PreparedStatement stmt = conn.prepareStatement(SQLPeopleInsert);
 						stmt.setString(1, officeAddress);
 						stmt.setString(2, officeHours);
 						stmt.setInt(3, UIN);
@@ -234,6 +278,62 @@ public class Employee extends People {
 		return isUpdated;
 	}
 
+	public static boolean updateEmpDetailscheck(int UIN){
+		
+		boolean  isUpdated=false;
+		try{
+			Connection conn = Database.getConnection();
+			String SQLselectEmp="";
+			
+			try{
+				
+				SQLselectEmp = "Select UIN From employee where UIN=?;";
+				PreparedStatement stmt = conn.prepareStatement(SQLselectEmp);
+				stmt.setInt(1, UIN);
+				ResultSet rs =  stmt.executeQuery();
+				
+					if(rs.first()){
+				        
+				        return true;
+					}
+					
+					else
+					{
+						
+						System.out.println(UIN+" is not an employee");
+						
+						
+					}
+					
+			}
+			
+			catch(SQLException e){
+				System.out.println("Error adding/updating to database");
+				e.printStackTrace();
+				System.out.println(e);	
+			}
+			
+			finally{
+				//System.out.println("retrieved");
+				//Database.closeConnection(conn);
+			}
+		}
+		
+		catch(Exception e){
+			System.out.println("Connection failed");
+			e.printStackTrace();
+			System.out.println(e);
+			
+		}
+		
+		finally{
+			
+			//System.out.println("retrieved");
+		}
+		
+		return isUpdated;
+	}
+	
 	public static boolean giveBonus(int UIN, double bonusPercent) throws bonusNotValidException{
 		
 		boolean giveBonus=false;
@@ -250,21 +350,25 @@ public class Employee extends People {
 			
 			try{
 				
-				SQLselectEmp = "Select Salary From employee where UIN=?;";
-				PreparedStatement stmt = conn.prepareStatement(SQLselectEmp);
-				stmt.setInt(1, UIN);
-				ResultSet rs =  stmt.executeQuery();
+//				SQLselectEmp = "Select Salary From employee where UIN=?;";
+//				PreparedStatement stmt = conn.prepareStatement(SQLselectEmp);
+//				stmt.setInt(1, UIN);
+//				ResultSet rs =  stmt.executeQuery();
+				boolean isExisting=giveBonusCheck(UIN);
 				
-					if(rs.first()){
+				if(isExisting){
+				
+						double retreivedSalaryForBonus=getsalary(UIN);
 						
-						double retreivedSalary=rs.getDouble("Salary");
-						double newSalary=(retreivedSalary+((retreivedSalary*bonusPercent)/100));
+					if(retreivedSalaryForBonus!=-1){
 						
-				        
+						
+						double newSalary=(retreivedSalaryForBonus+((retreivedSalaryForBonus*bonusPercent)/100));
+
 				         //Insert a update query to update the values of the database....NOT ADD
 						System.out.println("Updating the emp details in the database");
 						String SQLPeopleInsert= "UPDATE employee SET Salary=? where UIN=?;";
-						stmt = conn.prepareStatement(SQLPeopleInsert);
+						PreparedStatement stmt = conn.prepareStatement(SQLPeopleInsert);
 						stmt.setDouble(1, newSalary);
 						stmt.setInt(2,UIN);
 						System.out.println(stmt);
@@ -275,6 +379,10 @@ public class Employee extends People {
 						Database.commitTransaction(conn);
 						giveBonus=true;
 					}
+						
+				}
+				
+				
 					
 					else
 					{
@@ -312,50 +420,145 @@ public class Employee extends People {
 		
 		return giveBonus;
 	}
+	
+	public static double getsalary(int UIN){
+		
+		
+		try{
+			Connection conn = Database.getConnection();
+			String SQLselectEmp="";
+			
+			try{
+				
+				SQLselectEmp = "Select Salary From employee where UIN=?;";
+				PreparedStatement stmt = conn.prepareStatement(SQLselectEmp);
+				stmt.setInt(1, UIN);
+				ResultSet rs =  stmt.executeQuery();
+				
+					if(rs.first()){
+						
+						double retreivedSalary=rs.getDouble("Salary");
+						return retreivedSalary;
 
-	public static boolean deleteFromDatabaseByUIN(int UIN){
+					}
+					
+					else
+					{
+						
+						System.out.println(UIN+" is not an employee");
+						
+						
+					}
+					
+			}
+			
+			catch(SQLException e){
+				System.out.println("Error adding/updating to database");
+				e.printStackTrace();
+				System.out.println(e);	
+			}
+			
+			finally{
+				//System.out.println("retrieved");
+				//Database.closeConnection(conn);
+			}
+		}
+		
+		catch(Exception e){
+			System.out.println("Connection failed");
+			e.printStackTrace();
+			System.out.println(e);
+			
+		}
+		
+		finally{
+			
+			//System.out.println("retrieved");
+		}
+		
+		return -1;
+	}
+
+	public static boolean giveBonusCheck(int UIN){
+		
+		boolean giveBonusCheck=false;
+		
+		try{
+			Connection conn = Database.getConnection();
+			String SQLselectEmp="";
+			
+			try{
+				
+				SQLselectEmp = "Select * From employee where UIN=?;";
+				PreparedStatement stmt = conn.prepareStatement(SQLselectEmp);
+				stmt.setInt(1, UIN);
+				ResultSet rs =  stmt.executeQuery();
+				
+					if(rs.first()){
+						
+						return true;
+					}
+					
+					else
+					{
+						
+						System.out.println(UIN+" is not an employee");
+						
+						
+					}
+					
+			}
+			
+			catch(SQLException e){
+				System.out.println("Error adding/updating to database");
+				e.printStackTrace();
+				System.out.println(e);	
+			}
+			
+			finally{
+				//System.out.println("retrieved");
+				//Database.closeConnection(conn);
+			}
+		}
+		
+		catch(Exception e){
+			System.out.println("Connection failed");
+			e.printStackTrace();
+			System.out.println(e);
+			
+		}
+		
+		finally{
+			
+			//System.out.println("retrieved");
+		}
+		
+		return giveBonusCheck;
+	}
+
+	public static boolean deleteFromEmployeeByUIN(int UIN){
 		
 		boolean isDeleted=false;
 		
 		try{
 			Connection conn = Database.getConnection();
-			String SQLPeopleSelect="";
 			String SQLPeopleDelete="";
 			try{
 				if(conn != null){	
-				SQLPeopleSelect = "Select UIN From employee where UIN=?;";
-				PreparedStatement stmt = conn.prepareStatement(SQLPeopleSelect);
-				stmt.setInt(1, UIN);
-				ResultSet rs =  stmt.executeQuery();
+				
+					boolean ifExisting=deleteFromEmployeeByUINCheck(UIN);
 				
 				
 
-					if(rs.first())
+					if(ifExisting)
 					{	
-				         //this.UIN=peopleRetrievedUIN;
-				         //this.name=peopleRetrievedName;
-				         //this.userName=peopleRetrieveduserName;
-				         //this.deptID=peopleRetrievedDeptID;
-				         //this.positionID=peopleRetrievedPositionID;
-						
-						int peopleRetrievedUIN = rs.getInt("UIN");
-//						String peopleRetrievedName = rs.getString("Name");
-//						String peopleRetrieveduserName = rs.getString("UserName");
-//						int peopleRetrievedDeptID = rs.getInt("DepartmentID");
-//						int peopleRetrievedPositionID = rs.getInt("PositionID");
-				         
-//				         System.out.println(peopleRetrievedUIN);
-//				         System.out.println(peopleRetrievedName);
-//				         System.out.println(peopleRetrieveduserName);
-//				         System.out.println(peopleRetrievedDeptID);
-//				         System.out.println(peopleRetrievedPositionID);
-						
+				        
 						SQLPeopleDelete = "Delete From employee where UIN=?;";
-						stmt = conn.prepareStatement(SQLPeopleDelete);
+						PreparedStatement stmt = conn.prepareStatement(SQLPeopleDelete);
 						stmt.setInt(1, UIN);
 						int rs1=stmt.executeUpdate();
 						System.out.println(rs1);
-						System.out.println(peopleRetrievedUIN+ " is deleted");
+						System.out.println(UIN+ " is deleted");
 						isDeleted=true;
 						
 						
@@ -399,33 +602,89 @@ public class Employee extends People {
 					
 	}
 
-	public static boolean deleteFromDatabaseByUserName(String userName){
+	public static boolean deleteFromEmployeeByUINCheck(int UIN){
+		
+		boolean isExisting=false;
+		
+		try{
+			Connection conn = Database.getConnection();
+			String SQLEmployeeSelect="";
+			try{
+				if(conn != null){	
+				SQLEmployeeSelect = "Select UIN From employee where UIN=?;";
+				PreparedStatement stmt = conn.prepareStatement(SQLEmployeeSelect);
+				stmt.setInt(1, UIN);
+				ResultSet rs =  stmt.executeQuery();
+				
+				
+
+					if(rs.first())
+					{	
+				       return true; 
+						
+						
+					}
+					
+					else
+					{
+						
+						System.out.println("UIN does not exist in the employee table");
+
+					}
+				}
+					
+}
+			
+			catch(SQLException e){
+				System.out.println("Error trying to access the database");
+				e.printStackTrace();
+				System.out.println(e);	
+			}
+			
+			finally{
+				//System.out.println("retrieved");
+			}
+		}
+		
+		catch(Exception e){
+			System.out.println("Connection failed");
+			e.printStackTrace();
+			System.out.println(e);
+			
+		}
+		
+		finally{
+			
+			//System.out.println("retrieved");
+		}
+		
+			
+	return isExisting;	
+					
+	}
+
+	public static boolean deleteFromEmployeeByUserName(String userName){
 	
 	boolean isDeleted=false;	
 	try{
 		Connection conn = Database.getConnection();
-		String SQLPeopleSelect="";
 		String SQLPeopleDelete="";
 		try{
 			if(conn != null){	
-			SQLPeopleSelect = "Select UIN From people where Username=?;";
-			PreparedStatement stmt = conn.prepareStatement(SQLPeopleSelect);
-			stmt.setString(1, userName);
-			ResultSet rs =  stmt.executeQuery();
 			
+				boolean isExisting=deleteFromEmployeeByUserNameCheck(userName);
 			
-
-				if(rs.first())
+				if(isExisting)
 				{	
+					int getUINtoDelete=getEmployeeUIN(userName);
 					
-					int peopleRetrievedUIN = rs.getInt("UIN");	
 					
 					SQLPeopleDelete = "Delete From employee where UIN=?;";
-					stmt = conn.prepareStatement(SQLPeopleDelete);
-					stmt.setInt(1, peopleRetrievedUIN);
+					PreparedStatement stmt = conn.prepareStatement(SQLPeopleDelete);
+					stmt.setInt(1, getUINtoDelete);
 					int rs1=stmt.executeUpdate();
 					System.out.println(rs1);
-					System.out.println(peopleRetrievedUIN+ " is deleted");
+					System.out.println(getUINtoDelete+ " is deleted");
 					isDeleted=true;
 					
 				}
@@ -463,11 +722,131 @@ public class Employee extends People {
 		//System.out.println("retrieved");
 	}
 	
-		
 	return isDeleted;
+	}
+	
+	public static int getEmployeeUIN(String userName){
+		
+			
+		try{
+			Connection conn = Database.getConnection();
+			String SQLUINSelect="";
+			
+			try{
+				if(conn != null){	
+				SQLUINSelect = "Select UIN From people where Username=?;";
+				PreparedStatement stmt = conn.prepareStatement(SQLUINSelect);
+				stmt.setString(1, userName);
+				ResultSet rs =  stmt.executeQuery();
+				
+				
+
+					if(rs.first())
+					{	
+						
+						int peopleRetrievedUIN = rs.getInt("UIN");	
+						
+						return peopleRetrievedUIN;
+						
+					}
+					
+					else
+					{
+						
+						System.out.println("UIN does not exist as a employee");
+
+					}
+				}
+					
+	}
+			
+			catch(SQLException e){
+				System.out.println("Error trying to access the database");
+				e.printStackTrace();
+				System.out.println(e);	
+			}
+			
+			finally{
+				//System.out.println("retrieved");
+			}
+		}
+		
+		catch(Exception e){
+			System.out.println("Connection failed");
+			e.printStackTrace();
+			System.out.println(e);
+			
+		}
+		
+		finally{
+			
+			//System.out.println("retrieved");
+		}
+	
+		
+	return -1;
 				
 	}
 	
+	public static boolean deleteFromEmployeeByUserNameCheck(String userName){
+		
+		boolean isExisting=false;	
+		try{
+			Connection conn = Database.getConnection();
+			String SQLPeopleSelect="";
+			try{
+				if(conn != null){	
+				SQLPeopleSelect = "Select UIN From people where Username=?;";
+				PreparedStatement stmt = conn.prepareStatement(SQLPeopleSelect);
+				stmt.setString(1, userName);
+				ResultSet rs =  stmt.executeQuery();
+				
+				
+
+					if(rs.first())
+					{	
+						
+						return true;
+						
+					}
+					
+					else
+					{
+						
+						System.out.println("UIN does not exist as a employee");
+
+					}
+				}
+					
+	}
+			
+			catch(SQLException e){
+				System.out.println("Error trying to access the database");
+				e.printStackTrace();
+				System.out.println(e);	
+			}
+			
+			finally{
+				//System.out.println("retrieved");
+			}
+		}
+		
+		catch(Exception e){
+			System.out.println("Connection failed");
+			e.printStackTrace();
+			System.out.println(e);
+			
+		}
+		
+		finally{
+			
+			//System.out.println("retrieved");
+		}
+		
+			
+		return isExisting;
+					
+		}
 	
 	static class bonusNotValidException extends Exception{
 		private static final long serialVersionUID = 1L;
@@ -497,6 +876,16 @@ public class Employee extends People {
 	
 	public static void main(String[] args){
 		
+//		try {
+//			giveBonus(354, 30.0);
+//		} catch (bonusNotValidException e) {
+//			// TODO Auto-generated catch block
+//			e.printStackTrace();
+//		}
+		
+		//updateEmpDetails(354, "sim", "sim");
+		
+		//deleteFromDatabaseByUserName("arihant");
 
 	}
 }

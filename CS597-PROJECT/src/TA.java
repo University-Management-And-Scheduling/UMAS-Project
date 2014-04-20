@@ -4,6 +4,8 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 
+import com.mysql.jdbc.Statement;
+
 
 
 
@@ -46,31 +48,34 @@ public class TA extends Student {
 					boolean alreadyExists=addTAToEmployeeCheck(UIN, offerID);
 					
 					if(alreadyExists){
-						return false;
-					}
 						
-					else
-					{
+						throw new AlreadyExistsInEmployeeException();
+
+					         
+						}
 						
-						System.out.println("Adding new data into the database");
-						String SQLPeopleInsert= "Insert into employee (UIN, Salary, OfficeAddress, OfficeHours) Values (?,?,?,?);";
-						PreparedStatement stmt = conn.prepareStatement(SQLPeopleInsert);
-						stmt = conn.prepareStatement(SQLPeopleInsert);
-						stmt.setInt(1, UIN);
-						stmt.setDouble(2, salary);
-						stmt.setString(3, Office_address);
-						stmt.setString(4, office_hours);
-						System.out.println(stmt);
-						int i = stmt.executeUpdate();
-						System.out.println(i);
-						System.out.println("Inserted");
-						
-						
-						isAdded=addTAtoTAtable(UIN, offerID);
-						
-						if(isAdded)
-							isAdded=true;
-					}
+						else
+						{
+							
+							System.out.println("Adding new data into the database");
+							String SQLPeopleInsert= "Insert into employee (UIN, Salary, OfficeAddress, OfficeHours) Values (?,?,?,?);";
+							PreparedStatement stmt = conn.prepareStatement(SQLPeopleInsert);
+							stmt = conn.prepareStatement(SQLPeopleInsert);
+							stmt.setInt(1, UIN);
+							stmt.setDouble(2, salary);
+							stmt.setString(3, Office_address);
+							stmt.setString(4, office_hours);
+							System.out.println(stmt);
+							int i = stmt.executeUpdate();
+							System.out.println(i);
+							System.out.println("Inserted");
+							
+							
+							isAdded=addTAtoTAtable(UIN, offerID);
+							
+							if(isAdded)
+								isAdded=true;
+						}
 						
 				}
 				
@@ -86,11 +91,16 @@ public class TA extends Student {
 					e.printStackTrace();
 				}
 				
+				finally{
+					//System.out.println("retrieved");
+					//Database.closeConnection(conn);
+				}
 			}
 			
 			
 			
 			finally{
+				
 				//System.out.println("retrieved");
 			}
 
@@ -354,13 +364,136 @@ public class TA extends Student {
 			}
 			
 		
-			return getAllTAs;
+			
 		}
 		
 		finally{
 		}
 		
+		return getAllTAs;
 		
+	}
+	
+	
+
+	public boolean updateTAUserName(String userName){
+		
+		boolean isUpdated=false;
+		
+		try{
+			Connection conn = Database.getConnection();
+			
+			try{
+				
+				boolean ifAddedInLogin=People.updateUserNameIntoLoginTable(userName, this.getUserName());
+				if(ifAddedInLogin)
+					isUpdated=true;
+					
+			}
+			
+			catch(Exception e){
+				System.out.println("Error adding/updating to database");
+				e.printStackTrace();
+				System.out.println(e);	
+			}
+			
+		}
+		
+		catch(Exception e){
+			System.out.println("Connection failed");
+			e.printStackTrace();
+			System.out.println(e);
+			
+		}
+		
+		finally{
+			
+			//System.out.println("retrieved");
+		}
+
+		return isUpdated;
+				
+	}
+
+	public boolean updateTAName(String name){
+		
+		boolean isUpdated=false;
+		
+		try{
+			Connection conn = Database.getConnection();
+			
+			try{
+				
+				boolean ifAddedInPeople=People.updateNameIntoPeopleTable(name, this.getUIN());
+				if(ifAddedInPeople)
+					isUpdated=true;
+				
+					
+			}
+			
+			catch(Exception e){
+				System.out.println("Error adding/updating to database");
+				e.printStackTrace();
+				System.out.println(e);	
+			}
+			
+		}
+		
+		catch(Exception e){
+			System.out.println("Connection failed");
+			e.printStackTrace();
+			System.out.println(e);
+			
+		}
+		
+		finally{
+			
+			//System.out.println("retrieved");
+		}
+
+		return isUpdated;
+				
+	}
+	
+
+	public boolean updateTADept(int deptID){
+		
+		boolean isUpdated=false;
+		
+		try{
+			Connection conn = Database.getConnection();
+			
+			try{
+				
+				boolean ifUpdatedInPeople=People.updateDeptIntoPeopleTable(deptID, this.getUIN());
+				if(ifUpdatedInPeople)
+					isUpdated=true;
+				
+					
+			}
+			
+			catch(Exception e){
+				System.out.println("Error adding/updating to database");
+				e.printStackTrace();
+				System.out.println(e);	
+			}
+			
+		}
+		
+		catch(Exception e){
+			System.out.println("Connection failed");
+			e.printStackTrace();
+			System.out.println(e);
+			
+		}
+		
+		finally{
+			
+			//System.out.println("retrieved");
+		}
+
+		return isUpdated;
+				
 	}
 	
 	static class AlreadyExistsInEmployeeException extends Exception{
@@ -399,6 +532,11 @@ public class TA extends Student {
 //			e.printStackTrace();
 //		}
 		
+		//getAllTAs();
+		
+		TA ta=new TA(4);
+		
+		ta.updateTADept(16);
 		
 	}
 

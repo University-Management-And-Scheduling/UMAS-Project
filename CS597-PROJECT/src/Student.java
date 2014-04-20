@@ -3,6 +3,10 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
+
+import org.hamcrest.core.IsEqual;
+
 
 
 
@@ -10,6 +14,7 @@ public class Student extends People {
 	
 	double GPA;
 	int level;	
+	JobApplication jobApplication=null;
 	
 
 	public Student(int UIN) {
@@ -40,6 +45,7 @@ public class Student extends People {
 				         this.UIN=retrievedStudentUIN;
 				         this.GPA=retrievedStudentGPA;
 				         this.level=retrievedStudentLevel;
+				         this.jobApplication=new JobApplication(retrievedStudentUIN);
 
 				         
 				         //System.out.println(peopleRetrievedUIN);
@@ -52,7 +58,7 @@ public class Student extends People {
 					else
 					{
 						
-						System.out.println("UIN does not exist");
+						System.out.println("UIN does not exist in the student table");
 
 					}
 					
@@ -228,18 +234,9 @@ public class Student extends People {
 		
 	}
 		
-//	public static void deleteStudent(int UIN){
-//		
-//	
-//		
-//	}
-//	
-//	public static void deleteStudent(String userName){
-//		
-//		
-//		
-//		
-//	}
+	public static void deleteStudent(int UIN){}
+	
+	public static void deleteStudent(String userName){}
 	
 	public static boolean checkIfStudent(int UIN){
 		
@@ -332,25 +329,20 @@ public class Student extends People {
 		if(newGPA>4.00 || newGPA<1.0)
 			
 				throw new GPAnotValidException();
-			
 		
 		try{
 			Connection conn = Database.getConnection();
-			String SQLPeopleSelect="";
 			
 			try{
 				
-				SQLPeopleSelect = "Select UIN From student where UIN=?;";
-				PreparedStatement stmt = conn.prepareStatement(SQLPeopleSelect);
-				stmt.setInt(1, UIN);
-				ResultSet rs =  stmt.executeQuery();
+				boolean ifExisting=updateGPACheck(UIN);
 				
-					if(rs.first()){
+					if(ifExisting){
 				         
 				         //Insert a update query to update the values of the database....NOT ADD
 				         	System.out.println("Updating GPA into the database");
 							String SQLupdateGPA= "UPDATE student SET GPA=? where UIN=?;";
-							stmt = conn.prepareStatement(SQLupdateGPA);
+							PreparedStatement stmt = conn.prepareStatement(SQLupdateGPA);
 							stmt.setDouble(1, newGPA);
 							stmt.setInt(2,UIN);
 							System.out.println(stmt);
@@ -399,6 +391,63 @@ public class Student extends People {
 		}
 		
 		return updateGPA;
+	}
+	
+	public static boolean updateGPACheck(int UIN){
+		
+		boolean isExisting=false;
+
+		try{
+			Connection conn = Database.getConnection();
+			String SQLPeopleSelect="";
+			
+			try{
+				
+				SQLPeopleSelect = "Select UIN From student where UIN=?;";
+				PreparedStatement stmt = conn.prepareStatement(SQLPeopleSelect);
+				stmt.setInt(1, UIN);
+				ResultSet rs =  stmt.executeQuery();
+				
+					if(rs.first()){
+				         
+				         return true;
+
+					}
+					
+					else
+					{
+						System.out.println(UIN+"already exists");
+						
+						
+					}
+					
+			}
+			
+			catch(SQLException e){
+				System.out.println("Error adding/updating to database");
+				e.printStackTrace();
+				System.out.println(e);	
+			}
+			
+			finally{
+				//System.out.println("retrieved");
+				//Database.closeConnection(conn);
+			}
+		}
+		
+		catch(Exception e){
+			System.out.println("Connection failed");
+			e.printStackTrace();
+			System.out.println(e);
+			
+		}
+		
+		finally{
+			
+			//System.out.println("retrieved");
+		}
+		
+		return isExisting;
 	}
 
 	public static ArrayList<Student> getAllStudents() {
@@ -457,6 +506,175 @@ public class Student extends People {
 		
 	}
 
+	public LinkedHashMap<Integer, CourseOffered> getStudentCourses() throws Course.CourseDoesNotExistException, CourseOffered.CourseOfferingDoesNotExistException{
+		
+		
+		LinkedHashMap<Integer,CourseOffered> studentCourses = new LinkedHashMap<Integer,CourseOffered>();
+		
+		try{
+			Connection conn = Database.getConnection();
+			
+			try{
+				if(conn != null){
+					
+					
+					//Retrieve the current semester ID
+					String SemesterSelect = "Select *"
+							+ " FROM university.studentenrollment"
+							+ " WHERE UIN= ?";
+					PreparedStatement statement = conn.prepareStatement(SemesterSelect);
+					statement.setInt(1,this.getUIN());
+					ResultSet rs = statement.executeQuery();
+					
+					while(rs.next()){
+						int offerID = rs.getInt(3);
+						CourseOffered course = new CourseOffered(offerID);
+						studentCourses.put(course.getOfferID(),course);
+					}
+					
+				}
+					
+			}
+			
+			catch(SQLException e){
+				System.out.println("Error addind course offering");
+				System.out.println(e.getMessage());
+				e.printStackTrace();
+				
+			}
+				
+			finally{
+				//Database.commitTransaction(conn);
+			}
+			
+		
+			return studentCourses;
+		}
+		
+		finally{
+		}
+		
+	}
+	
+	public boolean updateStudentUserName(String userName){
+		
+		boolean isUpdated=false;
+		
+		try{
+			Connection conn = Database.getConnection();
+			
+			try{
+				
+				boolean ifAddedInLogin=People.updateUserNameIntoLoginTable(userName, this.getUserName());
+				if(ifAddedInLogin)
+					isUpdated=true;
+					
+			}
+			
+			catch(Exception e){
+				System.out.println("Error adding/updating to database");
+				e.printStackTrace();
+				System.out.println(e);	
+			}
+			
+		}
+		
+		catch(Exception e){
+			System.out.println("Connection failed");
+			e.printStackTrace();
+			System.out.println(e);
+			
+		}
+		
+		finally{
+			
+			//System.out.println("retrieved");
+		}
+
+		return isUpdated;
+				
+	}
+
+	public boolean updateStudentName(String name){
+		
+		boolean isUpdated=false;
+		
+		try{
+			Connection conn = Database.getConnection();
+			
+			try{
+				
+				boolean ifUpdatedInPeople=People.updateNameIntoPeopleTable(name, this.getUIN());
+				if(ifUpdatedInPeople)
+					isUpdated=true;
+				
+					
+			}
+			
+			catch(Exception e){
+				System.out.println("Error adding/updating to database");
+				e.printStackTrace();
+				System.out.println(e);	
+			}
+			
+		}
+		
+		catch(Exception e){
+			System.out.println("Connection failed");
+			e.printStackTrace();
+			System.out.println(e);
+			
+		}
+		
+		finally{
+			
+			//System.out.println("retrieved");
+		}
+
+		return isUpdated;
+				
+	}
+	
+	public boolean updateStudentDept(int deptID){
+		
+		boolean isUpdated=false;
+		
+		try{
+			Connection conn = Database.getConnection();
+			
+			try{
+				
+				boolean ifUpdatedInPeople=People.updateDeptIntoPeopleTable(deptID, this.getUIN());
+				if(ifUpdatedInPeople)
+					isUpdated=true;
+				
+					
+			}
+			
+			catch(Exception e){
+				System.out.println("Error adding/updating to database");
+				e.printStackTrace();
+				System.out.println(e);	
+			}
+			
+		}
+		
+		catch(Exception e){
+			System.out.println("Connection failed");
+			e.printStackTrace();
+			System.out.println(e);
+			
+		}
+		
+		finally{
+			
+			//System.out.println("retrieved");
+		}
+
+		return isUpdated;
+				
+	}
+	
 	static class levelNotExistException extends Exception{
 		private static final long serialVersionUID = 1L;
 		private String message = null;
@@ -507,7 +725,6 @@ public class Student extends People {
 	    }
 	}
 	
-
 	
 	public static void main(String[] args){
 		
@@ -529,7 +746,15 @@ public class Student extends People {
 		
 		//getAllStudents();
 		
-	}
+		Student student=new Student(451);
+		
+		student.updateStudentDept(16);
+			
+			
+		}
+		
+		
+	
 	
 }
 

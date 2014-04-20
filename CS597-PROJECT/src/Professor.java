@@ -5,6 +5,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 
 
+
 public class Professor extends Employee {
 	
 	
@@ -32,8 +33,6 @@ public class Professor extends Employee {
 		super(userName);
 	}
 	
-	
-		
 	//prof adding
 	public static boolean addProfToDb(String name, Department dept){
 		
@@ -529,7 +528,126 @@ public class Professor extends Employee {
 		}
 		
 	}
+	
+	public boolean updateProfUserName(String userName){
 		
+		boolean isUpdated=false;
+		
+		try{
+			Connection conn = Database.getConnection();
+			
+			try{
+				
+				boolean ifAddedInLogin=People.updateUserNameIntoLoginTable(userName, this.getUserName());
+				if(ifAddedInLogin)
+					isUpdated=true;
+					
+			}
+			
+			catch(Exception e){
+				System.out.println("Error adding/updating to database");
+				e.printStackTrace();
+				System.out.println(e);	
+			}
+			
+		}
+		
+		catch(Exception e){
+			System.out.println("Connection failed");
+			e.printStackTrace();
+			System.out.println(e);
+			
+		}
+		
+		finally{
+			
+			//System.out.println("retrieved");
+		}
+
+		return isUpdated;
+				
+	}
+	
+	public boolean updateProfName(String name){
+		
+		boolean isUpdated=false;
+		
+		try{
+			Connection conn = Database.getConnection();
+			
+			try{
+				
+				boolean ifUpdatedInPeople=People.updateNameIntoPeopleTable(name, this.getUIN());
+				if(ifUpdatedInPeople)
+					isUpdated=true;
+				
+					
+			}
+			
+			catch(Exception e){
+				System.out.println("Error adding/updating to database");
+				e.printStackTrace();
+				System.out.println(e);	
+			}
+			
+		}
+		
+		catch(Exception e){
+			System.out.println("Connection failed");
+			e.printStackTrace();
+			System.out.println(e);
+			
+		}
+		
+		finally{
+			
+			//System.out.println("retrieved");
+		}
+
+		return isUpdated;
+				
+	}
+	
+
+	public boolean updateProfDept(int deptID){
+		
+		boolean isUpdated=false;
+		
+		try{
+			Connection conn = Database.getConnection();
+			
+			try{
+				
+				boolean ifUpdatedInPeople=People.updateDeptIntoPeopleTable(deptID, this.getUIN());
+				if(ifUpdatedInPeople)
+					isUpdated=true;
+				
+					
+			}
+			
+			catch(Exception e){
+				System.out.println("Error adding/updating to database");
+				e.printStackTrace();
+				System.out.println(e);	
+			}
+			
+		}
+		
+		catch(Exception e){
+			System.out.println("Connection failed");
+			e.printStackTrace();
+			System.out.println(e);
+			
+		}
+		
+		finally{
+			
+			//System.out.println("retrieved");
+		}
+
+		return isUpdated;
+				
+	}
 	//add files
 	
 	//get all course taken by the professor
@@ -589,7 +707,10 @@ public class Professor extends Employee {
 //			e.printStackTrace();
 //		}
 		
-		Professor prof=new Professor(28);
+		Professor prof=new Professor(272);
+
+		
+		prof.updateProfDept(16);
 		
 		
 		
