@@ -4,8 +4,6 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 
-import com.mysql.jdbc.Statement;
-
 
 
 
@@ -48,34 +46,31 @@ public class TA extends Student {
 					boolean alreadyExists=addTAToEmployeeCheck(UIN, offerID);
 					
 					if(alreadyExists){
+						return false;
+					}
 						
-						throw new AlreadyExistsInEmployeeException();
-
-					         
-						}
+					else
+					{
 						
-						else
-						{
-							
-							System.out.println("Adding new data into the database");
-							String SQLPeopleInsert= "Insert into employee (UIN, Salary, OfficeAddress, OfficeHours) Values (?,?,?,?);";
-							PreparedStatement stmt = conn.prepareStatement(SQLPeopleInsert);
-							stmt = conn.prepareStatement(SQLPeopleInsert);
-							stmt.setInt(1, UIN);
-							stmt.setDouble(2, salary);
-							stmt.setString(3, Office_address);
-							stmt.setString(4, office_hours);
-							System.out.println(stmt);
-							int i = stmt.executeUpdate();
-							System.out.println(i);
-							System.out.println("Inserted");
-							
-							
-							isAdded=addTAtoTAtable(UIN, offerID);
-							
-							if(isAdded)
-								isAdded=true;
-						}
+						System.out.println("Adding new data into the database");
+						String SQLPeopleInsert= "Insert into employee (UIN, Salary, OfficeAddress, OfficeHours) Values (?,?,?,?);";
+						PreparedStatement stmt = conn.prepareStatement(SQLPeopleInsert);
+						stmt = conn.prepareStatement(SQLPeopleInsert);
+						stmt.setInt(1, UIN);
+						stmt.setDouble(2, salary);
+						stmt.setString(3, Office_address);
+						stmt.setString(4, office_hours);
+						System.out.println(stmt);
+						int i = stmt.executeUpdate();
+						System.out.println(i);
+						System.out.println("Inserted");
+						
+						
+						isAdded=addTAtoTAtable(UIN, offerID);
+						
+						if(isAdded)
+							isAdded=true;
+					}
 						
 				}
 				
@@ -91,16 +86,11 @@ public class TA extends Student {
 					e.printStackTrace();
 				}
 				
-				finally{
-					//System.out.println("retrieved");
-					//Database.closeConnection(conn);
-				}
 			}
 			
 			
 			
 			finally{
-				
 				//System.out.println("retrieved");
 			}
 
