@@ -6,14 +6,16 @@ import java.util.ArrayList;
 
 
 
-public class TA extends Student {
 
+public class TA extends Student {
+	
+	
 	public TA(int UIN) {
 		super(UIN);
 		// TODO Auto-generated constructor stub
 	}
 	
-	public static boolean addTAToEmployee(int UIN, int offerID) throws Course.CourseDoesNotExistException, CourseOffered.CourseOfferingDoesNotExistException{
+	public static boolean addTAToEmployee(int UIN, int offerID) throws CourseOffered.CourseOfferingNotCurrentException{
 		
 		boolean isAdded=false;
 		double salary=40000.00;
@@ -21,13 +23,18 @@ public class TA extends Student {
 		String office_hours="to be decided";
 		
 		
-		CourseOffered offerIDcheck=new CourseOffered(offerID);
 		
-		boolean isCurrent=offerIDcheck.checkIfCurrent();
+		CourseOffered offerIDcheck;
+		boolean isCurrent=false;
+		try {
+			offerIDcheck = new CourseOffered(offerID);
+			isCurrent=offerIDcheck.checkIfCurrent();
+		} catch (Course.CourseDoesNotExistException
+				| CourseOffered.CourseOfferingDoesNotExistException e1) {
+			return false;
+		}
 		
-		if(isCurrent){
-			
-			
+		if(isCurrent){			
 			try{
 				Connection conn = Database.getConnection();
 				String SQLPeopleSelect="";
@@ -58,10 +65,12 @@ public class TA extends Student {
 							int i = stmt.executeUpdate();
 							System.out.println(i);
 							System.out.println("Inserted");
-							isAdded=true;
 							
-							addTAtoTAtable(UIN, offerID);
 							
+							isAdded=addTAtoTAtable(UIN, offerID);
+							
+							if(isAdded)
+								isAdded=true;
 						}
 						
 				}
@@ -90,12 +99,10 @@ public class TA extends Student {
 				//System.out.println("retrieved");
 			}
 
-			
 		}
 		
 		else{
-			
-			throw new CourseOffered.CourseOfferingDoesNotExistException();
+			throw new CourseOffered.CourseOfferingNotCurrentException();
 		}
 		
 		return isAdded;
@@ -114,7 +121,7 @@ public class TA extends Student {
 			
 			try{
 				
-				SQLPeopleSelect = "Select TaUIN From employee where OfferID=?;";
+				SQLPeopleSelect = "Select TaUIN From teachingassistant where OfferID=?;";
 				PreparedStatement stmt = conn.prepareStatement(SQLPeopleSelect);
 				stmt.setInt(1, UIN);
 				ResultSet rs =  stmt.executeQuery();
