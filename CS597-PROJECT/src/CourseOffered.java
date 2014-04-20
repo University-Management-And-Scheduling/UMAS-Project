@@ -452,57 +452,36 @@ public class CourseOffered {
 		
 	}
 
-	//Not to be used, functionality not complete
-	//Remove courseOffered from database
-	//Will be removed only if it is current
-	public static void removeCourseOffering(final CourseOffered courseOffered) throws CourseOfferingDoesNotExistException{		
-		
+	public boolean updateCourseOffering(Professor professor) throws CourseOfferingDoesNotExistException{		
+		boolean isUpdated = false;	
 		try{
 			Connection conn = Database.getConnection();
 			
 			try{
 				if(conn != null){
-					
-					//Retrieve the current semester ID
-					String SemesterSelect = "Select SemesterID"
-							+ " FROM university.semester"
-							+ " WHERE IsCurrent= ?";
-					PreparedStatement statement = conn.prepareStatement(SemesterSelect, ResultSet.CONCUR_UPDATABLE);
-					statement.setInt(1, 1);
-					ResultSet rs = statement.executeQuery();
-					int currentSemID = rs.getInt(1);
-					
-					if(currentSemID == courseOffered.getSemesterID()){
-						//delete the course offering
-						String deleteCourseQuery = "Delete "
-								+ "From university.coursesoffered"
-								+ "Where OfferID= ?";
-						statement = conn.prepareStatement(deleteCourseQuery, ResultSet.CONCUR_UPDATABLE);
-						statement.setInt(1, courseOffered.getOfferID());
-						rs = statement.executeQuery();
-					}
-					
-					else{
-						throw new CourseOfferingDoesNotExistException();									
-					}
+					String SQLUpdate = "UPDATE university.coursesoffered "
+							+ "SET Taughtby= ? "
+							+ "WHERE offerID= ?";
+					PreparedStatement statement = conn.prepareStatement(SQLUpdate, ResultSet.CONCUR_UPDATABLE);
+					statement.setInt(1, professor.getUIN());
+					statement.setInt(2, this.getOfferID());
+					statement.executeUpdate();
+					Database.commitTransaction(conn);
+					isUpdated = true;
 				}
 			}
 			
 			catch(SQLException e){
-				System.out.println("Error deleting course");
-				System.out.println(e.getMessage());
+				System.out.println("Error updatint course offering");
 				e.printStackTrace();
-			}
-			
-			finally{
-				//Database.closeConnection(conn);
 			}
 			
 		}
 		
 		finally{
 		}
-
+		
+		return isUpdated;
 		
 	}
 	

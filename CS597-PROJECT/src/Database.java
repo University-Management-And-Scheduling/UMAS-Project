@@ -18,7 +18,7 @@ public class Database {
 		dbName = "university";
 		driver = "com.mysql.jdbc.Driver";
 		userName = "root";
-		password = "root";
+		password = "engineering";
 	}
 	
 //Constructor added	
