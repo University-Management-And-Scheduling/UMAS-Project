@@ -131,10 +131,10 @@ public class GradeSystem {
 		return isGradePresent;
 	}
 	
-	public boolean isGradeLevelPresent(){
+	public static boolean isGradeLevelPresent(int gradeLevel){
 		boolean isGradeLevelPresent = false;
 		
-		int gradeLevel = this.getGradeLevel();
+		//int gradeLevel = this.getGradeLevel();
 		@DBAnnotation (
 				variable = "tableGradeLevel",  
 				table = "gradingsystem", 
@@ -254,40 +254,46 @@ public class GradeSystem {
 		boolean isGradeLevelModified = false;
 		
 		String grade = this.getGrade();
-		
-		boolean isGradeLevelPresent = this.isGradeLevelPresent();
-		if(isGradeLevelPresent == false){
-			System.out.println("This gradeLevel is not present");
+		int gradeLevel = this.gradeLevel;
+		boolean isOldGradeLevelPresent = isGradeLevelPresent(gradeLevel);
+		boolean isNewGradeLevelPresent = isGradeLevelPresent(newGradeLevel);
+		if(isOldGradeLevelPresent == false){
+			System.out.println("This Old Grade Level is not present");
 		} else{
-			@DBAnnotation (
-					variable = "newGradeLevel",  
-					table = "gradingsystem", 
-					column = "GradeLevel", 
-					isSource = false)
-			
-			String SQLGradeUpdate = "UPDATE gradingsystem SET GradeLevel = ? WHERE GradeLevel = ? ;";
-			
-			try {
-				Connection conn = Database.getConnection();
+			if(isNewGradeLevelPresent == true){
+				System.out.println(" new Grade Level is not present");
+			} else {
+				@DBAnnotation (
+						variable = "newGradeLevel",  
+						table = "gradingsystem", 
+						column = "GradeLevel", 
+						isSource = false)
+				
+				String SQLGradeUpdate = "UPDATE gradingsystem SET GradeLevel = ? WHERE GradeLevel = ? ;";
+				
 				try {
-					if (conn != null) {
-						PreparedStatement statement = conn.prepareStatement(SQLGradeUpdate);
-						statement.setInt(1, gradeLevel);
-						statement.setInt(1, newGradeLevel);
-						statement.executeUpdate();
-						Database.commitTransaction(conn);
-						isGradeLevelModified = true;
-					}	
-				} catch (SQLException e) {
+					Connection conn = Database.getConnection();
+					try {
+						if (conn != null) {
+							PreparedStatement statement = conn.prepareStatement(SQLGradeUpdate);
+							statement.setInt(1, gradeLevel);
+							statement.setInt(1, newGradeLevel);
+							statement.executeUpdate();
+							Database.commitTransaction(conn);
+							isGradeLevelModified = true;
+						}	
+					} catch (SQLException e) {
+						System.out.println(e);
+						Database.rollBackTransaction(conn);
+					}
+
+				} catch (Exception e) {
 					System.out.println(e);
-					Database.rollBackTransaction(conn);
 				}
-
-			} catch (Exception e) {
-				System.out.println(e);
 			}
-		}
 
+		}
+			
 		return isGradeLevelModified;
 	}
 
@@ -331,9 +337,9 @@ public class GradeSystem {
 		return this;
 	}
 
-	public GradeSystem getGradeForGradeLevel(int gradeLevel){
+	public static GradeSystem getGradeForGradeLevel(int gradeLevel){
 		GradeSystem gradeObject = null;
-		boolean isGradeLevelPresent = this.isGradeLevelPresent(); 
+		boolean isGradeLevelPresent = isGradeLevelPresent(gradeLevel); 
 		if(isGradeLevelPresent == false){
 			System.out.println("Grade Level " + gradeLevel + " is not present");
 		} else {

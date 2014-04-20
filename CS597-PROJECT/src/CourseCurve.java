@@ -130,8 +130,10 @@ public class CourseCurve {
 	// 3 ways to Calculate the Curve
 
 	// HashMap<String,Integer> = HashMap<Grade,Percentage of students in the grade>
-	// Example: <'A',30> = Top 30% students would be given 'A' grade
-	// <'B',40> = Next 40% students would be given 'B' grade
+	// Example: <30,40,30> = Top 30% students would be given grade at level 1.
+	// Next 40% students would be given grade  at level 2. 
+	// Last 30% students would be given grade  at level 3.
+	// Grade levels are stored in the gradingsystem table.
 	public static CourseCurve calculatePercentageCurve(int offerID, List<Integer> curvingCriteria){
 		CourseCurve curve = new CourseCurve(offerID,curvingCriteria);
 		
@@ -148,34 +150,33 @@ public class CourseCurve {
 		// the curvingCriteria selected by the professor 
 		//(30,40,30) = (9,12,9) / 30
 		HashMap<Student,String> courseCurve = null;
-		int initialStudents = 0;
-		//int thirtypercent = (int) Math.ceil(0.7 * 30);
 		int numberOfStudents = sortedstudentTotalMarks.size();
 		int numberOfGrades = curvingCriteria.size();
+		int studentsLeft = numberOfStudents;
 		
-		for (int percentStudents: curvingCriteria) {
+		Set<Student> keys = sortedstudentTotalMarks.keySet();
+		Iterator<Student> keyIterator = keys.iterator();
+		
+		for (int gradeLevel=1; gradeLevel<= numberOfGrades;gradeLevel++){
+			GradeSystem grade = GradeSystem.getGradeForGradeLevel(gradeLevel);
+			String studentGrade = grade.getGrade();
 			
-			//int percentStudents = curvingCriteria.get(initialStudents);
+			int percentStudents = curvingCriteria.get(gradeLevel);
+		
 			int students =  (int) Math.ceil((percentStudents/100) * numberOfStudents);
 			
-			for(int studentsAdded = 0; studentsAdded<=students;studentsAdded++){
-				// Skip
-				int UIN = 0;
-				double marks = 0.0;
-				Set<Student> keys = sortedstudentTotalMarks.keySet();
-				Iterator<Student> keyIterator = keys.iterator();
-				for(int i = 0;i<=initialStudents;i++){
-					if (keyIterator.hasNext()) {
-						Student student = keyIterator.next();
-					}
-				}
-				Student student = keyIterator.next();
-				
-				initialStudents++;
-				
+			// For roundoff error
+			if(students > studentsLeft){
+				students = studentsLeft;
 			}
 			
+			for(int studentsAdded = 0; studentsAdded<=students;studentsAdded++){
+				Student student = keyIterator.next();
+				courseCurve.put(student, studentGrade);
+				studentsLeft--;
+			}
 		}
+			
 		curve.setCourseCurve(courseCurve);
 		return curve;
 	}
