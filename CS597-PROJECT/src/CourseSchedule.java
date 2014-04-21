@@ -7,6 +7,7 @@ import java.util.Collections;
 import java.util.HashMap;
 
 
+
 public class CourseSchedule {
 	private int offerID;
 	private int classroomID;
@@ -204,7 +205,8 @@ public class CourseSchedule {
 				if(conn != null){
 					
 					String SQLSelect= "Select *"
-							+ " FROM university.courseschedule";
+							+ " FROM university.courseschedule natural join university.coursesoffered "
+							+ "ORDER BY TotalCapacity";
 					PreparedStatement statement = conn.prepareStatement(SQLSelect);
 					ResultSet rs =  statement.executeQuery();
 					
@@ -219,6 +221,53 @@ public class CourseSchedule {
 			catch(SQLException e){
 				System.out.println("Error getting");
 				System.out.println(e.getMessage());
+			}
+			
+		}
+		
+		finally{
+		}
+		
+		return courseSchedule;
+	}
+	
+	public static ArrayList<CourseSchedule> getAllScheduledCourses(Department department){
+		ArrayList<CourseSchedule> courseSchedule = new ArrayList<CourseSchedule>();
+		if(department == null)
+			return courseSchedule;
+		
+		String departmentName = department.getDepartmentName();
+		try{
+			Connection conn = Database.getConnection();
+			
+			try{
+				if(conn != null){
+					
+					String SQLSelect= "Select *"
+							+ " FROM university.courseschedule natural join university.coursesoffered "
+							+ "ORDER BY TotalCapacity";
+					PreparedStatement statement = conn.prepareStatement(SQLSelect);
+					ResultSet rs =  statement.executeQuery();
+					
+					while(rs.next()){
+						CourseOffered co = new CourseOffered(rs.getInt("OfferID"));
+						if(co.getDepartmentName().equals(departmentName)){
+							courseSchedule.add(new CourseSchedule(co.getOfferID()));
+						}
+					}
+					
+				}
+			}
+			
+			catch(SQLException e){
+				System.out.println("Error getting schedule for department");
+				System.out.println(e.getMessage());
+			} catch (Course.CourseDoesNotExistException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (CourseOffered.CourseOfferingDoesNotExistException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
 			}
 			
 		}
@@ -395,7 +444,7 @@ public class CourseSchedule {
 			catch(SQLException e){
 				System.out.println("Error adding schedule");
 				System.out.println(e.getMessage());
-				//e.printStackTrace();
+				e.printStackTrace();
 			}
 			
 		}
@@ -429,7 +478,26 @@ public class CourseSchedule {
 		
 		Database.commitTransaction(Database.getConnection());
 	}
+	
+	public static void scheduleAllCurrentCourses(Department department){
+		//Remove all the scheduled courses in the dept
 		
+		deleteAllCourseSchedule(department);		
+		
+		ArrayList<CourseOffered> allCourses = department.getDepartmentCourseOffered();
+		for(CourseOffered co:allCourses){
+			System.out.println("\n\n\nxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
+					+ "\n--------------------------------------------------------------------------------------------------------------");
+			
+			scheduleCourse(co);
+			
+			System.out.println("\n\n\n-----------------------------------------------------------------------------------------------------------"
+					+ "\nxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx");
+		}
+		
+		Database.commitTransaction(Database.getConnection());
+	}
+	
 	private static void deleteAllCourseSchedule(){
 		try{
 			Connection conn = Database.getConnection();
@@ -441,6 +509,49 @@ public class CourseSchedule {
 					String courseScheduleDelete = "Delete"
 							+ " FROM university.courseschedule";
 					PreparedStatement statement = conn.prepareStatement(courseScheduleDelete, ResultSet.CONCUR_UPDATABLE);
+				    int isDeleted= statement.executeUpdate();
+				    System.out.println("Deletd:"+isDeleted);
+				    if(isDeleted > 0){
+				    	Database.commitTransaction(conn);
+				    }
+				    
+									
+				}
+			}
+			
+			catch(SQLException e){
+				System.out.println("Error deleting schedule");
+				System.out.println(e.getMessage());
+				e.printStackTrace();
+			}
+						
+		}
+		
+		finally{
+		}
+	}
+	
+	private static void deleteAllCourseSchedule(Department department){
+		ArrayList<CourseOffered> deptCoursesOffering = department.getDepartmentCourseOffered();
+		
+		for(CourseOffered co:deptCoursesOffering){
+			deleteSingleSchedule(co.getOfferID());
+		}
+	}
+	
+	private static void deleteSingleSchedule(int offerID){
+		try{
+			Connection conn = Database.getConnection();
+			
+			try{
+				if(conn != null){
+					
+					//Retrieve the current semester ID
+					String courseScheduleDelete = "Delete"
+							+ " FROM university.courseschedule "
+							+ "WHERE OfferID = ?";
+					PreparedStatement statement = conn.prepareStatement(courseScheduleDelete, ResultSet.CONCUR_UPDATABLE);
+					statement.setInt(1, offerID);
 				    int isDeleted= statement.executeUpdate();
 				    System.out.println("Deletd:"+isDeleted);
 				    if(isDeleted > 0){

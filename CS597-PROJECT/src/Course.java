@@ -157,7 +157,7 @@ public class Course {
 	}
 
 	//Add a course to the database
-	public boolean addCourse(String courseName, Department department) throws CourseAlreadyExistsException{
+	public static boolean addCourse(String courseName, Department department) throws CourseAlreadyExistsException{
 		boolean isAdded = false;
 		
 		if(department == null || courseName.length()<1 || courseName == null)
@@ -205,7 +205,7 @@ public class Course {
 		if(department == null || courseName.length()<1 || courseName == null)
 			return isUpdated;
 		
-		if(!isExists(courseName, department))
+		if(isExists(courseName, department))
 			return isUpdated;
 		
 		try{
@@ -215,7 +215,7 @@ public class Course {
 				if(conn != null){
 					//add the data to the course table
 					System.out.println("Updating course");
-					String SQLupdate= "UPDATE university.course "
+					String SQLupdate= "UPDATE university.courses "
 							+ "SET CourseName= ?, DepartmentID= ? "
 							+ "WHERE CourseID= ?";
 					PreparedStatement statement;
@@ -234,6 +234,7 @@ public class Course {
 			catch(SQLException e){
 				System.out.println("Error updating");
 				System.out.println(e.getMessage());
+				e.printStackTrace();
 			}
 						
 		}
@@ -245,7 +246,7 @@ public class Course {
 
 	}
 	
-	private boolean isExists(String courseName, Department department){
+	private static boolean isExists(String courseName, Department department){
 		boolean isExists = false;
 		try{
 			Connection conn = Database.getConnection();
@@ -362,7 +363,50 @@ public class Course {
 		return courses;
 	}
 	
-	public static ArrayList<Course> getCoursesOfDepartment(Department d){
+	public LinkedHashMap<Integer, CourseOffered> getCurrentOfferings(){
+		LinkedHashMap<Integer, CourseOffered> courseOfferings = new LinkedHashMap<Integer, CourseOffered>();
+		
+		try{
+			Connection conn = Database.getConnection();
+			
+			try{
+				if(conn != null){
+					String SQLSelect= "Select *"
+							+ " FROM university.coursesoffered natural join university.courseschedule"
+							+ " WHERE coursesoffered.CourseID= ?";
+					PreparedStatement statement = conn.prepareStatement(SQLSelect);
+					statement.setInt(1, this.courseID);
+					ResultSet rs =  statement.executeQuery();
+					
+					while(rs.next()){
+						System.out.println("Retreiving the Course");
+						int offerID = rs.getInt("OfferID");
+						CourseOffered co = new CourseOffered(offerID);
+						courseOfferings.put(offerID, co);						
+					}
+				}
+			}
+			
+			catch(SQLException e){
+				System.out.println("Error getting courses");
+				System.out.println(e.getMessage());
+			} catch (CourseDoesNotExistException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (CourseOffered.CourseOfferingDoesNotExistException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			
+		}
+		
+		finally{
+		}
+		
+		return courseOfferings;
+	}
+	
+ 	public static ArrayList<Course> getCoursesOfDepartment(Department d){
 		int deptID = d.getDepartmentID();
 		ArrayList<Course> deptCourses = new ArrayList<Course>();
 		try{
@@ -467,5 +511,14 @@ public class Course {
 		toReturn+=this.getDepartment().toString();
 		return toReturn;
 		
+	}
+
+	public static void main(String[] args) throws CourseDoesNotExistException{
+		LinkedHashMap<Integer, CourseOffered> co = new LinkedHashMap<Integer, CourseOffered>();
+		Course c = new Course(19);
+		co = c.getCurrentOfferings();
+		for(Integer i:co.keySet()){
+			System.out.println(co.get(i).getOfferID());
+		}
 	}
 }

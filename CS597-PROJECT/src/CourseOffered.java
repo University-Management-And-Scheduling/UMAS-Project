@@ -856,7 +856,7 @@ public class CourseOffered {
 					ResultSet rs = statement.executeQuery();
 					
 					if(rs.first()){
-						current = rs.getInt("IsCurrent");
+						current = rs.getInt("SemesterID");
 					}							
 					
 				}
@@ -1025,7 +1025,9 @@ public class CourseOffered {
 
 	
 	public static void main(final String[] args) throws Course.CourseDoesNotExistException, CourseOfferingDoesNotExistException, CourseOfferingNotCurrentException, CourseOfferingAlreadyExistsException, CourseOfferingNotSchedulable{
-		addCourseOfferingToDatabase(new Course(67), new Professor(289), 40);
+		//addCourseOfferingToDatabase(new Course(67), new Professor(289), 40);
+		System.out.println(getAllCurrentlyOfferedCourses().size());
+		System.out.println(getCurrentSemesterID());
 	}
 
 }

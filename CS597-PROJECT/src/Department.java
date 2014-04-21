@@ -388,11 +388,88 @@ public class Department {
 	
 	//to be implemented
 	public ArrayList<Course> getDepartmentCourses(){
-		return null;
+		ArrayList<Course> deptCourses = new ArrayList<Course>();
+		
+		try{
+			Connection conn = Database.getConnection();
+			
+			try{
+				if(conn != null){
+					String SQLSelect= "Select CourseID"
+							+ " FROM university.department natural join university.courses"
+							+ " WHERE DepartmentID= ?";
+					PreparedStatement statement = conn.prepareStatement(SQLSelect);
+					statement.setInt(1, this.getDepartmentID());
+					ResultSet rs =  statement.executeQuery();
+					
+					while(rs.next()){
+						Course c = new Course(rs.getInt("CourseID"));
+						deptCourses.add(c);
+					}
+				}
+			}
+			
+			catch(SQLException e){
+				System.out.println("Error updating/adding");
+				System.out.println(e.getMessage());
+			} catch (Course.CourseDoesNotExistException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			
+			finally{
+				//Database.closeConnection(conn);
+			}
+			
+		}
+		
+		finally{
+		}
+		
+		return deptCourses;
 	}
 	
 	public ArrayList<CourseOffered> getDepartmentCourseOffered(){
-		return null;
+		
+		ArrayList<CourseOffered> deptCourses = new ArrayList<CourseOffered>();
+		int currentSemester = CourseOffered.getCurrentSemesterID();
+		try{
+			Connection conn = Database.getConnection();
+			
+			try{
+				if(conn != null){
+					String SQLSelect= "Select CourseID, OfferID"
+							+ " FROM university.coursesoffered natural join university.courses"
+							+ " WHERE DepartmentID= ? and SemesterID = ?";
+					PreparedStatement statement = conn.prepareStatement(SQLSelect);
+					statement.setInt(1, this.getDepartmentID());
+					statement.setInt(2, currentSemester);
+					ResultSet rs =  statement.executeQuery();
+					
+					while(rs.next()){
+						CourseOffered co = new CourseOffered(rs.getInt("OfferID"));
+						deptCourses.add(co);
+					}
+				}
+			}
+			
+			catch(SQLException e){
+				System.out.println("Error retrieving");
+				System.out.println(e.getMessage());
+			} catch (Course.CourseDoesNotExistException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (CourseOffered.CourseOfferingDoesNotExistException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			
+		}
+		
+		finally{
+		}
+		
+		return deptCourses;
 	}
 	
 	public static void main(String[] args){
