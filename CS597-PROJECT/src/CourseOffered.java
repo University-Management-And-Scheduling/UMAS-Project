@@ -76,7 +76,8 @@ public class CourseOffered {
 
 		
 	}
-		
+	
+	
 	/**
 	 * @return the offerID
 	 */
@@ -420,13 +421,15 @@ public class CourseOffered {
 						statement.setInt(3, totalCap);
 						statement.setInt(4, 0);
 						statement.setInt(5, profID);
-						//int i = statement.executeUpdate();
+						statement.executeUpdate();
 						ResultSet generatedSet = statement.getGeneratedKeys();
 						int generatedID = -1;
 						if(generatedSet.first())
 							generatedID = generatedSet.getInt(1);
+						else
+							return false;
 						System.out.println(generatedID);
-						Database.commitTransaction(conn);
+						//Database.commitTransaction(conn);
 						boolean flag = CourseSchedule.scheduleCourseUsingID(generatedID, totalCap);
 						if(flag){
 							Database.commitTransaction(conn);
@@ -526,7 +529,6 @@ public class CourseOffered {
 			}
 				
 			finally{
-				//Database.commitTransaction(conn);
 			}
 			
 		
@@ -657,6 +659,7 @@ public class CourseOffered {
 	//complete
 	public boolean addOneSeatFilledToCourseOffered() throws CourseOfferingNotCurrentException{
 		boolean success = false;
+		int currentlyFilled = 0;
 		if(!checkIfCurrent()){
 			throw new CourseOfferingNotCurrentException("This course offering is not current");
 		}
@@ -665,22 +668,31 @@ public class CourseOffered {
 			
 			try{
 				if(conn != null){
-					
-					//Retrieve the current semester ID
-					String SemesterSelect = "Select *"
+					String courseOfferSelect = "Select *"
 							+ " FROM university.coursesoffered"
 							+ " WHERE OfferID= ?";
-					PreparedStatement statement = conn.prepareStatement(SemesterSelect);
+					PreparedStatement statement = conn.prepareStatement(courseOfferSelect, ResultSet.CONCUR_UPDATABLE);
 					statement.setInt(1, this.getOfferID());
 					ResultSet rs = statement.executeQuery();
 					
 					if(rs.first()){
-						int currentlyFilled = rs.getInt(5);
+						currentlyFilled = rs.getInt("SeatsFilled");
 						currentlyFilled += 1;
-						rs.updateInt(5, currentlyFilled);
-						Database.commitTransaction(conn);
-						success = true;
 					}
+					
+					else{
+						throw new CourseOfferingDoesNotExistException();
+					}
+					
+					String updateStatement = "UPDATE university.coursesoffered "
+							+ "SET SeatsFilled= ? "
+							+ "WHERE OfferID= ? ;";
+					statement = conn.prepareStatement(updateStatement, ResultSet.CONCUR_UPDATABLE);
+					statement.setInt(1, currentlyFilled);
+					statement.setInt(2, this.getOfferID());
+					statement.executeUpdate();
+					Database.commitTransaction(conn);
+					success = true;
 										
 				}					
 				
@@ -889,13 +901,14 @@ public class CourseOffered {
 			e.printStackTrace();
 		}
 		
-		//check if the student is on the waitList
-		if(WaitList.isStudentOnWaitList(student, offerID)){
-			return false;
-		}
 		
 		if(WaitList.isStudentEmailed(student, offerID)){
 			return true;
+		}
+		
+		//check if the student is on the waitList
+		if(WaitList.isStudentOnWaitList(student, offerID)){
+			return false;
 		}
 		
 		if(!WaitList.isWaitListEmpty(offerID)){
@@ -1011,21 +1024,8 @@ public class CourseOffered {
 		}
 
 	
-	public static void main(final String[] args){
-//		try {
-//			CourseOffered.addCourseOfferingToDatabase(new Course(1), Professor.retrieveProfDetailsByUIN(1), 50);
-//		} 
-//		
-//		catch (CourseOfferingAlreadyExistsException e) {
-//			// TODO Auto-generated catch block
-//			e.printStackTrace();
-//		} catch (Course.CourseDoesNotExistException e) {
-//			// TODO Auto-generated catch block
-//			e.printStackTrace();
-//		} catch (CourseOfferingNotSchedulable e) {
-//			// TODO Auto-generated catch block
-//			e.printStackTrace();
-//		}
+	public static void main(final String[] args) throws Course.CourseDoesNotExistException, CourseOfferingDoesNotExistException, CourseOfferingNotCurrentException, CourseOfferingAlreadyExistsException, CourseOfferingNotSchedulable{
+		addCourseOfferingToDatabase(new Course(67), new Professor(289), 40);
 	}
 
 }
