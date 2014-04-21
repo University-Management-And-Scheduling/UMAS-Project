@@ -15,7 +15,7 @@ public class JobApplication {
 	
 	protected int ApplicationID;
 	protected int UIN;
-	protected int workEx;
+	protected double workEx;
 	protected boolean skill1;
 	protected boolean skill2;
 	protected boolean skill3;
@@ -25,6 +25,94 @@ public class JobApplication {
 	String SQLPeopleSelect="";
 	String SQLPeopleReSelect="";
 	
+	public int getApplicationID() {
+		return ApplicationID;
+	}
+
+	public void setApplicationID(int applicationID) {
+		ApplicationID = applicationID;
+	}
+
+	public int getUIN() {
+		return UIN;
+	}
+
+	public void setUIN(int uIN) {
+		UIN = uIN;
+	}
+
+	public double getWorkEx() {
+		return workEx;
+	}
+
+	public void setWorkEx(double workEx) {
+		this.workEx = workEx;
+	}
+
+	public boolean isSkill1() {
+		return skill1;
+	}
+
+	public void setSkill1(boolean skill1) {
+		this.skill1 = skill1;
+	}
+
+	public boolean isSkill2() {
+		return skill2;
+	}
+
+	public void setSkill2(boolean skill2) {
+		this.skill2 = skill2;
+	}
+
+	public boolean isSkill3() {
+		return skill3;
+	}
+
+	public void setSkill3(boolean skill3) {
+		this.skill3 = skill3;
+	}
+
+	public boolean isSkill4() {
+		return skill4;
+	}
+
+	public void setSkill4(boolean skill4) {
+		this.skill4 = skill4;
+	}
+
+	public boolean isSkill5() {
+		return skill5;
+	}
+
+	public void setSkill5(boolean skill5) {
+		this.skill5 = skill5;
+	}
+
+	public float getScaledScore() {
+		return scaledScore;
+	}
+
+	public void setScaledScore(float scaledScore) {
+		this.scaledScore = scaledScore;
+	}
+
+	public String getSQLPeopleSelect() {
+		return SQLPeopleSelect;
+	}
+
+	public void setSQLPeopleSelect(String sQLPeopleSelect) {
+		SQLPeopleSelect = sQLPeopleSelect;
+	}
+
+	public String getSQLPeopleReSelect() {
+		return SQLPeopleReSelect;
+	}
+
+	public void setSQLPeopleReSelect(String sQLPeopleReSelect) {
+		SQLPeopleReSelect = sQLPeopleReSelect;
+	}
+
 	public JobApplication(int UIN){
 	
 		try{
@@ -34,7 +122,7 @@ public class JobApplication {
 			
 				if(conn != null){
 					
-					SQLPeopleSelect = "Select ApplicantUIN, WorkExperience, Skillset1, Skillset2, Skillset3, Skillset4, Skillset5, Scaledscore From applicationdetails where ApplicantUIN=?;";
+					SQLPeopleSelect = "Select * From applicationdetails where ApplicantUIN=?;";
 				}
 				
 				
@@ -48,7 +136,7 @@ public class JobApplication {
 					{
 						
 						 int RetrievedUIN = rs.getInt("ApplicantUIN");
-				         int RetrievedWorkEx = rs.getInt("WorkExperience");
+				         Double RetrievedWorkEx = rs.getDouble("WorkExperience");
 				         boolean retreivedSkill1=rs.getBoolean("Skillset1");
 				         boolean retreivedSkill2=rs.getBoolean("Skillset2");
 				         boolean retreivedSkill3=rs.getBoolean("Skillset3");
@@ -56,7 +144,7 @@ public class JobApplication {
 				         boolean retreivedSkill5=rs.getBoolean("Skillset5");
 				         float retreivedScaledScore=rs.getFloat("Scaledscore");
 				     
-						
+				         this.ApplicationID = rs.getInt("ApplicationID");
 				         this.UIN=RetrievedUIN;
 				         this.workEx=RetrievedWorkEx;
 				         this.skill1=retreivedSkill1;
@@ -630,12 +718,12 @@ public class JobApplication {
 	 public static void main(String[] args)
 		{
 		 
-		Job job=new Job(22);
-		// updateApplication(527, 4.0, false, true, true, true, false);
-		rePost(1.5, 1.5, false, true, true, true, false, job);
+		//Job job=new Job(22);
+		//updateApplication(520, 4.0, true, true, true, true, false);
+		//rePost(1.5, 1.5, false, true, true, true, false, job);
 		 
 //		 addApplicationDetails(519, 2.5, true, false, true, true, false);
-//		 addApplicationDetails(520, 2.5, true, true, true, true, false);
+//		 addApplicationDetails(520, 3.0, true, true, true, true, false);
 //		 addApplicationDetails(521, 2.5, false, false, true, false, false);
 //		 addApplicationDetails(522, 2.5, true, true, false, true, false);
 //		 addApplicationDetails(523, 2.5, false, false, true, true, false);
@@ -644,6 +732,9 @@ public class JobApplication {
 //		 addApplicationDetails(526, 2.5, false, false, true, true, false);
 //		 addApplicationDetails(527, 2.5, true, true, false, true, false);
 //		 addApplicationDetails(528, 2.5, false, true, true, true, false);
+		 
+		 JobApplication app=new JobApplication(520);
+		 System.out.println(app.getWorkEx());
 		 
 		}
 	 
