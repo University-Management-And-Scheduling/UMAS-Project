@@ -9,15 +9,13 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
-import java.util.List;
 import java.util.Set;
-
 
 public class CourseExams {
 
 	int offerID;
 	String examName;
-	HashMap examMarks = new HashMap<Student,Double>(); 
+	HashMap<Student,Double> examMarks = new HashMap<Student,Double>(); 
 	
 	@Target({ElementType.LOCAL_VARIABLE})
 	@Retention(RetentionPolicy.RUNTIME)
@@ -28,7 +26,7 @@ public class CourseExams {
 	 boolean[] isSource () default false; 
 	}
 	
-	public CourseExams(int offerID, String examName, HashMap examMarks) {
+	public CourseExams(int offerID, String examName, HashMap<Student,Double> examMarks) {
 		super();
 		this.offerID = offerID;
 		this.examName = examName;
@@ -57,16 +55,16 @@ public class CourseExams {
 		this.examName = examName;
 	}
 	
-	public HashMap getExamMarks() {
+	public HashMap<Student,Double> getExamMarks() {
 		return examMarks;
 	}
 
-	public void setExamMarks(HashMap examMarks) {
+	public void setExamMarks(HashMap<Student,Double> examMarks) {
 		this.examMarks = examMarks;
 	}
 
-	public static void createCourseExamMarksTable(CourseOffered offeredCourse){
-		
+	public static boolean createCourseExamMarksTable(CourseOffered offeredCourse){
+		boolean tableAdded = false;
 		Course course = offeredCourse.getCourse();
 		String courseName = course.getCourseName();
 		int offerID= offeredCourse.getOfferID();
@@ -82,26 +80,34 @@ public class CourseExams {
 //				table = "courseExamStructureTable", 
 //				column = {"Username","Password"}, 
 //				isSource = false)
-		String SQLExamCreate = "CREATE TABLE ? (`StudentUIN` int(12) NOT NULL,`StudentEnrollmentID` int(12) NOT NULL, " +
-				" PRIMARY KEY (`StudentUIN`), KEY `StudentID_idx` (`StudentUIN`),  " + 
+		String SQLExamCreate = "CREATE TABLE %s (`StudentUIN` int(12) NOT NULL,`StudentEnrollmentID` int(12) NOT NULL, " +
+				"PRIMARY KEY (`StudentUIN`), KEY `StudentID_idx` (`StudentUIN`),  " + 
 				"KEY `StudentEnrollmentID_idx` (`StudentEnrollmentID`), " +
-				"CONSTRAINT `?` FOREIGN KEY (`StudentEnrollmentID`) REFERENCES `studentenrollment` (`EnrollmentID`) ON DELETE NO ACTION ON UPDATE NO ACTION," +
-				"CONSTRAINT `?` FOREIGN KEY (`StudentUIN`) REFERENCES `student` (`UIN`) ON DELETE CASCADE ON UPDATE CASCADE;" ;
+				"CONSTRAINT %s FOREIGN KEY (`StudentEnrollmentID`) REFERENCES `studentenrollment` (`EnrollmentID`) ON DELETE NO ACTION ON UPDATE NO ACTION," +
+				"CONSTRAINT %s FOREIGN KEY (`StudentUIN`) REFERENCES `student` (`UIN`) ON DELETE CASCADE ON UPDATE CASCADE);" ;
 
-		
+		//String SQLExamCreate = "CREATE TABLE %s (`StudentUIN` int(12), `StudentEnrollmentID` int(12), PRIMARY KEY (StudentUIN))";
+		SQLExamCreate = String.format(SQLExamCreate, tableName,studentEnrollmentIDConstraint,studentIDConstraint);
 		try {
 			Connection conn = Database.getConnection();
 			try {
 				if (conn != null) {
-				 
-					PreparedStatement statement = conn.prepareStatement(SQLExamCreate);
-					statement.setString(1, tableName);
-					statement.setString(2, studentIDConstraint);
-					statement.setString(3, studentEnrollmentIDConstraint);
-					statement.executeUpdate();
-					CourseExamStructure.createCourseExamStructureTable(offeredCourse);
-					Database.commitTransaction(conn);
 					
+					PreparedStatement statement = conn.prepareStatement(SQLExamCreate);
+//					statement.setString(1, tableName);
+//					statement.setString(1, studentEnrollmentIDConstraint);
+//					statement.setString(2, studentIDConstraint);
+
+					System.out.println("Before exam create");
+					statement.executeUpdate();
+					boolean isCourseAdded = CourseExamStructure.createCourseExamStructureTable(offeredCourse);
+					if(isCourseAdded == true){
+						Database.commitTransaction(conn);
+						tableAdded = true;
+						System.out.println("After exam create");
+					} else {
+						Database.rollBackTransaction(conn);
+					}
 				}	
 			} catch (SQLException e) {
 				System.out.println(e);
@@ -111,7 +117,8 @@ public class CourseExams {
 		} catch (Exception e) {
 			System.out.println(e);
 		}
-		
+	
+		return tableAdded;
 	}
 		
 	public static boolean addNewExamColumn(CourseExamStructure courseExamStructure){
@@ -138,16 +145,15 @@ public class CourseExams {
 				table = "tableName", 
 				column = {"ExamName"}, 
 				isSource = false)
-		String SQLExamAlter = "ALTER TABLE ? ADD COLUMN `?` DECIMAL(4,1) NULL DEFAULT NULL ;";
-		
+		String SQLExamAlter = "ALTER TABLE %s ADD COLUMN %s DECIMAL(4,1) NULL DEFAULT NULL ;";
+		SQLExamAlter = String.format(SQLExamAlter, tableName,examName);
 		try {
 			Connection conn = Database.getConnection();
 			try {
 				if (conn != null) {
-				 
 					PreparedStatement statement = conn.prepareStatement(SQLExamAlter);
-					statement.setString(1, tableName);
-					statement.setString(2, examName);
+//					statement.setString(1, tableName);
+//					statement.setString(2, examName);
 					statement.executeUpdate();					
 					examAdded = true;
 				}	
@@ -171,7 +177,7 @@ public class CourseExams {
 				table = "INFORMATION_SCHEMA.COLUMNS", 
 				column = {"column_name"}, 
 				isSource = true)
-		String INFORMATION_SCHEMA_COLUMNS_Select = "SELECT ISC.column_name FROM INFORMATION_SCHEMA.COLUMNS ISC WHERE ISC.table_name = '?';";
+		String INFORMATION_SCHEMA_COLUMNS_Select = "SELECT ISC.column_name FROM INFORMATION_SCHEMA.COLUMNS ISC WHERE ISC.table_name = ?;";
 		
 		try {
 			Connection conn = Database.getConnection();
@@ -183,7 +189,7 @@ public class CourseExams {
 					ResultSet rs = statement.executeQuery();
 					while(rs.next()){
 						String tableExamName = rs.getString("column_name");
-						if(examName == tableExamName){
+						if(examName.equals(tableExamName)){
 							isExamPresent = true;
 							break;
 						}
@@ -224,7 +230,8 @@ public class CourseExams {
 				table = "tableName", 
 				column = {"ExamName"}, 
 				isSource = false)
-		String SQLExamAlter = "ALTER TABLE `?` CHANGE COLUMN `?` `?` DECIMAL(4,1) NULL;";
+		String SQLExamAlter = "ALTER TABLE %s CHANGE COLUMN %s %s DECIMAL(4,1) NULL;";
+		SQLExamAlter = String.format(SQLExamAlter, tableName, examName,newExamName);
 		
 		try {
 			Connection conn = Database.getConnection();
@@ -232,9 +239,9 @@ public class CourseExams {
 				if (conn != null) {
 				 
 					PreparedStatement statement = conn.prepareStatement(SQLExamAlter);
-					statement.setString(1, tableName);
-					statement.setString(2, examName);
-					statement.setString(3, newExamName);
+//					statement.setString(1, tableName);
+//					statement.setString(2, examName);
+//					statement.setString(3, newExamName);
 					statement.executeUpdate();					
 					modifiedColumn = true;
 				}	
@@ -265,7 +272,7 @@ public class CourseExams {
 		
 		String tableName = courseName + Integer.toString(offerID) + Integer.toString(semID);
 		
-		String examName = courseExamStructure.examName;
+		String examName = courseExamStructure.getExamName();
 		
 		boolean isExamPresent = isExamPresent(tableName,examName);
 		if (isExamPresent == true){
@@ -275,15 +282,15 @@ public class CourseExams {
 				table = "tableName", 
 				column = {"ExamName"}, 
 				isSource = false)
-		String SQLExamDelete = "ALTER TABLE `?` DROP COLUMN `?` ;";
-		
+		String SQLExamDelete = "ALTER TABLE %s DROP COLUMN %s ;";
+		SQLExamDelete = String.format(SQLExamDelete, tableName,examName);
 		try {
 			Connection conn = Database.getConnection();
 			try {
 				if (conn != null) {
 					PreparedStatement statement = conn.prepareStatement(SQLExamDelete);
-					statement.setString(1, tableName);
-					statement.setString(2, examName);
+//					statement.setString(1, tableName);
+//					statement.setString(2, examName);
 					statement.executeUpdate();
 					examDeleted = true;
 				}	
@@ -322,7 +329,7 @@ public class CourseExams {
 		String tableName = courseName + Integer.toString(offerID) + Integer.toString(semID); 
 	
 		String examName = this.getExamName();
-		HashMap examMarks = this.examMarks;
+		HashMap<Student,Double> examMarks = this.examMarks;
 		Set<Student> keys = examMarks.keySet();
 		Iterator<Student> keyIterator = keys.iterator();
 		while (keyIterator.hasNext()) {
@@ -345,18 +352,18 @@ public class CourseExams {
 						table = "tableName", 
 						column = {"ExamName","StudentUIN"}, 
 						isSource = false)
-				String SQLExamUpdate = "UPDATE `?` SET `?`='?' WHERE `StudentUIN`='?';";
-				
+				String SQLExamUpdate = "UPDATE %s SET %s = ? WHERE `StudentUIN`=?;";
+				SQLExamUpdate = String.format(SQLExamUpdate, tableName,examName);
 				try {
 					Connection conn = Database.getConnection();
 					try {
 						if (conn != null) {
 						 
 							PreparedStatement statement = conn.prepareStatement(SQLExamUpdate);
-							statement.setString(1, tableName);
-							statement.setString(2, examName);
-							statement.setDouble(3, marks);
-							statement.setInt(3, UIN);
+//							statement.setString(1, tableName);
+//							statement.setString(2, examName);
+							statement.setDouble(1, marks);
+							statement.setInt(2, UIN);
 							statement.executeUpdate();					
 							Database.commitTransaction(conn);
 							studentsMarksAdded = true;
@@ -423,14 +430,14 @@ public class CourseExams {
 				table = "tableName", 
 				column = {"ExamName"}, 
 				isSource = true)
-		String SQLExamSelect = "SELECT * FROM ? ;";
-		
+		String SQLExamSelect = "SELECT * FROM %s ;";
+		SQLExamSelect = String.format(SQLExamSelect, tableName);
 		try {
 			Connection conn = Database.getConnection();
 			try {
 				if (conn != null) {
 					PreparedStatement statement = conn.prepareStatement(SQLExamSelect);
-					statement.setString(1, tableName);
+//					statement.setString(1, tableName);
 					ResultSet rs =  statement.executeQuery();
 					ArrayList<String> allExams = this.viewAllExams();
 					if(allExams.isEmpty()){
@@ -467,7 +474,7 @@ public class CourseExams {
 		
 		int offerID = this.getOfferID();
 		String examName = this.getExamName();
-		HashMap examMarks = this.getExamMarks();
+		HashMap<Student,Double> examMarks = this.getExamMarks();
 
 		CourseOffered offeredCourse = null;
 		
@@ -505,18 +512,18 @@ public class CourseExams {
 						table = "tableName", 
 						column = {"ExamName","StudentUIN"}, 
 						isSource = false)
-				String SQLExamUpdate = "UPDATE `?` SET `?`='?' WHERE `StudentUIN`='?';";
-				
+				String SQLExamUpdate = "UPDATE %s SET %s = ? WHERE `StudentUIN`=?;";
+				SQLExamUpdate = String.format(SQLExamUpdate, tableName,examName);
 				try {
 					Connection conn = Database.getConnection();
 					try {
 						if (conn != null) {
 						 
 							PreparedStatement statement = conn.prepareStatement(SQLExamUpdate);
-							statement.setString(1, tableName);
-							statement.setString(2, examName);
-							statement.setDouble(3, marks);
-							statement.setInt(3, UIN);
+//							statement.setString(1, tableName);
+//							statement.setString(2, examName);
+							statement.setDouble(1, marks);
+							statement.setInt(2, UIN);
 							statement.executeUpdate();					
 							Database.commitTransaction(conn);
 							studentsMarksModified = true;
@@ -564,14 +571,16 @@ public class CourseExams {
 				table = "tableName", 
 				column = {"ExamName"}, 
 				isSource = true)
-		String SQLExamSelect = "SELECT ExamName FROM ? ;";
+		String SQLExamSelect = "SELECT ExamName FROM %s ;";
+		SQLExamSelect = String.format(SQLExamSelect, tableName);
 		
 		try {
 			Connection conn = Database.getConnection();
 			try {
 				if (conn != null) {
+					
 					PreparedStatement statement = conn.prepareStatement(SQLExamSelect);
-					statement.setString(1, tableName);
+//					statement.setString(1, tableName);
 					ResultSet rs =  statement.executeQuery();
 									
 					while(rs.next()){
@@ -588,5 +597,29 @@ public class CourseExams {
 			System.out.println(e);
 		}
 		return allExams;
+	}
+
+	public static void main(String[] args){
+
+		int offerID = 345678;
+		CourseOffered offeredCourse = null;
+		try {
+			offeredCourse = new CourseOffered(offerID);
+		} catch (Course.CourseDoesNotExistException e) {
+			e.printStackTrace();
+		} catch (CourseOffered.CourseOfferingDoesNotExistException e) {
+			e.printStackTrace();
+		}
+		
+//		Test to add an exam
+//		boolean courseAdded = CourseExams.createCourseExamMarksTable(offeredCourse);
+//		if(courseAdded == true){
+//			System.out.println("Course Added");
+//		} else {
+//			System.out.println("Course Not Added");
+//		}
+		
+		
+		
 	}
 }

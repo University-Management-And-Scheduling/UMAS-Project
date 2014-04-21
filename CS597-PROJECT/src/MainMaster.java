@@ -57,6 +57,8 @@ public class MainMaster {
 					user = null;
 					break;
 				}
+			} else {
+				// Get user object
 			}
 		} while (isValidUser == false || continueInput == true);
 		

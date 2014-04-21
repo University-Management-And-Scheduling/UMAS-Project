@@ -55,7 +55,8 @@ public class CourseExamStructure {
 		this.examTotal = examTotal;
 	}
 	
-	public static void createCourseExamStructureTable(CourseOffered offeredCourse){
+	public static boolean createCourseExamStructureTable(CourseOffered offeredCourse){
+		boolean tableAdded = false;
 		Course course = offeredCourse.getCourse();
 		String courseName = course.getCourseName();
 		int offerID= offeredCourse.getOfferID();
@@ -68,16 +69,18 @@ public class CourseExamStructure {
 //				table = "courseExamStructureTable", 
 //				column = {"Username","Password"}, 
 //				isSource = false)
-		String SQLExamStructureCreate = "CREATE TABLE `?` (String `ExamName` varchar(20), int TotalMarks int(12),PRIMARY KEY (`ExamName`)) ;";
-		
+		String SQLExamStructureCreate = "CREATE TABLE %s (ExamName varchar(20), TotalMarks int(12),PRIMARY KEY (ExamName)) ;";
+		SQLExamStructureCreate = String.format(SQLExamStructureCreate, tableName);
 		try {
 			Connection conn = Database.getConnection();
 			try {
 				if (conn != null) {
-				 
+					System.out.println("Before struct create");
 					PreparedStatement statement = conn.prepareStatement(SQLExamStructureCreate);
-					statement.setString(1, tableName);
+					//statement.setString(1, tableName);
 					statement.executeUpdate();
+					tableAdded = true;
+					System.out.println("After struct create");
 				}	
 			} catch (SQLException e) {
 				System.out.println(e);
@@ -87,7 +90,8 @@ public class CourseExamStructure {
 		} catch (Exception e) {
 			System.out.println(e);
 		}
-	
+	 
+		return tableAdded;
 	}
 	
 	public boolean addNewExam(){
@@ -114,7 +118,8 @@ public class CourseExamStructure {
 				table = "tableName", 
 				column = {"ExamName","TotalMarks"}, 
 				isSource = false)
-		String SQLExamStructureCreate = "INSERT INTO ? VALUES(?,?) ;";
+		String SQLExamStructureCreate = "INSERT INTO %s (ExamName,TotalMarks) VALUES(?,?) ;";
+		SQLExamStructureCreate = String.format(SQLExamStructureCreate, tableName);
 		
 		try {
 			Connection conn = Database.getConnection();
@@ -122,11 +127,10 @@ public class CourseExamStructure {
 				if (conn != null) {
 				 
 					PreparedStatement statement = conn.prepareStatement(SQLExamStructureCreate);
-					statement.setString(1, tableName);
-					statement.setString(2, examName);
-					statement.setInt(3, examTotal);
+//					statement.setString(1, tableName);
+					statement.setString(1, examName);
+					statement.setInt(2, examTotal);
 					statement.executeUpdate();
-					
 					examAdded = CourseExams.addNewExamColumn(this);
 					if (examAdded == true){
 						Database.commitTransaction(conn);
@@ -164,19 +168,19 @@ public class CourseExamStructure {
 				table = "tableName", 
 				column = {"ExamName"}, 
 				isSource = true)
-		String SQLExamStructureSelect = "Select ExamName FROM ? ;";
-		
+		String SQLExamStructureSelect = "Select ExamName FROM %s ;";
+		SQLExamStructureSelect = String.format(SQLExamStructureSelect, tableName);
 		try {
 			Connection conn = Database.getConnection();
 			try {
 				if (conn != null) {
 				 
 					PreparedStatement statement = conn.prepareStatement(SQLExamStructureSelect);
-					statement.setString(1, tableName);
+//					statement.setString(1, tableName);
 					ResultSet rs = statement.executeQuery();
 					while(rs.next()){
 						String tableExamName = rs.getString("ExamName");
-						if (tableExamName == examName){
+						if (tableExamName.equals(examName)){
 							isExamPresent = true;
 						}
 					}
@@ -215,17 +219,17 @@ public class CourseExamStructure {
 				table = "tableName", 
 				column = {"ExamName"}, 
 				isSource = false)
-		String SQLExamStructureUpdate = "UPDATE ? SET ExamName = ? WHERE ExamName = ? ;";
-		
+		String SQLExamStructureUpdate = "UPDATE %s SET ExamName = ? WHERE ExamName = ? ;";
+		SQLExamStructureUpdate = String.format(SQLExamStructureUpdate, tableName);
 		try {
 			Connection conn = Database.getConnection();
 			try {
 				if (conn != null) {
 				 
 					PreparedStatement statement = conn.prepareStatement(SQLExamStructureUpdate);
-					statement.setString(1, tableName);
-					statement.setString(2, newExamName);
-					statement.setString(3, examName);
+//					statement.setString(1, tableName);
+					statement.setString(1, newExamName);
+					statement.setString(2, examName);
 					statement.executeUpdate();
 					boolean modifiedColumn = CourseExams.modifyExistingExamColumnName(this, newExamName);
 					if (modifiedColumn == true){
@@ -272,7 +276,8 @@ public class CourseExamStructure {
 				table = "tableName", 
 				column = {"TotalMarks"}, 
 				isSource = false)
-		String SQLExamStructureUpdate = "UPDATE ? SET TotalMarks = ? WHERE ExamName = ? ;";
+		String SQLExamStructureUpdate = "UPDATE %s SET TotalMarks = ? WHERE ExamName = ? ;";
+		SQLExamStructureUpdate = String.format(SQLExamStructureUpdate, tableName);
 		
 		try {
 			Connection conn = Database.getConnection();
@@ -280,9 +285,9 @@ public class CourseExamStructure {
 				if (conn != null) {
 				 
 					PreparedStatement statement = conn.prepareStatement(SQLExamStructureUpdate);
-					statement.setString(1, tableName);
-					statement.setInt(2, newTotalMarks);
-					statement.setString(3, examName);
+					//statement.setString(1, tableName);
+					statement.setInt(1, newTotalMarks);
+					statement.setString(2, examName);
 					statement.executeUpdate();
 					Database.commitTransaction(conn);
 					marksModified = true;
@@ -314,7 +319,7 @@ public class CourseExamStructure {
 		String tableName = courseName + Integer.toString(offerID) + Integer.toString(semID) + "Structure";
 		
 		String examName = this.examName;
-		int examTotal = this.examTotal;
+		//int examTotal = this.examTotal;
 		
 		boolean isExamPresent = this.isExamPresent(tableName,examName);
 		if (isExamPresent == true){
@@ -324,15 +329,16 @@ public class CourseExamStructure {
 				table = "tableName", 
 				column = {"ExamName"}, 
 				isSource = false)
-		String SQLExamStructureDelete = "DELETE FROM ? WHERE ExamName = ?  ;";
+		String SQLExamStructureDelete = "DELETE FROM %s WHERE ExamName = ?  ;";
+		SQLExamStructureDelete = String.format(SQLExamStructureDelete, tableName);
 		
 		try {
 			Connection conn = Database.getConnection();
 			try {
 				if (conn != null) {
 					PreparedStatement statement = conn.prepareStatement(SQLExamStructureDelete);
-					statement.setString(1, tableName);
-					statement.setString(2, examName);
+//					statement.setString(1, tableName);
+					statement.setString(1, examName);
 					statement.executeUpdate();
 					boolean examColumnDeleted = CourseExams.deleteExistingExamColumn(this);
 					if(examColumnDeleted == true){
@@ -357,4 +363,56 @@ public class CourseExamStructure {
 		return examDeleted;
 	}
 
+	public static void main(String[] args){
+	
+		int offerID = 345678;
+		String examName = "Assgn1";
+		
+		int totalMarks = 10; 
+		CourseOffered offeredCourse = null;
+		try {
+			offeredCourse = new CourseOffered(offerID);
+		} catch (Course.CourseDoesNotExistException e) {
+			e.printStackTrace();
+		} catch (CourseOffered.CourseOfferingDoesNotExistException e) {
+			e.printStackTrace();
+		}
+//		
+		CourseExamStructure examStruct = new CourseExamStructure(offeredCourse,examName,totalMarks);
+//		
+		// To add a new exam
+//		boolean examAdded = examStruct.addNewExam();
+//		if(examAdded == true){
+//			System.out.println("Exam Added");
+//		} else {
+//			System.out.println("Exam Not Added");
+//		}
+		
+//		To test modifying the exam name
+//		String newExamName = "Hw2";
+//		boolean nameModified = examStruct.modifyExistingExamName(newExamName);
+//		if(nameModified == true){
+//			System.out.println("Exam Name Modified");
+//		} else {
+//			System.out.println("Exam Name Not Modified");
+//		}
+		
+//		To test deleting an exam 
+//		boolean examDeleted = examStruct.deleteExistingExam();
+//		if(examDeleted == true){
+//			System.out.println("Exam Deleted");
+//		} else {
+//			System.out.println("Exam Not Deleted");
+//		}
+		
+//		To test modifying the exam mks
+		int newExamMks = 20;
+		boolean mksModified = examStruct.modifyExistingExamTotalMarks(newExamMks);
+		if(mksModified == true){
+			System.out.println("Exam Mks Modified");
+		} else {
+			System.out.println("Exam Mks Not Modified");
+		}
+		
+	}
 }

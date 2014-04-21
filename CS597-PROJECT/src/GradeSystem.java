@@ -375,4 +375,9 @@ public class GradeSystem {
 		
 		return gradeObject;
 	}
+
+	public static void main(String[] args){
+		
+	}
+
 }

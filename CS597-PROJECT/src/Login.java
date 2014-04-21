@@ -56,20 +56,19 @@ public class Login {
 			Connection conn = Database.getConnection();
 			try {
 				if (conn != null) {
-					
 					// Check if file is already present. 
 					PreparedStatement statement = conn.prepareStatement(SQLLoginSelect);
 					statement.setString(1, username);
 					statement.setString(2, password);
 					ResultSet rs = statement.executeQuery();
-					while (rs.next()) {
+					if (rs.next()) {
 						// Retrieve by column name
 						String tableUsername = rs.getString("Username");
 						String tablePassword = rs.getString("Password");
 						
-						if((tableUsername == username) && (tablePassword == password)){
-							isValidUser = true;
-							break;
+						if((tableUsername.equals(username)) && (tablePassword.equals(password))){ 
+								isValidUser = true;
+							//break;
 						}
 					}
 				}	
@@ -125,7 +124,7 @@ public class Login {
 	
 	// Checks whether the username is already present in the logindetails table before 
 	// addLoginInfoToDB() adds it in the logindetails table
-	private boolean checkUsernameInDatabase(String username) {
+	private static boolean checkUsernameInDatabase(String username) {
 		boolean isUsernamePresent = false;
 		
 		@DBAnnotation (
@@ -147,7 +146,7 @@ public class Login {
 					while (rs.next()) {
 						// Retrieve by column name
 						String tableUsername = rs.getString("Username");
-						if(tableUsername == username){
+						if(tableUsername.equals(username)){
 							isUsernamePresent = true;
 							break;
 						}
@@ -256,6 +255,44 @@ public class Login {
 	}
 	
  	public static void main(String[] args){
+		
+ 		// Test authenticate function when user is present
+// 		Login user = new Login("aky1","pra");
+// 		String username = user.getUsername();
+//		boolean isPresent = user.authenticate();
+//		if(isPresent == true){
+//			System.out.println("User Present");
+//		} else {
+//			System.out.println("User Absent");
+//		}
+// 		
+//		// Test authenticate function when user is absent
+//		user = new Login("aky1","pra");
+//		isPresent = user.authenticate();
+//		if(isPresent == true){
+//			System.out.println("User Present");
+//		} else {
+//			System.out.println("User Absent");
+//		}
+//		
+		
+		// Test checkUsernameInDatabase function when user is present
+// 		String username = "aky";
+// 		boolean isPresent = Login.checkUsernameInDatabase(username);
+//		if(isPresent == true){
+//			System.out.println("User Present");
+//		} else {
+//			System.out.println("User Absent");
+//		}
+// 		
+//		// Test checkUsernameInDatabase function when user is absent
+//		username = "aky1";
+//		isPresent = Login.checkUsernameInDatabase(username);
+//		if(isPresent == true){
+//			System.out.println("User Present");
+//		} else {
+//			System.out.println("User Absent");
+//		}
 		
 	}
 

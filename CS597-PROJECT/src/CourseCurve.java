@@ -378,4 +378,10 @@ public class CourseCurve {
 
         return sortedstudentTotalMarks;
     }
+
+	public static void main(String[] args){
+		
+	}
+
+
 }

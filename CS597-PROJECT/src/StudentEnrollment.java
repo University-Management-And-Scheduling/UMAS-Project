@@ -363,9 +363,14 @@ public class StudentEnrollment {
 							statement.setInt(3, generatedEnrollmentID);
 							statement.executeUpdate();
 							
-							CourseOffered.addOneSeatFilledToCourseOffered(offeredCourse);
-							Database.commitTransaction(conn);
-							isStudentEnrolled = true;
+							boolean seatAdded = offeredCourse.addOneSeatFilledToCourseOffered();
+							if(seatAdded = true){
+								Database.commitTransaction(conn);
+								isStudentEnrolled = true;
+							} else {
+								Database.rollBackTransaction(conn);
+							}
+							
 						}	
 					} catch (SQLException e) {
 						System.out.println(e);
@@ -705,6 +710,10 @@ public class StudentEnrollment {
 			
 		return seatRemoved ;
 	}
+	
+	
+	public static void main(String[] args){
 		
+	}
 	
 }
