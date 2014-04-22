@@ -114,7 +114,7 @@ public class GradeSystem {
 					ResultSet rs = statement.executeQuery();
 					while (rs.next()) {
 						String tableGrade = rs.getString("Grade");
-						if(tableGrade == grade){
+						if(tableGrade.equals(grade)){
 							isGradePresent = true;
 							break;
 						}

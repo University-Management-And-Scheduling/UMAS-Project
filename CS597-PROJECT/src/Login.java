@@ -229,12 +229,12 @@ public class Login {
 							// Retrieve by column name
 							String password = rs.getString("Password");
 							this.setPassword(password);
-							Email email = Email.getInstance("UMAS.UIC", password);
+							Email email = Email.getInstance("UMAS.UIC@gmail.com", "cs597project");
 							String subject = "UMAS Password";
 							String body = "Your password is " + password + 
 											". /n Please change your password after you login";
 							
-							boolean mailSent = email.sendEmail(username, subject, body);
+							boolean mailSent = email.sendEmail(username+"@gmail.com", subject, body);
 							if (mailSent == true){
 								System.out.println("Mail containing password sent to the user.");
 							}

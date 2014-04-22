@@ -90,7 +90,7 @@ public class StudentEnrollment {
 		this.grade = grade;
 	}
 	
-	public HashMap<CourseOffered, String> getAllGradesOfStudent (Student student) {
+	public static HashMap<CourseOffered, String> getAllGradesOfStudent (Student student) {
 		int UIN = student.getUIN();
 		HashMap<CourseOffered, String> courseGrade = new HashMap<CourseOffered, String>();
 		
@@ -196,7 +196,7 @@ public class StudentEnrollment {
 		return coursesTaken;
 	}
 	
- 	public ArrayList<Student> getStudentsInCourse(CourseOffered courseOffered) {
+ 	public static ArrayList<Student> getStudentsInCourse(CourseOffered courseOffered) {
 		ArrayList<Student> enrolledStudents = new ArrayList<Student>();
 		
 		int offerID = courseOffered.getOfferID();
@@ -236,7 +236,7 @@ public class StudentEnrollment {
 		return enrolledStudents;
 	}
 	
-	public ArrayList<CourseOffered> getCurrentCoursesOfStudent (Student student) {
+	public static ArrayList<CourseOffered> getCurrentCoursesOfStudent (Student student) {
 		ArrayList<CourseOffered> enrolledCourses = new ArrayList<CourseOffered>();
 		
 		int UIN = student.getUIN();
@@ -334,8 +334,11 @@ public class StudentEnrollment {
 						column = {"UIN","OfferID"}, 
 						isSource = false)
 				
-				String SQLCourseExamsInsert = "INSERT INTO ? (StudentUIN,StudentEnrollmentID) VALUES(?,?) ;";
-				String SQLStudentEnrollInsert = "INSERT INTO studentenrollment VALUES(?,?,?) ;";
+				String SQLCourseExamsInsert = "INSERT INTO %s (StudentUIN,StudentEnrollmentID) VALUES(?,?) ;";
+				SQLCourseExamsInsert = String.format(SQLCourseExamsInsert, tableName);
+				String SQLStudentEnrollInsert = "INSERT INTO studentenrollment(UIN,OfferID,Grade) VALUES(?,?,?) ;";
+				
+				
 				
 				try {
 					Connection conn = Database.getConnection();
@@ -346,7 +349,7 @@ public class StudentEnrollment {
 							PreparedStatement statement = conn.prepareStatement(SQLStudentEnrollInsert,key);
 							statement.setInt(1, UIN);
 							statement.setInt(2, offerID);
-							statement.setString(2, grade);
+							statement.setString(3, grade);
 							statement.executeUpdate();
 							
 							ResultSet rs = statement.getGeneratedKeys();
@@ -358,9 +361,9 @@ public class StudentEnrollment {
 							}
 							
 							statement = conn.prepareStatement(SQLCourseExamsInsert);
-							statement.setString(1, tableName);
-							statement.setInt(2, UIN);
-							statement.setInt(3, generatedEnrollmentID);
+							// statement.setString(1, tableName);
+							statement.setInt(1, UIN);
+							statement.setInt(2, generatedEnrollmentID);
 							statement.executeUpdate();
 							
 							boolean seatAdded = offeredCourse.addOneSeatFilledToCourseOffered();
@@ -385,7 +388,7 @@ public class StudentEnrollment {
 		return isStudentEnrolled;
 	}
 	
-	public boolean updateAllStudentGrade(HashMap<Student,String> studentGrades, CourseOffered offeredCourse){
+	public static boolean updateAllStudentGrade(HashMap<Student,String> studentGrades, CourseOffered offeredCourse){
 		boolean isGradeUpdated = false;
 		
 		int offerID = offeredCourse.getOfferID();
@@ -395,14 +398,21 @@ public class StudentEnrollment {
 			Student student = keyIterator.next();
 			int UIN = student.getUIN();
 			String grade = studentGrades.get(student);
+			GradeSystem gradesys = new GradeSystem(grade);
+			boolean isgradePresent = gradesys.isGradePresent();
+			if (isgradePresent == false){
+				System.out.println("Grade Not present");
+			} else {
+				StudentEnrollment enrollStudent = new StudentEnrollment(UIN,offerID,grade);
+				boolean updateStudentGrade = enrollStudent.updateStudentGrade();
+				
+				if(updateStudentGrade == false){
+					System.out.println("Student " + student.getName() + "'s grade not updated");
+				} else {
+					isGradeUpdated = true;
+				}
 			
-			StudentEnrollment enrollStudent = new StudentEnrollment(UIN,offerID,grade);
-			boolean updateStudentGrade = enrollStudent.updateStudentGrade();
-			
-			if(updateStudentGrade == false){
-				System.out.println("Student " + student.getName() + "'s grade not updated");
 			}
-			
 		}
 		
 		return isGradeUpdated;
@@ -413,6 +423,12 @@ public class StudentEnrollment {
 		int UIN = this.getUIN();
 		int offerID = this.getOfferID();
 		String grade = this.getGrade();
+		GradeSystem gradesys = new GradeSystem(grade);
+		boolean isgradePresent = gradesys.isGradePresent();
+		if (isgradePresent == false){
+			System.out.println("Grade Not present");
+		} else {
+			
 		
 		// Step 1: Check if student is already enrolled for this course
 		boolean isStudentCurrentlyEnrolled = this.isStudentEnrolled(UIN, offerID);
@@ -428,7 +444,7 @@ public class StudentEnrollment {
 					table = "studentenrollment", 
 					column = {"Grade","EnrollmentID"}, 
 					isSource = false)
-			String SQLStudentEnrollInsert = "UPDATE `studentenrollment` SET `Grade`='?' WHERE `EnrollmentID`='?';";
+			String SQLStudentEnrollInsert = "UPDATE `studentenrollment` SET `Grade`=? WHERE `EnrollmentID`=?;";
 			
 			try {
 				Connection conn = Database.getConnection();
@@ -451,7 +467,8 @@ public class StudentEnrollment {
 				System.out.println(e);
 			}
 		}
-		
+		}
+	
 		return isGradeUpdated;
 	}
 	
@@ -537,8 +554,9 @@ public class StudentEnrollment {
 					column = {"UIN","OfferID","All"}, 
 					isSource = true)
 			
-			String SQLCourseExamsDelete = "DELETE FROM `?` WHERE `StudentUIN`='?';";
-			String SQLStudentEnrollDelete = "DELETE FROM `studentenrollment` WHERE `EnrollmentID`='?';";
+			String SQLCourseExamsDelete = "DELETE FROM %s WHERE `StudentUIN`=?;";
+			SQLCourseExamsDelete = String.format(SQLCourseExamsDelete, tableName);
+			String SQLStudentEnrollDelete = "DELETE FROM `studentenrollment` WHERE `EnrollmentID`=?;";
 			
 			try {
 				Connection conn = Database.getConnection();
@@ -546,16 +564,21 @@ public class StudentEnrollment {
 					if (conn != null) {
 					 
 						PreparedStatement statement = conn.prepareStatement(SQLCourseExamsDelete);
-						statement.setString(1, tableName);
-						statement.setInt(2, UIN);
+						//statement.setString(1, tableName);
+						statement.setInt(1, UIN);
 						statement.executeUpdate();
 						
 						statement = conn.prepareStatement(SQLStudentEnrollDelete);
 						statement.setInt(1, enrollmentID);
 						statement.executeUpdate();
-						this.removeOneSeatFromCourseOffered(offeredCourse);
-						Database.commitTransaction(conn);
-						studentUnregistered = true;
+						boolean removed = this.removeOneSeatFromCourseOffered(offeredCourse);
+						if(removed == true){
+							Database.commitTransaction(conn);
+							studentUnregistered = true;
+						} else {
+							Database.rollBackTransaction(conn);
+						}
+						
 					}	
 				} catch (SQLException e) {
 					System.out.println(e);
@@ -675,7 +698,7 @@ public class StudentEnrollment {
 			Connection conn = Database.getConnection();
 			try{
 				if(conn != null){
-					
+					int currentlyFilled = -1;
 					@DBAnnotation (
 							variable = {"offerID"},  
 							table = "coursesoffered", 
@@ -685,21 +708,31 @@ public class StudentEnrollment {
 					PreparedStatement statement = conn.prepareStatement(SQLcoursesOfferedSelect);
 					statement.setInt(1, offerID);
 					ResultSet rs = statement.executeQuery();
-					if(rs.first()){
-						int currentlyFilled = rs.getInt(5);
+					if(rs.next()){
+						currentlyFilled = rs.getInt("SeatsFilled");
 						currentlyFilled -= 1;
-						rs.updateInt(5, currentlyFilled);
-						Database.commitTransaction(conn);
-						seatRemoved = true;
+//						rs.updateInt(5, currentlyFilled);
+//						Database.commitTransaction(conn);
+//						seatRemoved = true;
+						
 					}
 					else{
 						throw new CourseOffered.CourseOfferingDoesNotExistException();
 					}
 					
+					String updateStatement = "UPDATE university.coursesoffered "
+							+ "SET SeatsFilled= ? "
+							+ "WHERE OfferID= ? ;";
+					statement = conn.prepareStatement(updateStatement, ResultSet.CONCUR_UPDATABLE);
+					statement.setInt(1, currentlyFilled);
+					statement.setInt(2, this.getOfferID());
+					statement.executeUpdate();
+					Database.commitTransaction(conn);
+					seatRemoved = true;
 				}						
 					
 			} catch(SQLException e){
-				System.out.println("Error addind course offering");
+				System.out.println("Error adding course offering");
 				System.out.println(e.getMessage());
 				e.printStackTrace();
 				Database.rollBackTransaction(conn);
@@ -713,6 +746,96 @@ public class StudentEnrollment {
 	
 	
 	public static void main(String[] args){
+		// Test getAllGradesOfStudent function
+		Student student = new Student(1);
+//		StudentEnrollment enrolledStud = new StudentEnrollment(345678,1);
+//		HashMap<CourseOffered, String> grades = StudentEnrollment.getAllGradesOfStudent(student);
+//		for(CourseOffered offeredCourse: grades.keySet() ){
+//			int offerID = offeredCourse.getOfferID();
+//			String grade = grades.get(offeredCourse);
+//			System.out.println("Course: "+ offerID + " Grade: " + grade);
+//		}
+//		
+//		// Test getStudentsAllCourses function
+//		ArrayList<CourseOffered> courses = StudentEnrollment.getStudentsAllCourses(student);
+//		for(CourseOffered offeredCourse: courses){
+//			int offerID = offeredCourse.getOfferID();
+//			System.out.println("Course: "+ offerID);			
+//		}
+		
+		// Test getStudentsInCourse function
+//		int offerID = 345678;
+//		CourseOffered offeredCourse = null;
+//		try {
+//			offeredCourse = new CourseOffered(offerID);
+//		} catch (Course.CourseDoesNotExistException
+//				| CourseOffered.CourseOfferingDoesNotExistException e) {
+//			e.printStackTrace();
+//		}
+//		
+//		// Test getStudentsInCourse function
+//		ArrayList<Student> students = StudentEnrollment.getStudentsInCourse(offeredCourse);
+//		for(Student stud: students){
+//			int UIN = stud.getUIN();
+//			System.out.println("Student: "+ UIN);			
+//		}
+		
+		// Test getStudentsAllCourses function
+//		ArrayList<CourseOffered> courses = StudentEnrollment.getCurrentCoursesOfStudent(student);
+//		for(CourseOffered offeredCourse: courses){
+//			int offerID = offeredCourse.getOfferID();
+//			System.out.println("Course: "+ offerID);			
+//		}
+		
+		// To enroll student
+//		StudentEnrollment enrolledStud = new StudentEnrollment(345678,4);
+//		boolean enrolled =  enrolledStud.enrollStudents();
+//		if (enrolled == true){
+//			System.out.println("Student Enrolled");
+//		} else {
+//			System.out.println("Student Not Enrolled");
+//		}
+		
+		// To unregister students
+//		StudentEnrollment enrolledStud = new StudentEnrollment(345678,4);
+//		boolean enrolled =  enrolledStud.unregisterStudent();
+//		if (enrolled == true){
+//			System.out.println("Student Unregistered");
+//		} else {
+//			System.out.println("Student Still Registered");
+//		}
+	
+		// Update Grades
+//		StudentEnrollment enrolledStud = new StudentEnrollment(2, 123456, "C");
+//		boolean updated =  enrolledStud.updateStudentGrade();
+//		if (updated == true){
+//			System.out.println("Student Grade Updated");
+//		} else {
+//			System.out.println("Student Grade Not Updated");
+//		}
+		
+		
+		// To update multiple student's grades
+//		int offerID = 345678;
+//		CourseOffered offeredCourse = null;
+//		try {
+//			offeredCourse = new CourseOffered(offerID);
+//		} catch (Course.CourseDoesNotExistException
+//				| CourseOffered.CourseOfferingDoesNotExistException e) {
+//			e.printStackTrace();
+//		}
+//		HashMap<Student,String> studentGrades = new HashMap<Student,String>();
+//		student = new Student(1);
+//		studentGrades.put(student, "B");
+//		student = new Student(2);
+//		studentGrades.put(student, "A");
+//		
+//		boolean updated =  StudentEnrollment.updateAllStudentGrade(studentGrades, offeredCourse);
+//		if (updated == true){
+//			System.out.println("Students Grades Updated");
+//		} else {
+//			System.out.println("Students Grades Not Updated");
+//		}
 		
 	}
 	

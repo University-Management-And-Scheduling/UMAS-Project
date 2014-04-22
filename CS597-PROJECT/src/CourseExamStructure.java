@@ -378,6 +378,7 @@ public class CourseExamStructure {
 			e.printStackTrace();
 		}
 //		
+		@SuppressWarnings("unused")
 		CourseExamStructure examStruct = new CourseExamStructure(offeredCourse,examName,totalMarks);
 //		
 		// To add a new exam
@@ -406,13 +407,13 @@ public class CourseExamStructure {
 //		}
 		
 //		To test modifying the exam mks
-		int newExamMks = 20;
-		boolean mksModified = examStruct.modifyExistingExamTotalMarks(newExamMks);
-		if(mksModified == true){
-			System.out.println("Exam Mks Modified");
-		} else {
-			System.out.println("Exam Mks Not Modified");
-		}
+//		int newExamMks = 20;
+//		boolean mksModified = examStruct.modifyExistingExamTotalMarks(newExamMks);
+//		if(mksModified == true){
+//			System.out.println("Exam Mks Modified");
+//		} else {
+//			System.out.println("Exam Mks Not Modified");
+//		}
 		
 	}
 }

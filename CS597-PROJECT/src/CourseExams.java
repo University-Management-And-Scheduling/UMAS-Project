@@ -145,7 +145,7 @@ public class CourseExams {
 				table = "tableName", 
 				column = {"ExamName"}, 
 				isSource = false)
-		String SQLExamAlter = "ALTER TABLE %s ADD COLUMN %s DECIMAL(4,1) NULL DEFAULT NULL ;";
+		String SQLExamAlter = "ALTER TABLE %s ADD COLUMN %s DECIMAL(4,1) Null DEFAULT 0 ;";
 		SQLExamAlter = String.format(SQLExamAlter, tableName,examName);
 		try {
 			Connection conn = Database.getConnection();
@@ -432,6 +432,7 @@ public class CourseExams {
 				isSource = true)
 		String SQLExamSelect = "SELECT * FROM %s ;";
 		SQLExamSelect = String.format(SQLExamSelect, tableName);
+
 		try {
 			Connection conn = Database.getConnection();
 			try {
@@ -439,6 +440,7 @@ public class CourseExams {
 					PreparedStatement statement = conn.prepareStatement(SQLExamSelect);
 //					statement.setString(1, tableName);
 					ResultSet rs =  statement.executeQuery();
+					//System.out.println(rs.getDouble());
 					ArrayList<String> allExams = this.viewAllExams();
 					if(allExams.isEmpty()){
 						System.out.println("No exams entered yet");
@@ -446,9 +448,12 @@ public class CourseExams {
 					
 						while(rs.next()){
 							UIN = rs.getInt("StudentUIN");
+							studentTotalMarks = 0.0;
+							System.out.println("---");
 							for(String examName:allExams){
 								studentTotalMarks = studentTotalMarks + rs.getDouble(examName);
 							}
+							
 							Student student = new Student(UIN);
 							examMarks.put(student, studentTotalMarks);
 							
@@ -547,7 +552,7 @@ public class CourseExams {
 	}
 
 	public ArrayList<String> viewAllExams(){
-		ArrayList<String> allExams = null;
+		ArrayList<String> allExams = new ArrayList<String>() ;
 		
 		int offerID = this.getOfferID();
 		CourseOffered offeredCourse = null;
@@ -578,15 +583,18 @@ public class CourseExams {
 			Connection conn = Database.getConnection();
 			try {
 				if (conn != null) {
-					
+					//System.out.println(tableName);
 					PreparedStatement statement = conn.prepareStatement(SQLExamSelect);
 //					statement.setString(1, tableName);
 					ResultSet rs =  statement.executeQuery();
 									
 					while(rs.next()){
 						String examName = rs.getString("ExamName");
+						System.out.println(examName);
 						if(examName != null)
 							allExams.add(examName);
+						System.out.println(allExams.get(0));
+							
 					}
 					
 				}	
@@ -599,17 +607,20 @@ public class CourseExams {
 		return allExams;
 	}
 
-	public static void main(String[] args){
+	
+	
+//	public static void main(String[] args){
 
-		int offerID = 345678;
-		CourseOffered offeredCourse = null;
-		try {
-			offeredCourse = new CourseOffered(offerID);
-		} catch (Course.CourseDoesNotExistException e) {
-			e.printStackTrace();
-		} catch (CourseOffered.CourseOfferingDoesNotExistException e) {
-			e.printStackTrace();
-		}
+//		int offerID = 345678;
+//		@SuppressWarnings("unused")
+//		CourseOffered offeredCourse = null;
+//		try {
+//			offeredCourse = new CourseOffered(offerID);
+//		} catch (Course.CourseDoesNotExistException e) {
+//			e.printStackTrace();
+//		} catch (CourseOffered.CourseOfferingDoesNotExistException e) {
+//			e.printStackTrace();
+//		}
 		
 //		Test to add an exam
 //		boolean courseAdded = CourseExams.createCourseExamMarksTable(offeredCourse);
@@ -619,7 +630,58 @@ public class CourseExams {
 //			System.out.println("Course Not Added");
 //		}
 		
+		// To add mks for a student
+//		String examName = "Assgn1";
+//		int UIN = 1;
+//		Student student = new Student(UIN);
+//		double marks = 8.5; 
+//		HashMap<Student,Double> examMarks = new HashMap<Student,Double>();
+//		examMarks.put(student, marks);
+//		UIN = 2;
+//		marks = 7.5;
+//		student = new Student(UIN);
+//		examMarks.put(student, marks);
+//		CourseExams exams = new CourseExams(offerID,examName,examMarks);
+//		
+//		boolean marksAdded = exams.addStudentMarks();
+//		if(marksAdded == true){
+//			System.out.println("Mks Added");
+//		} else {
+//			System.out.println("Mks Not Added");
+//		}
+		
+		// To get student's marks
+//		CourseExams exams = new CourseExams(offerID);
+//		CourseExams marks = exams.getStudentMarks();
+//		HashMap<Student,Double> examMarks = marks.getExamMarks();
+//		Set<Student> keys = examMarks.keySet();
+//		Iterator<Student> keyIterator = keys.iterator();
+//		while (keyIterator.hasNext()) {
+//			Student student = keyIterator.next();
+//			int UIN = student.getUIN();
+//			double studeMarks = (double) examMarks.get(student);
+//			System.out.println("UIN: " + UIN + " TotalMarks: " + studeMarks);
+//		}	
 		
 		
-	}
+		// To modify student's marks
+//		int UIN = 1;
+//		Student student = new Student(UIN);
+//		double marks = 9; 
+//		HashMap<Student,Double> examMarks = new HashMap<Student,Double>();
+//		examMarks.put(student, marks);
+//		UIN = 2;
+//		marks = 3;
+//		student = new Student(UIN);
+//		examMarks.put(student, marks);
+//		CourseExams exams = new CourseExams(offerID,examName,examMarks);
+//		
+//		boolean marksModified = exams.modifyStudentMarks();
+//		if(marksModified == true){
+//			System.out.println("Mks Modified");
+//		} else {
+//			System.out.println("Mks Not Modified");
+//		}
+		
+//	}
 }
