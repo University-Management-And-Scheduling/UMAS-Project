@@ -108,7 +108,7 @@ public class Job {
 		
 	}
 	
-	public static boolean postJob(int postedByUIN, int jobInDepartment, double reqdMinimumGPA, double reqdMinimumWorkExperience, 
+	public static int postJob(int postedByUIN, int jobInDepartment, double reqdMinimumGPA, double reqdMinimumWorkExperience, 
 			boolean skillset1, boolean skillset2, boolean skillset3, boolean skillset4, boolean skillset5) throws NoPermissionException{
 		
 		//check the level of the person who is posting it
@@ -151,12 +151,113 @@ public class Job {
 					System.out.println(stmtForSelect);
 					int i = stmtForSelect.executeUpdate();
 					System.out.println(i);
+					
+					ResultSet rs = stmtForSelect.getGeneratedKeys();
+					if(rs.first()){
+						retreivedJobID=rs.getInt(1);
+						System.out.println(retreivedJobID);
+						System.out.println(i);
+						System.out.println("Inserted");
+						isAdded=true;	
+						Database.commitTransaction(conn);
+					}
+											
+					}
+		
+		}
+				
+				catch(SQLException e){
+					e.printStackTrace();
+					System.out.println(e);
+					
+				}
+				
+				finally{
+					
+					//System.out.println("retrieved");
+				}
+			}
+			
+			catch(Exception e){
+				e.printStackTrace();
+				System.out.println(e);
+				
+			}
+			
+			finally{
+				
+				//System.out.println("retrieved");
+			}
+			
+			
+		
+			
+		}
+		
+		else{
+			
+			throw new NoPermissionException();
+		}
+		
+		
+		
+		// add the job posting to the db
+		
+		//retreive the students----call the function here.
+		
+		return retreivedJobID;
+		
+		
+	}
+	
+	public static boolean updateJob(int postedByUIN, int jobInDepartment, double reqdMinimumGPA, double reqdMinimumWorkExperience, 
+			boolean skillset1, boolean skillset2, boolean skillset3, boolean skillset4, boolean skillset5) throws NoPermissionException{
+		
+		//check the level of the person who is posting it
+		//---------> if not prof, then return level exception
+		
+		boolean isAdded=false;
+		int retreivedJobID=-1;
+		ArrayList<Student> listOfEmails=new ArrayList<>();
+		
+		boolean checkLevel=checkEligibility(postedByUIN);
+		
+		if(checkLevel){
+			
+			try{
+				Connection conn = Database.getConnection();
+				String SQLJobInsert="";
+				try{
+				
+					if(conn != null){
+						
+						SQLJobInsert = "UPDATE jobpostings SET ReqdMinimumGPA=?," +
+								"ReqdMinimumWorkExperience=?," +
+								"ReqdSkillset1=?,ReqdSkillset2=?,ReqdSkillset3=?,ReqdSkillset4=?,ReqdSkillset5=? " +
+								"where PostedByUIN=?;";
+					
+					
+					
+					
+					PreparedStatement stmtForSelect = conn.prepareStatement(SQLJobInsert, Statement.RETURN_GENERATED_KEYS);
+					stmtForSelect.setDouble(1, reqdMinimumGPA);
+					stmtForSelect.setDouble(2, reqdMinimumWorkExperience);
+					stmtForSelect.setBoolean(3, skillset1);
+					stmtForSelect.setBoolean(4, skillset2);
+					stmtForSelect.setBoolean(5, skillset3);
+					stmtForSelect.setBoolean(6, skillset4);
+					stmtForSelect.setBoolean(7, skillset5);
+					stmtForSelect.setInt(8, postedByUIN);
+					
+					System.out.println(stmtForSelect);
+					int i = stmtForSelect.executeUpdate();
+					System.out.println(i);
 					ResultSet rs = stmtForSelect.getGeneratedKeys();
 					if(rs.first())
 						retreivedJobID=rs.getInt(1);
 					System.out.println(retreivedJobID);
 					System.out.println(i);
-					System.out.println("Inserted");
+					System.out.println("Updated");
 					isAdded=true;
 					
 					Database.commitTransaction(conn);
@@ -344,6 +445,7 @@ public class Job {
 				System.out.println("Inserted");
 				
 				isAdded=true;
+				Database.commitTransaction(conn);
 
 					
 				}
@@ -395,8 +497,7 @@ public class Job {
 		String receipients = ""+studentEmail+"";
 		boolean ifSent=email.sendEmail(receipients, subject, body);
 		
-		if(ifSent)
-			return true;
+		if(ifSent){
 			boolean addedToJobRoster=addToJobRoster(student.getUIN(), jobID);
 				if(addedToJobRoster){
 					return true;
@@ -404,6 +505,7 @@ public class Job {
 				else{
 					return false;
 				}
+		}
 				
 	}
 		
