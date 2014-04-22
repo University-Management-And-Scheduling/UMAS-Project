@@ -248,6 +248,7 @@ public class Course {
 	
 	private static boolean isExists(String courseName, Department department){
 		boolean isExists = false;
+		int deptID = department.getDepartmentID();
 		try{
 			Connection conn = Database.getConnection();
 			
@@ -256,9 +257,10 @@ public class Course {
 					
 					String SQLSelect= "Select CourseID, CourseName, DepartmentID"
 							+ " FROM university.courses"
-							+ " WHERE CourseName= ?";
+							+ " WHERE CourseName= ? and DepartmentID=?";
 					PreparedStatement statement = conn.prepareStatement(SQLSelect);
 					statement.setString(1, courseName);
+					statement.setInt(2, deptID);
 					ResultSet rs =  statement.executeQuery();
 					
 					if(rs.first()){

@@ -1023,11 +1023,36 @@ public class CourseOffered {
 		    }
 		}
 
+	/* (non-Javadoc)
+	 * @see java.lang.Object#equals(java.lang.Object)
+	 */
+	@Override
+	public boolean equals(Object arg0) {
+		if(arg0 instanceof CourseOffered){
+			CourseOffered temp = (CourseOffered)arg0;
+			return(temp.getOfferID() == this.getOfferID());
+		}
+		
+		else return false;
+	}
+
+
+	/* (non-Javadoc)
+	 * @see java.lang.Object#hashCode()
+	 */
+	@Override
+	public int hashCode() {
+		return (this.offerID*31);
+	}
+	
 	
 	public static void main(final String[] args) throws Course.CourseDoesNotExistException, CourseOfferingDoesNotExistException, CourseOfferingNotCurrentException, CourseOfferingAlreadyExistsException, CourseOfferingNotSchedulable{
 		//addCourseOfferingToDatabase(new Course(67), new Professor(289), 40);
 		System.out.println(getAllCurrentlyOfferedCourses().size());
 		System.out.println(getCurrentSemesterID());
 	}
+
+
+
 
 }
