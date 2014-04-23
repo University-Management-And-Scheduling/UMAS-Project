@@ -6,6 +6,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.HashMap;
 
 public class CourseExamStructure {
 	CourseOffered offeredCourse;
@@ -55,6 +56,13 @@ public class CourseExamStructure {
 		this.examTotal = examTotal;
 	}
 	
+	public CourseExamStructure(CourseOffered offeredCourse, String examName) {
+		this.offeredCourse = offeredCourse;
+		this.examName = examName;
+		// this.examTotal = getTotalMarksForExam(examName);
+		this.examTotal = 20;
+	}
+	
 	public static boolean createCourseExamStructureTable(CourseOffered offeredCourse){
 		boolean tableAdded = false;
 		Course course = offeredCourse.getCourse();
@@ -92,6 +100,12 @@ public class CourseExamStructure {
 		}
 	 
 		return tableAdded;
+	}
+	
+	public static int getTotalMarksForExam(String examName){
+		int totalMarks=0;
+		
+		return totalMarks;
 	}
 	
 	public boolean addNewExam(){
@@ -363,6 +377,58 @@ public class CourseExamStructure {
 		return examDeleted;
 	}
 
+	public static HashMap<String,Integer> viewExams(CourseOffered courseoffered){
+		HashMap<String,Integer> allExams = new HashMap<String,Integer>();
+		int offerID = courseoffered.getOfferID();
+		
+//		try {
+//			offeredCourse = new CourseOffered(offerID);
+//		} catch (Course.CourseDoesNotExistException e1) {
+//			e1.printStackTrace();
+//		} catch (CourseOffered.CourseOfferingDoesNotExistException e1) {
+//			e1.printStackTrace();
+//		}
+		
+		Course course = courseoffered.getCourse();
+		String courseName = course.getCourseName();
+		int semID = courseoffered.getSemesterID();
+		
+		String tableName = courseName + Integer.toString(offerID) + Integer.toString(semID) + "Structure"; 
+	
+		@DBAnnotation (
+				variable = {"examName","totalMarks"},  
+				table = "tableName", 
+				column = {"ExamName","TotalMarks"}, 
+				isSource = true)
+		String SQLExamSelect = "SELECT ExamName,TotalMarks FROM %s ;";
+		SQLExamSelect = String.format(SQLExamSelect, tableName);
+		
+		try {
+			Connection conn = Database.getConnection();
+			try {
+				if (conn != null) {
+					//System.out.println(tableName);
+					PreparedStatement statement = conn.prepareStatement(SQLExamSelect);
+//					statement.setString(1, tableName);
+					ResultSet rs =  statement.executeQuery();
+									
+					while(rs.next()){
+						String examName = rs.getString("ExamName");
+						int totalMarks = rs.getInt("TotalMarks");
+						System.out.println(examName);
+						if(examName != null)
+							allExams.put(examName,totalMarks);
+					}
+				}	
+			} catch (SQLException e) {
+				System.out.println(e);
+			}
+		} catch (Exception e) {
+			System.out.println(e);
+		}
+		return allExams;
+	}
+	
 	public static void main(String[] args){
 	
 		int offerID = 345678;

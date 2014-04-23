@@ -449,7 +449,7 @@ public class CourseExams {
 						while(rs.next()){
 							UIN = rs.getInt("StudentUIN");
 							studentTotalMarks = 0.0;
-							System.out.println("---");
+							System.out.println("-*-");
 							for(String examName:allExams){
 								studentTotalMarks = studentTotalMarks + rs.getDouble(examName);
 							}

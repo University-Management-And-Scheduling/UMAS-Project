@@ -14,26 +14,30 @@ public class MainMaster {
 		System.out.println();
 		
 		Login user = authenticate();
-		
-		System.out.println("Welcome " + user.getUsername());
-		
-		
-//		do{
-//			int option = 0;
-//			Scanner in = new Scanner(System.in);
-//			switch (option) {
-//	        case 1:  System.out.println("");
-//	        		 
-//	        		 
-//	                 break;
-//	        
-//	        
-//	        default: System.out.println("Invalid input. Enter again.");
-//	                 break;
-//	    }
-//
-//		} while (user != null);
-		
+		if (user!=null){
+			System.out.println("Welcome " + user.getUsername());
+			
+			String username = user.getUsername();
+			People person = new People(username);
+			
+			int option = 0;
+			do{
+				option = 0;
+				Scanner in = new Scanner(System.in);
+				switch (option) {
+		        case 1:  System.out.println("");
+		        		 
+		        		 
+		                 break;
+		        
+		        
+		        case 5: System.out.println("5. Exit");
+		        default: System.out.println("Invalid input. Enter again.");
+		                 break;
+		    }
+	
+			} while ((user != null) || (option != 5));
+		}
 	}
 
 	private static Login authenticate() {
@@ -65,5 +69,11 @@ public class MainMaster {
 		return user;
 	}
 
+	private static int peopleFunctions(){
+		int option = 0;
+		
+		
+		return option;
+	}
 
 }

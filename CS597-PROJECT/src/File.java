@@ -331,8 +331,8 @@ public class File {
 						fileID = rs.getInt("FileID");
 						fileName = rs.getString("FileName");
 						fileLocation = rs.getString("FileLocation");
-						String newFileLocation = fileLocation.replace("/","//");
-						File file = new File(fileID, fileName, newFileLocation, offerID);
+						// String newFileLocation = fileLocation.replace("/","//");
+						File file = new File(fileID, fileName, fileLocation, offerID);
 						courseFiles.add(file);
 					}
 				}

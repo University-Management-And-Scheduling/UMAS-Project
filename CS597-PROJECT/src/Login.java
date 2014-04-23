@@ -35,9 +35,9 @@ public class Login {
 		this.password = password;
 	}
 
-	public Login(String username, String password) {
+	public Login(String username, char[] password) {
 		this.username = username;
-		this.password = password;
+		this.password = new String(password);
 	}
 
 	// To authenticate the username and password during login
@@ -164,10 +164,10 @@ public class Login {
 	}
 
 	// To change the password for a user who is logged in
-	public boolean changePassword(String newPassword){
+	public static boolean changePassword(String username, String newPassword){
 		
 		boolean passwordChanged = false;
-		String username = this.getUsername();
+	//	String username = this.getUsername();
 		
 		@DBAnnotation (
 			variable = {"username","newPassword"},  
@@ -200,9 +200,8 @@ public class Login {
 	}
 
 	// To recover a user's password
-	public Login recoverPassword (String username){
-		Login user = null;
-		
+	public static boolean recoverPassword (String username){
+		boolean passwordrecovered = false;
 		boolean isUserPresent = checkUsernameInDatabase(username);
 		if (isUserPresent == false){
 			System.out.println("Username not present");
@@ -228,15 +227,16 @@ public class Login {
 						while (rs.next()) {
 							// Retrieve by column name
 							String password = rs.getString("Password");
-							this.setPassword(password);
-							Email email = Email.getInstance("UMAS.UIC@gmail.com", "cs597project");
+							//this.setPassword(password);
+							Email email = Email.getInstance("umas.uic@gmail.com", "cs597project");
 							String subject = "UMAS Password";
 							String body = "Your password is " + password + 
-											". /n Please change your password after you login";
+											"Please change your password after you login";
 							
 							boolean mailSent = email.sendEmail(username+"@gmail.com", subject, body);
 							if (mailSent == true){
 								System.out.println("Mail containing password sent to the user.");
+								passwordrecovered = true;
 							}
 						}
 					}	
@@ -250,7 +250,7 @@ public class Login {
 
 		}
 		
-		return user;
+		return passwordrecovered;
 		
 	}
 	
