@@ -474,6 +474,62 @@ public class CourseExams {
 		return this;
 	}
 
+	public static HashMap<String,Double> getStudentMarks(CourseOffered offeredCourse, Student student){
+		HashMap<String,Double> studentExamAndMarks = new HashMap<String,Double>();
+		int offerID = offeredCourse.getOfferID();
+		Course course = offeredCourse.getCourse();
+		String courseName = course.getCourseName();
+		int semID = offeredCourse.getSemesterID();
+		
+		String tableName = courseName + Integer.toString(offerID) + Integer.toString(semID); 
+		
+		int UIN = student.getUIN();
+		double studentMarks = 0.0;
+		
+		CourseExams exam = new CourseExams(offerID);
+		ArrayList<String> allExams = exam.viewAllExams();
+		if(allExams.isEmpty()){
+			System.out.println("No exams entered yet");
+		} else {
+			for(String oneExam: allExams){
+				
+				@DBAnnotation (
+						variable = {"examName"},  
+						table = "tableName", 
+						column = {"ExamName"}, 
+						isSource = true)
+				String SQLExamSelect = "SELECT ? FROM %s WHERE UIN = ?;";
+				SQLExamSelect = String.format(SQLExamSelect, tableName);
+
+				try {
+					Connection conn = Database.getConnection();
+					try {
+						if (conn != null) {
+							PreparedStatement statement = conn.prepareStatement(SQLExamSelect);
+							statement.setString(1, oneExam);
+							statement.setInt(2, UIN);
+							ResultSet rs =  statement.executeQuery();
+							//System.out.println(rs.getDouble());
+								if(rs.next()){
+									studentMarks = rs.getDouble(oneExam);
+									studentExamAndMarks.put(oneExam, studentMarks);
+								}
+							}
+							
+					} catch (SQLException e) {
+						System.out.println(e);
+					}
+
+				} catch (Exception e) {
+					System.out.println(e);
+				}
+
+			}
+		}
+
+		return studentExamAndMarks;
+	}
+	
  	public boolean modifyStudentMarks(){
 		boolean studentsMarksModified = false;
 		
@@ -551,6 +607,9 @@ public class CourseExams {
 		
 	}
 
+ 	
+ 	
+ 	
 	public ArrayList<String> viewAllExams(){
 		ArrayList<String> allExams = new ArrayList<String>() ;
 		

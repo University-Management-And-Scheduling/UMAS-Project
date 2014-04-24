@@ -60,7 +60,43 @@ public class CourseExamStructure {
 		this.offeredCourse = offeredCourse;
 		this.examName = examName;
 		// this.examTotal = getTotalMarksForExam(examName);
-		this.examTotal = 20;
+		
+		Course course = offeredCourse.getCourse();
+		String courseName = course.getCourseName();
+		int offerID= offeredCourse.getOfferID();
+		int semID = offeredCourse.getSemesterID();
+		String tableName = courseName + Integer.toString(offerID) + Integer.toString(semID) + "Structure";
+		
+		boolean isExamPresent = isExamPresent(tableName,examName);
+		if (isExamPresent == false){
+			System.out.println("Exam Not Present. Please try again.");
+		} else {
+		
+			String SQLExamStructureSelect = "Select TotalMarks FROM %s WHERE ExamName = ?;";
+			SQLExamStructureSelect = String.format(SQLExamStructureSelect, tableName);
+			try {
+				Connection conn = Database.getConnection();
+				try {
+					if (conn != null) {
+					 
+						PreparedStatement statement = conn.prepareStatement(SQLExamStructureSelect);
+	//					statement.setString(1, tableName);
+						statement.setString(1, examName);
+						ResultSet rs = statement.executeQuery();
+						while(rs.next()){
+							this.examTotal = rs.getInt("TotalMarks");
+						}
+					}	
+				} catch (SQLException e) {
+					System.out.println(e);
+				}
+	
+			} catch (Exception e) {
+				System.out.println(e);
+			}
+		
+		}
+		
 	}
 	
 	public static boolean createCourseExamStructureTable(CourseOffered offeredCourse){

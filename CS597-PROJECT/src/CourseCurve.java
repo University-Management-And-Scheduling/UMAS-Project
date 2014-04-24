@@ -159,7 +159,6 @@ public class CourseCurve {
 		return percent;
 	}
 	
-	
 	// 3 ways to Calculate the Curve
 
 	// HashMap<String,Integer> = HashMap<Grade,Percentage of students in the grade>
@@ -328,9 +327,9 @@ public class CourseCurve {
 		// 5. That is the cut-off point.
 		// 6. Move on to the next grade
 		
-		//int numberOfStudents = sortedstudentTotalMarks.size();
+		int numberOfStudents = sortedstudentTotalMarks.size();
 		int numberOfGrades = curvingCriteria.size();
-		
+		int studentsLeft = numberOfStudents;
 		Set<Student> keys = sortedstudentTotalMarks.keySet();
 		Iterator<Student> keyIterator = keys.iterator();
 		
@@ -356,45 +355,92 @@ public class CourseCurve {
 				System.out.println("UIN-: " + UIN + " Grade-: " + studentGrade);
 				courseCurve.put(student, studentGrade);
 				gradedStudents++;
+				studentsLeft--;
+				System.out.println("Graded Students: " + gradedStudents + " studentsLeft: " + studentsLeft);
+			}
+			if(keyIterator.hasNext()){
+				boolean added = false;
+				Student student = keyIterator.next();
+				@SuppressWarnings("unused")
+				int nextUIN = student.getUIN();
+				double nextMarks = (double) sortedstudentTotalMarks.get(student);
+				
+				System.out.println("nextUIN: "+nextUIN+" nextMarks: " + nextMarks +" mks: "+ marks);
+				
+				double difference = marks-nextMarks;
+				
+				while(keyIterator.hasNext() && (gradeLevel< numberOfGrades)) {
+					added = true;
+					marks = nextMarks;
+					Student nextstudent = keyIterator.next();
+					int nextUIN2 = nextstudent.getUIN();
+					nextMarks = (double) sortedstudentTotalMarks.get(nextstudent);
+					double nextDifference = marks - nextMarks;
+					System.out.println("nextUIN2: " + nextUIN2 + " nextMarks-: " + nextMarks);
+					if(nextDifference >= difference){
+						//System.out.println("UIN: " + nextUIN + " Grade: " + studentGrade);
+						courseCurve.put(student, studentGrade);
+						gradedStudents++;
+						studentsLeft--;
+						System.out.println("Graded Students: " + gradedStudents + " studentsLeft: " + studentsLeft);
+						grade = GradeSystem.getGradeForGradeLevel((gradeLevel+1));
+						studentGrade = grade.getGrade();
+						System.out.println("NEXTUINinIF: " + nextUIN2 + " Grade: " + studentGrade);
+						courseCurve.put(nextstudent, studentGrade);
+						gradedStudents++;
+						studentsLeft--;
+						System.out.println("Graded Students: " + gradedStudents + " studentsLeft: " + studentsLeft);
+						added = false;
+						break;
+					} else if (nextDifference < difference){
+						gradeLevel++;
+						GradeSystem nextGrade = GradeSystem.getGradeForGradeLevel(gradeLevel);
+						String nextStudentGrade = nextGrade.getGrade();
+						System.out.println("UIN: " + UIN + " Grade: " + studentGrade);
+						System.out.println("NEXTUIN: " + nextUIN + " Grade: " + nextStudentGrade);
+						courseCurve.put(student, nextStudentGrade);
+						gradedStudents++;
+						studentsLeft--;
+						System.out.println("Graded Students: " + gradedStudents + " studentsLeft: " + studentsLeft);
+						courseCurve.put(nextstudent, nextStudentGrade);
+						gradedStudents++;
+						studentsLeft--;
+						System.out.println("Graded Students: " + gradedStudents + " studentsLeft: " + studentsLeft);
+						added = false;
+						//nextGraded = true;
+						break;
+					}
+					
+					
+					
+				} 
+				System.out.println("Added: " +added);
+				if (added==false){
+					System.out.println("Graded Students--: " + gradedStudents + " studentsLeft: " + studentsLeft);
+					System.out.println("gradelevel: "+gradeLevel + " numberOfGrades: " +numberOfGrades);
+					if(studentsLeft > 0 && (gradeLevel == numberOfGrades-1) ){
+						//Student student = keyIterator.next();
+						GradeSystem grade2 = GradeSystem.getGradeForGradeLevel(gradeLevel);
+						String studentGrade2 = grade.getGrade();
+						courseCurve.put(student, studentGrade2);
+						studentsLeft--;
+						System.out.println("Graded Students: " + gradedStudents + " studentsLeft: " + studentsLeft);
+						if(keyIterator.hasNext()){
+							student = keyIterator.next();
+							grade2 = GradeSystem.getGradeForGradeLevel(gradeLevel+1);
+							studentGrade2 = grade.getGrade();
+							courseCurve.put(student, studentGrade2);
+							studentsLeft--;
+							System.out.println("Graded Students: " + gradedStudents + " studentsLeft: " + studentsLeft);
+						}
+						
+					}
+				}
+			
+				
+			
 			}
 			
-			Student student = keyIterator.next();
-			@SuppressWarnings("unused")
-			int nextUIN = student.getUIN();
-			double nextMarks = (double) sortedstudentTotalMarks.get(student);
-			
-			System.out.println("nextUIN: "+nextUIN+" nextMarks: " + nextMarks +" mks: "+ marks);
-			
-			double difference = marks-nextMarks;
-			
-			while(keyIterator.hasNext() && (gradeLevel< numberOfGrades)) {
-				marks = nextMarks;
-				Student nextstudent = keyIterator.next();
-				int nextUIN2 = nextstudent.getUIN();
-				nextMarks = (double) sortedstudentTotalMarks.get(nextstudent);
-				double nextDifference = marks - nextMarks;
-				if(nextDifference >= difference){
-					//System.out.println("UIN: " + nextUIN + " Grade: " + studentGrade);
-					courseCurve.put(student, studentGrade);
-					gradeLevel++;
-					grade = GradeSystem.getGradeForGradeLevel((gradeLevel));
-					studentGrade = grade.getGrade();
-					System.out.println("NEXTUIN: " + nextUIN + " Grade: " + studentGrade);
-					courseCurve.put(nextstudent, studentGrade);
-					break;
-				} else if (nextDifference < difference){
-					gradeLevel++;
-					GradeSystem nextGrade = GradeSystem.getGradeForGradeLevel(gradeLevel);
-					String nextStudentGrade = nextGrade.getGrade();
-					System.out.println("UIN: " + UIN + " Grade: " + studentGrade);
-					System.out.println("NEXTUIN: " + nextUIN + " Grade: " + nextStudentGrade);
-					courseCurve.put(student, nextStudentGrade);
-					courseCurve.put(nextstudent, nextStudentGrade);
-					//nextGraded = true;
-					break;
-				}
-				
-			} 
 		}
 		curve.setCourseCurve(courseCurve);
 		return curve;
@@ -482,24 +528,24 @@ public class CourseCurve {
 		
 		
 		// To test max gap curve
-		int offerID = 345678;
-		List<Integer> curvingCriteria = new ArrayList<Integer>();
-		curvingCriteria.add(3);
-		curvingCriteria.add(2);
-		curvingCriteria.add(2);
-				
-		CourseCurve curve = CourseCurve.calculateMaxGapCurve(offerID, curvingCriteria);
-		
-		HashMap<Student,String> courseCurve = curve.getCourseCurve();
-		System.out.println("----------------------------------");
-		if(courseCurve != null){
-			for(Student students:courseCurve.keySet()){
-				int UIN = students.getUIN();
-				String grade = courseCurve.get(students);
-				
-				System.out.println("UIN: " + UIN + " Grade: " + grade);
-			}
-		}
+//		int offerID = 345678;
+//		List<Integer> curvingCriteria = new ArrayList<Integer>();
+//		curvingCriteria.add(3);
+//		curvingCriteria.add(1);
+//		curvingCriteria.add(1);
+//				
+//		CourseCurve curve = CourseCurve.calculateMaxGapCurve(offerID, curvingCriteria);
+//		
+//		HashMap<Student,String> courseCurve = curve.getCourseCurve();
+//		System.out.println("----------------------------------");
+//		if(courseCurve != null){
+//			for(Student students:courseCurve.keySet()){
+//				int UIN = students.getUIN();
+//				String grade = courseCurve.get(students);
+//				
+//				System.out.println("UIN: " + UIN + " Grade: " + grade);
+//			}
+//		}
 		
 		
 		
