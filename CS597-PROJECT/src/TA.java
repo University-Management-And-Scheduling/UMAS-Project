@@ -11,6 +11,14 @@ import java.util.ArrayList;
 
 import com.mysql.jdbc.Statement;
 
+
+/**
+ * @author Akshay
+ * 
+ */
+
+/*************** ADMIN.JAVA CLASS WAS WRITTEN BY AKSHAY THIRKATEH ********************************/
+
 public class TA extends Student {
 	
 	@Target({ElementType.LOCAL_VARIABLE})
