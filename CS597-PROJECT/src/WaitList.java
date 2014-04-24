@@ -4,6 +4,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.util.ArrayList;
+import java.util.HashMap;
 
 import org.joda.time.Period;
 
@@ -196,9 +197,10 @@ public class WaitList {
 			
 			try{
 				if(conn != null){
-					String SemesterSelect = "Select UIN"
+					String SemesterSelect = "Select *"
 							+ " FROM university.waitlist"
-							+ " WHERE offerID= ?";
+							+ " WHERE offerID= ?"
+							+ " ORDER BY QueuePos";
 					PreparedStatement statement = conn.prepareStatement(SemesterSelect);
 					statement.setInt(1, offerID);
 					ResultSet rs = statement.executeQuery();
@@ -218,6 +220,44 @@ public class WaitList {
 		}
 		
 		return students;
+	}
+	
+	public static ArrayList<CourseOffered> getWaitListCoursesOfStudent(Student s){
+		ArrayList<CourseOffered> waitListCourses = new ArrayList<CourseOffered>();
+		try{
+			Connection conn = Database.getConnection();
+			
+			try{
+				if(conn != null){
+					String SQLSelect = "Select *"
+							+ " FROM university.waitlist"
+							+ " WHERE UIN= ?"
+							+ " ORDER BY QueuePos";
+					PreparedStatement statement = conn.prepareStatement(SQLSelect);
+					statement.setInt(1, s.getUIN());
+					ResultSet rs = statement.executeQuery();
+					while(rs.next()){
+						waitListCourses.add(new CourseOffered(rs.getInt("OfferID")));
+					}
+				}
+			}
+			
+			catch(SQLException e){
+				System.out.println(e.getMessage());
+				e.printStackTrace();
+			} catch (Course.CourseDoesNotExistException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (CourseOffered.CourseOfferingDoesNotExistException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}			
+		}
+		
+		finally{
+		}
+		
+		return waitListCourses;
 	}
 	
 	private static boolean canCourseAccomodateNewStudentFromWaitList(int offerID){
@@ -247,12 +287,14 @@ public class WaitList {
 		CourseOffered courseOffered = new CourseOffered(offerID);
 		if(courseOffered.isCourseRegistrableBy(student)){
 			canBeAdded = false;
+			return canBeAdded;
 		}
 		
 		if(!isStudentRegistered(student, offerID)){
 			if(!isStudentOnWaitList(student, offerID)){
 				if(!isStudentEmailed(student, offerID)){
 					canBeAdded = true;
+					return canBeAdded;
 				}
 			}
 		}
@@ -260,8 +302,9 @@ public class WaitList {
 		return canBeAdded;
 	}
 			
-	public static void removeFromWaitList(Student student, int offerID){
+	public static boolean removeFromWaitList(Student student, int offerID){
 		int UIN = student.getUIN();
+		boolean isRemoved = false;
 		try{
 			Connection conn = Database.getConnection();
 			
@@ -270,10 +313,11 @@ public class WaitList {
 					System.out.println("Deleting student from wait list");
 					String WaitListInsert = "DELETE FROM university.waitlist "
 							+ "WHERE UIN= ? and OfferID= ?";
-					PreparedStatement statement = conn.prepareStatement(WaitListInsert, ResultSet.CONCUR_UPDATABLE);
+					PreparedStatement statement = conn.prepareStatement(WaitListInsert, ResultSet.CONCUR_UPDATABLE, ResultSet.TYPE_FORWARD_ONLY);
 					statement.setInt(1, UIN);
 					statement.setInt(2, offerID);
 					statement.executeUpdate();
+					isRemoved = true;
 					//Database.commitTransaction(conn);											
 				}
 			}
@@ -286,6 +330,41 @@ public class WaitList {
 		
 		finally{
 		}
+		
+		return isRemoved;
+	}
+	
+	//this function is externally called when a student removes self from waitlist
+	public static boolean removeFromWaitListAndCommit(Student student, int offerID){
+		int UIN = student.getUIN();
+		boolean isRemoved = false;
+		try{
+			Connection conn = Database.getConnection();
+			
+			try{
+				if(conn != null){
+					System.out.println("Deleting student from wait list");
+					String WaitListInsert = "DELETE FROM university.waitlist "
+							+ "WHERE UIN= ? and OfferID= ?";
+					PreparedStatement statement = conn.prepareStatement(WaitListInsert, ResultSet.CONCUR_UPDATABLE, ResultSet.TYPE_FORWARD_ONLY);
+					statement.setInt(1, UIN);
+					statement.setInt(2, offerID);
+					statement.executeUpdate();
+					isRemoved = true;
+					Database.commitTransaction(conn);											
+				}
+			}
+			
+			catch(SQLException e){
+				System.out.println(e.getMessage());
+				e.printStackTrace();
+			}			
+		}
+		
+		finally{
+		}
+		
+		return isRemoved;
 	}
 
 	public static void removeFromEmailedList(int UIN, int offerID){
@@ -611,12 +690,40 @@ public class WaitList {
 		return p.getHours();
 	}
 	
-	public static void main(String[] args){
-//		int UIN = 452;
-//		System.out.println("On wait list:"+isStudentOnWaitList(new Student(UIN), 295));
-//		System.out.println("Is registrabe:"+CourseOffered.isCourseRegistrableBy(new Student(UIN), 295));
-//		System.out.println("Can be added to wait list:"+canBeAddedToWaitList(new Student(UIN), 295));
-		//emailFirstStudentOnWaitList(295);
+	public static void scanWaitList(){
+		HashMap<Integer, CourseSchedule> allScheduledCourses = CourseSchedule.getHaspMapForSchedule();
 		checkTheStatusOfEmailedStudents();
+		for(Integer i:allScheduledCourses.keySet()){
+			int wailtListStudents = getStudentsOnWaitList(i).size();
+			if(wailtListStudents <= 0)
+				continue;
+			
+			try {
+				CourseOffered co = new CourseOffered(i);
+				int emailedStudents = getStudentsOnEmailList(i).size();
+				int totalCap = co.getTotalCapacity();
+				int filled = co.getCurrentlyFilled();
+				
+				int numberOfNewStudentsToBeAccomodated = (totalCap-filled) - emailedStudents;
+				
+				if(numberOfNewStudentsToBeAccomodated > 0){
+					emailFirstStudentOnWaitList(i);
+					Thread.sleep(2000);
+				}
+				
+				
+			} catch (Course.CourseDoesNotExistException
+					| CourseOffered.CourseOfferingDoesNotExistException e) {
+				e.printStackTrace();
+			} catch (InterruptedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			
+		}
+		
+	}
+	
+	public static void main(String[] args){
 	}
 }
