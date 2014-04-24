@@ -498,16 +498,16 @@ public class CourseExams {
 						table = "tableName", 
 						column = {"ExamName"}, 
 						isSource = true)
-				String SQLExamSelect = "SELECT ? FROM %s WHERE UIN = ?;";
-				SQLExamSelect = String.format(SQLExamSelect, tableName);
+				String SQLExamSelect = "SELECT %s FROM %s WHERE StudentUIN = ?;";
+				SQLExamSelect = String.format(SQLExamSelect, oneExam, tableName);
 
 				try {
 					Connection conn = Database.getConnection();
 					try {
 						if (conn != null) {
 							PreparedStatement statement = conn.prepareStatement(SQLExamSelect);
-							statement.setString(1, oneExam);
-							statement.setInt(2, UIN);
+							// statement.setString(1, oneExam);
+							statement.setInt(1, UIN);
 							ResultSet rs =  statement.executeQuery();
 							//System.out.println(rs.getDouble());
 								if(rs.next()){
@@ -530,6 +530,59 @@ public class CourseExams {
 		return studentExamAndMarks;
 	}
 	
+	public static HashMap<Integer,Double> getStudents(CourseOffered offeredCourse, String examName){
+		HashMap<Integer,Double> studentsMarks = new HashMap<Integer,Double>();
+		
+		int offerID = offeredCourse.getOfferID();
+		Course course = offeredCourse.getCourse();
+		String courseName = course.getCourseName();
+		int semID = offeredCourse.getSemesterID();
+		
+		String tableName = courseName + Integer.toString(offerID) + Integer.toString(semID); 
+		
+		boolean isExamPresent = isExamPresent(tableName, examName);
+			if(isExamPresent == false){
+				System.out.println("Exam Absent");
+			} else {
+				@DBAnnotation (
+						variable = {"examName"},  
+						table = "tableName", 
+						column = {"ExamName"}, 
+						isSource = true)
+				String SQLExamSelect = "SELECT StudentUIN, %s FROM %s;";
+				SQLExamSelect = String.format(SQLExamSelect, examName, tableName);
+
+				try {
+					Connection conn = Database.getConnection();
+					try {
+						if (conn != null) {
+							PreparedStatement statement = conn.prepareStatement(SQLExamSelect);
+//							statement.setInt(1, UIN);
+//							statement.setDouble(1, examName);
+							
+							ResultSet rs =  statement.executeQuery();
+							//System.out.println(rs.getDouble());
+								if(rs.next()){
+									int UIN = rs.getInt(1);
+									double marks = rs.getDouble(2); 
+									studentsMarks.put(UIN, marks);
+								}
+							}
+							
+					} catch (SQLException e) {
+						System.out.println(e);
+					}
+
+				} catch (Exception e) {
+					System.out.println(e);
+				}
+
+			}
+
+		return studentsMarks;
+	}
+	
+
  	public boolean modifyStudentMarks(){
 		boolean studentsMarksModified = false;
 		
@@ -607,8 +660,6 @@ public class CourseExams {
 		
 	}
 
- 	
- 	
  	
 	public ArrayList<String> viewAllExams(){
 		ArrayList<String> allExams = new ArrayList<String>() ;
