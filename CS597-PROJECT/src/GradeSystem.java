@@ -376,6 +376,38 @@ public class GradeSystem {
 		return gradeObject;
 	}
 
+	public static int getMaxGradeLevel(){
+		int maxGradeLevel = 0;
+		
+		@DBAnnotation (
+				variable = "gradeLevel",  
+				table = "gradingsystem", 
+				column = "GradeLevel", 
+				isSource = true)
+		
+		String SQLGradeSelect = "SELECT max(GradeLevel) FROM gradingsystem;";
+		
+		try {
+			Connection conn = Database.getConnection();
+			try {
+				if (conn != null) {
+					PreparedStatement statement = conn.prepareStatement(SQLGradeSelect);
+					ResultSet rs = statement.executeQuery();
+					while (rs.next()) {
+						maxGradeLevel = rs.getInt(1);
+					}
+				}	
+			} catch (SQLException e) {
+				System.out.println(e);
+			}
+
+		} catch (Exception e) {
+			System.out.println(e);
+		}
+
+		return maxGradeLevel;
+	}
+	
 	public static void main(String[] args){
 		
 	}
