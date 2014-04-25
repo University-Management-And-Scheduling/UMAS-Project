@@ -686,7 +686,7 @@ public class TA extends Student {
 	return isUpdated;
 	}
 	
-	static class AlreadyExistsInEmployeeException extends Exception {
+	public static class AlreadyExistsInEmployeeException extends Exception {
 		private static final long serialVersionUID = 1L;
 		private String message = null;
 

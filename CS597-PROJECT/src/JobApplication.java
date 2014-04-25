@@ -1,3 +1,4 @@
+
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -167,7 +168,6 @@ public class JobApplication {
 					{
 						
 						System.out.println("job application for "+UIN+" does not exist");
-						throw new People.PersonDoesNotExistException();
 
 					}
 					

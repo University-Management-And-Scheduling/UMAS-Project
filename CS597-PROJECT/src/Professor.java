@@ -671,7 +671,7 @@ public class Professor extends Employee {
 	
 	//grade exams
 	
-	static class ProfessorDoesNotExistException extends Exception{
+	public static class ProfessorDoesNotExistException extends Exception{
 		private static final long serialVersionUID = 1L;
 		private String message = null;
 		 

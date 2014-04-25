@@ -676,7 +676,7 @@ public class Job {
 
 
 
-	static class NoPermissionException extends Exception{
+	public static class NoPermissionException extends Exception{
 		private static final long serialVersionUID = 1L;
 		private String message = null;
 		 

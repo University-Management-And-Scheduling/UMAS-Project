@@ -1134,7 +1134,7 @@ public class People {
 		
 	}
 
-	static class PersonDoesNotExistException extends Exception{
+	public static class PersonDoesNotExistException extends Exception{
 		private static final long serialVersionUID = 1L;
 		private String message = null;
 		 
@@ -1159,7 +1159,7 @@ public class People {
 	    }
 	}
 	
-	static class loginDetailsnotAdded extends Exception{
+	public static class loginDetailsnotAdded extends Exception{
 		private static final long serialVersionUID = 1L;
 		private String message = null;
 		 

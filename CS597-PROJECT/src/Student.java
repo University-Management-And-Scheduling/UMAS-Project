@@ -13,7 +13,7 @@ public class Student extends People {
 	
 	protected double GPA;
 	protected int level;	
-	protected JobApplication jobApplication=null;
+	public JobApplication jobApplication=null;
 	
 
 	public Student(int UIN) throws PersonDoesNotExistException {
@@ -814,7 +814,7 @@ public class Student extends People {
 	}
 	
 	
-	static class levelNotExistException extends Exception{
+	public static class levelNotExistException extends Exception{
 		private static final long serialVersionUID = 1L;
 		private String message = null;
 		 
@@ -865,7 +865,7 @@ public class Student extends People {
 	    }
 	}
 	
-	static class AccessDeniedException extends Exception{
+	public static class AccessDeniedException extends Exception{
 		private static final long serialVersionUID = 1L;
 		private String message = null;
 		 
