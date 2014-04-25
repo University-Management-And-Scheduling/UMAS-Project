@@ -2,17 +2,18 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.LinkedHashMap;
 
 import javax.xml.crypto.Data;
 
 
 
-
 public class Employee extends People {
 	
-	double salary;
-	String officeAddress;
-	String officeHours;
+	protected double salary;
+	protected String officeAddress;
+	protected String officeHours;
 
 	public double getSalary() {
 		return salary;
@@ -44,7 +45,7 @@ public class Employee extends People {
 	}
 
 
-	public Employee(int UIN) {
+	public Employee(int UIN) throws PersonDoesNotExistException {
 		super(UIN);
 		
 		
@@ -81,6 +82,7 @@ public class Employee extends People {
 					{
 						
 						System.out.println(UIN+"does not exist");
+						throw new PersonDoesNotExistException();
 						
 					}
 					
@@ -243,7 +245,12 @@ public class Employee extends People {
 		
 	}
 	
-	public static boolean updateEmpDetails(int UIN, String officeAddress, String officeHours){
+	public static boolean updateEmpDetails(int UIN, String officeAddress, String officeHours) throws Student.AccessDeniedException{
+		
+		boolean check=checkIfEmployee(UIN);
+		if(!check){
+			throw new Student.AccessDeniedException();
+		}
 		
 		boolean  isUpdated=false;
 		try{
@@ -364,7 +371,12 @@ public class Employee extends People {
 		return isUpdated;
 	}
 	
-	public static boolean giveBonus(int UIN, double bonusPercent) throws bonusNotValidException{
+	public static boolean giveBonus(int UIN, double bonusPercent) throws bonusNotValidException, Student.AccessDeniedException{
+		
+		boolean check=checkIfEmployee(UIN);
+		if(!check){
+			throw new Student.AccessDeniedException();
+		}
 		
 		boolean giveBonus=false;
 		
@@ -878,6 +890,229 @@ public class Employee extends People {
 					
 		}
 	
+	public static ArrayList<Employee> getAllEmployeesByDepartment(String deptName) throws Department.DepartmentDoesNotExistException{
+	
+		ArrayList<Employee> getAllEmpDept=new ArrayList<Employee>();
+		try{
+			Connection conn = Database.getConnection();
+			
+			try{
+				if(conn != null){
+					
+					int retreivedDepartmentID=0;
+					
+						String getDeptID = "Select Username"
+								+ " FROM university.employee natural join university.people natural join university.department"
+								+ " WHERE DepartmentName= ?";
+						
+						PreparedStatement statement = conn.prepareStatement(getDeptID);
+						statement.setString(1, deptName);
+						ResultSet rs = statement.executeQuery();
+						
+						while(rs.next()){
+							
+							String retreivedProfUserNames=rs.getString("Username");
+							//System.out.println(retreivedProfUserNames);
+							Employee emps=new Employee(retreivedProfUserNames);
+							getAllEmpDept.add(emps);
+							System.out.println(emps.getName());
+							
+							}
+					}
+			}
+					
+					catch(SQLException e){
+						System.out.println("Error finding the department name ");
+						System.out.println(e.getMessage());
+						e.printStackTrace();
+	
+					}
+					
+					
+					
+					finally{
+						//Database.commitTransaction(conn);
+					}
+					
+			}
+			
+			catch(Exception e){
+				System.out.println("Error fetching all the professors of the department ");
+				System.out.println(e.getMessage());
+				e.printStackTrace();
+				
+			}
+				
+		
+		
+		finally{
+		}
+		
+	
+		return getAllEmpDept;
+	}
+	
+	public static boolean checkIfEmployee(int UIN){
+		
+		try{
+			Connection conn = Database.getConnection();
+			String SQLPeopleSelect="";
+			try{
+			
+				if(conn != null){
+					
+					SQLPeopleSelect = "Select PositionID From People where UIN=?;";
+				}
+				
+				
+				
+				PreparedStatement stmtForSelect = conn.prepareStatement(SQLPeopleSelect);
+				stmtForSelect.setInt(1, UIN);
+				
+				ResultSet rs =  stmtForSelect.executeQuery();
+					
+					if(rs.first())
+					{
+						
+				         int peopleRetrievedPositionID = rs.getInt("PositionID");
+				         System.out.println("UIN:"+UIN+" Position ID:"+peopleRetrievedPositionID);
+				         
+				         
+				         if(peopleRetrievedPositionID <=2){
+				        	 System.out.println("UIN is an employee");
+				        	 return true;
+				         }
+				         else 
+				         {
+				        	 System.out.println("UIN exists, but it is not a Employee");
+				        	 return false;
+						
+				         }
+				         
+
+				         
+					}
+					
+					else
+					{
+						
+						System.out.println("UIN does not exist");
+						return false;
+
+					}
+					
+				
+			
+		
+	}
+			
+			catch(SQLException e){
+				System.out.println(e);
+				
+			}
+			
+			finally{
+				
+				//System.out.println("retrieved");
+			}
+		}
+		
+		catch(Exception e){
+			System.out.println(e);
+			
+		}
+		
+		finally{
+			
+			//System.out.println("retrieved");
+		}		
+		
+		return false;
+	}
+	
+	public static boolean checkIfEmployee(String userName){
+		
+		try{
+			Connection conn = Database.getConnection();
+			String SQLProfSelect="";
+			try{
+			
+				if(conn != null){
+					
+					SQLProfSelect = "Select PositionID From People where Username=?;";
+				}
+				
+				
+				
+				PreparedStatement stmtForSelect = conn.prepareStatement(SQLProfSelect);
+				stmtForSelect.setString(1, userName);
+				
+				ResultSet rs =  stmtForSelect.executeQuery();
+					
+					if(rs.first())
+					{
+						
+						 int peopleRetrievedPositionID = rs.getInt("PositionID");
+				         System.out.println("Username:"+userName+" Position ID:"+peopleRetrievedPositionID);
+				         /*Check here if the position ID id of a professor i.e 2, UIN exists for students
+				          * professors, admins TA and virtually every person existing in the university
+				          * Check if the position ID of the passed UIN is of a professor.
+				          */
+				         
+				         if(peopleRetrievedPositionID <=2)
+				         {
+				        	 System.out.println("UIN is an employee");
+				        	 return true;
+				         }
+				         else {
+				        	 System.out.println("UIN is not an employee");
+				        	 return false;
+				        	 
+				         }
+				         //System.out.println("Professor UIN exists");
+
+
+				         
+					}
+					
+					else
+					{
+						
+						System.out.println("username does not exist");
+						return false;
+
+					}
+					
+				
+			
+		
+	}
+			
+			catch(SQLException e){
+				System.out.println(e);
+				
+			}
+			
+			finally{
+				
+				//System.out.println("retrieved");
+			}
+		}
+		
+		catch(Exception e){
+			System.out.println(e);
+			
+		}
+		
+		finally{
+			
+			//System.out.println("retrieved");
+		}		
+		
+		return false;
+	}
+	
+	
 	static class bonusNotValidException extends Exception{
 		private static final long serialVersionUID = 1L;
 		private String message = null;
@@ -917,6 +1152,23 @@ public class Employee extends People {
 		
 		//deleteFromDatabaseByUserName("arihant");
 
+//		try {
+//			ArrayList<Employee> emp=Employee.getAllEmployeesByDepartment("Duis A LLP");
+//		} catch (Department.DepartmentDoesNotExistException e) {
+//			// TODO Auto-generated catch block
+//			e.printStackTrace();
+//		}
+		
+		boolean c=checkIfEmployee(451);
+		System.out.println(c);
+		
+		try {
+			boolean check=updateEmpDetails(451, "ss", "ss");
+		} catch (Student.AccessDeniedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
 	}
 }
 	

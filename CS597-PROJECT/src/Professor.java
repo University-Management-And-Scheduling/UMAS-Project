@@ -25,8 +25,14 @@ public class Professor extends Employee {
 		super(name, userName, deptID, 2);	
 	}
 	
-	public Professor(int UIN){
+	public Professor(int UIN) throws Student.AccessDeniedException, PersonDoesNotExistException{
 		super(UIN);
+		boolean check=checkIfProfessor(UIN);
+		
+		if(!check){
+			throw new Student.AccessDeniedException();
+		}
+		
 	}
 	
 	public Professor(String userName){
@@ -44,6 +50,9 @@ public class Professor extends Employee {
 			throw new NullPointerException();
 		}
 		
+		if(name.equals("")){
+			throw new NullPointerException();
+		}
 		
 		try {
 			returnedUIN = addIntoDatabase(name, dept, 2);
@@ -237,8 +246,18 @@ public class Professor extends Employee {
 		if(check==true)
 		{
 		//retireveDetailsByUIN(12);
-		Professor professor = new Professor(UIN);
-		return professor;
+		Professor professor;
+		try {
+			professor = new Professor(UIN);
+			return professor;
+		} catch (PersonDoesNotExistException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace(); 
+		} catch (Student.AccessDeniedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
 		}
 		
 		else
@@ -247,6 +266,7 @@ public class Professor extends Employee {
 			return null;
 		}
 		
+	return null;	
 	}
 	
 	//prof retrieval by userName
@@ -611,6 +631,8 @@ public class Professor extends Employee {
 
 	public boolean updateProfDept(int deptID){
 		
+		
+		// how to check if the dept ID is not existing
 		boolean isUpdated=false;
 		
 		try{
@@ -707,10 +729,18 @@ public class Professor extends Employee {
 //			e.printStackTrace();
 //		}
 		
-		Professor prof=new Professor(272);
+		try {
+			Professor prof=new Professor(451);
+		} catch (PersonDoesNotExistException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (Student.AccessDeniedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 
 		
-		prof.updateProfDept(16);
+		//prof.updateProfDept(16);
 		
 		
 		

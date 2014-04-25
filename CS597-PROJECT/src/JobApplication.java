@@ -11,6 +11,8 @@ import java.util.List;
 import javax.xml.crypto.Data;
 
 
+
+
 public class JobApplication {
 	
 	protected int ApplicationID;
@@ -113,8 +115,14 @@ public class JobApplication {
 		SQLPeopleReSelect = sQLPeopleReSelect;
 	}
 
-	public JobApplication(int UIN){
+	public JobApplication(int UIN) throws People.PersonDoesNotExistException{
 	
+		boolean check=Student.checkIfStudent(UIN);
+		System.out.println(check);
+		if(!check){
+			throw new People.PersonDoesNotExistException();
+		}
+		
 		try{
 			Connection conn = Database.getConnection();
 			
@@ -159,6 +167,7 @@ public class JobApplication {
 					{
 						
 						System.out.println("job application for "+UIN+" does not exist");
+						throw new People.PersonDoesNotExistException();
 
 					}
 					
@@ -194,9 +203,13 @@ public class JobApplication {
 		
 	}
 	
-	public static boolean addApplicationDetails(int UIN, double workExp, boolean skill1, boolean skill2, boolean skill3, boolean skill4, boolean skill5){
+	public static boolean addApplicationDetails(int UIN, double workExp, boolean skill1, boolean skill2, boolean skill3, boolean skill4, boolean skill5) throws People.PersonDoesNotExistException{
 		
 
+		boolean check=Student.checkIfStudent(UIN);
+		if(!check){
+			throw new People.PersonDoesNotExistException();
+		}
 		boolean isAdded=false;
 		try{
 			Connection conn = Database.getConnection();
@@ -324,6 +337,7 @@ public class JobApplication {
 		int skillScore4=0;
 		int skillScore5=0;
 		double scaledScore=0;
+		double retreivedGPA=0.0;
 		
 		
 		if(skill1)
@@ -353,8 +367,14 @@ public class JobApplication {
 		
 		//get the GPA factor here
 		
-		Student getStudentGPA=new Student(UIN);
-		double retreivedGPA=getStudentGPA.getGPA();
+		Student getStudentGPA;
+		try {
+			getStudentGPA = new Student(UIN);
+			retreivedGPA=getStudentGPA.getGPA();
+		} catch (People.PersonDoesNotExistException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		
 		if(retreivedGPA>=3.70 && retreivedGPA<=4.0)
 			scaledScore=scaledScore+4;
@@ -573,7 +593,12 @@ public class JobApplication {
 		}
 	 	 
 	 
-	 public static boolean updateApplication(int UIN, double workExp, boolean skill1, boolean skill2, boolean skill3, boolean skill4, boolean skill5){
+	 public static boolean updateApplication(int UIN, double workExp, boolean skill1, boolean skill2, boolean skill3, boolean skill4, boolean skill5) throws People.PersonDoesNotExistException{
+		 
+		 boolean check=Student.checkIfStudent(UIN);
+		 if(!check){
+			 throw new People.PersonDoesNotExistException();
+		 }
 		 
 		 boolean isUpdated=false;
 		 
@@ -719,7 +744,12 @@ public class JobApplication {
 		{
 		 
 		//Job job=new Job(22);
-		//updateApplication(520, 4.0, true, true, true, true, false);
+		try {
+			updateApplication(272, 4.0, true, true, true, true, false);
+		} catch (People.PersonDoesNotExistException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		//rePost(1.5, 1.5, false, true, true, true, false, job);
 		 
 //		 addApplicationDetails(519, 2.5, true, false, true, true, false);
@@ -731,10 +761,20 @@ public class JobApplication {
 //		 addApplicationDetails(525, 2.5, true, true, false, true, false);
 //		 addApplicationDetails(526, 2.5, false, false, true, true, false);
 //		 addApplicationDetails(527, 2.5, true, true, false, true, false);
-//		 addApplicationDetails(528, 2.5, false, true, true, true, false);
+//		 try {
+//			addApplicationDetails(272, 2.5, false, true, true, true, false);
+//		} catch (People.PersonDoesNotExistException e) {
+//			// TODO Auto-generated catch block
+//			e.printStackTrace();
+//		}
 		 
-		 JobApplication app=new JobApplication(520);
-		 System.out.println(app.getWorkEx());
+//		try {
+//			JobApplication app=new JobApplication(272);
+//		} catch (People.PersonDoesNotExistException e) {
+//			// TODO Auto-generated catch block
+//			e.printStackTrace();
+//		}
+		// System.out.println(app.getWorkEx());
 		 
 		}
 	 

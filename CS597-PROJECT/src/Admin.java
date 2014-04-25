@@ -23,7 +23,7 @@ public class Admin extends Employee {
 	}
 
 	/* this constructor calls the employee class constructor by UIN */
-	public Admin(int UIN) {
+	public Admin(int UIN) throws PersonDoesNotExistException {
 		super(UIN);
 		// TODO Auto-generated constructor stub
 	}
@@ -92,9 +92,17 @@ public class Admin extends Employee {
 
 						int retreivedAdminUIN = rs.getInt("UIN");
 						// System.out.println(retreivedProfUserNames);
-						Admin admins = new Admin(retreivedAdminUIN);
-						getAllAdmin.add(admins);
-						System.out.println(admins.getUserName());
+						Admin admins;
+						try {
+							admins = new Admin(retreivedAdminUIN);
+							getAllAdmin.add(admins);
+							System.out.println(admins.getUserName());
+						} 
+						catch (PersonDoesNotExistException e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+						}
+						
 					}
 
 				}

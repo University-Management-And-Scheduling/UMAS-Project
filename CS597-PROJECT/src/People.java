@@ -29,7 +29,7 @@ public class People {
 				
 	}
 	
-	public People(int UIN){
+	public People(int UIN) throws PersonDoesNotExistException{
 		
 		try{
 			Connection conn = Database.getConnection();
@@ -70,6 +70,7 @@ public class People {
 					{
 						
 						System.out.println("UIN does not exist in the people table");
+						throw new PersonDoesNotExistException();
 
 					}
 					
@@ -147,6 +148,7 @@ public class People {
 				{
 					
 					System.out.println("UIN does not exist");
+					throw new PersonDoesNotExistException();
 
 				}
 				
@@ -510,9 +512,7 @@ public class People {
 		
 	return isUpdated;
 	}
-
-	
-	
+		
 	public static boolean addUserDetailsIntoLoginTableCheck(String userName){
 		
 		boolean isExisting=false;
@@ -1169,6 +1169,31 @@ public class People {
 	    }
 	    
 	    public loginDetailsnotAdded (String message) {
+	        super();
+	        this.message = message;
+	    }
+	 
+	    @Override
+	    public String toString() {
+	        return message;
+	    }
+	 
+	    @Override
+	    public String getMessage() {
+	        return message;
+	    }
+	}
+	
+	static class PersonDoesNotExist extends Exception{
+		private static final long serialVersionUID = 1L;
+		private String message = null;
+		 
+	    public PersonDoesNotExist () {
+	        super();
+	        this.message = "Person does not Added ";
+	    }
+	    
+	    public PersonDoesNotExist (String message) {
 	        super();
 	        this.message = message;
 	    }

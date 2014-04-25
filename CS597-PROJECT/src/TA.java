@@ -30,8 +30,9 @@ public class TA extends Student {
 	 boolean[] isSource () default false; 
 	}
 
-	public TA(int UIN) {
+	public TA(int UIN) throws PersonDoesNotExistException {
 		super(UIN);
+		
 		// TODO Auto-generated constructor stub
 	}
 
@@ -49,9 +50,13 @@ public class TA extends Student {
 	 * 
 	 * else the function returns false
 	 */
-	public static boolean addTAToEmployee(int UIN, int offerID)
-			throws AlreadyExistsInEmployeeException {
+	public static boolean addTAToEmployee(int UIN, int offerID) throws AlreadyExistsInEmployeeException, AccessDeniedException {
 
+		boolean check=checkIfStudent(UIN);
+		if(!check){
+			throw new Student.AccessDeniedException();
+		}
+		
 		boolean isAdded = false;
 		double salary = 40000.00;
 		String office_address = "to be decided";
@@ -258,8 +263,7 @@ public class TA extends Student {
 					System.out.println(i);
 					System.out.println("Inserted");
 					isAdded = true;
-
-					Database.commitTransaction(conn);
+					updateStudentToTA(UIN);
 
 				}
 
@@ -383,9 +387,16 @@ public class TA extends Student {
 
 						int retreivedTAUIN = rs.getInt("UIN");
 						// System.out.println(retreivedProfUserNames);
-						TA teachingAssistant = new TA(retreivedTAUIN);
-						getAllTAs.add(teachingAssistant);
-						System.out.println(teachingAssistant.getUserName());
+						TA teachingAssistant;
+						try {
+							teachingAssistant = new TA(retreivedTAUIN);
+							getAllTAs.add(teachingAssistant);
+							System.out.println(teachingAssistant.getUserName());
+						} catch (PersonDoesNotExistException e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+						}
+						
 					}
 
 				}
@@ -566,6 +577,115 @@ public class TA extends Student {
 
 	}
 
+	public static boolean updateStudentToTA(int UIN){
+		
+		boolean isUpdated=false;
+		
+		try{
+			Connection conn = Database.getConnection();
+			
+			try{
+				
+				    
+						
+						System.out.println("Updating data in the database");
+						String SQLDeptUpdate= "UPDATE people SET PositionID= ? where UIN=?;";
+						PreparedStatement stmt = conn.prepareStatement(SQLDeptUpdate);
+						stmt.setInt(1, 4);
+						stmt.setInt(2, UIN);
+						System.out.println(stmt);
+						int i = stmt.executeUpdate();
+						System.out.println(i);
+						System.out.println("Inserted");
+						isUpdated=true;
+						Database.commitTransaction(conn);
+						
+					
+					
+			}
+			
+			catch(SQLException e){
+				System.out.println("Error adding/updating to database");
+				System.out.println(e);	
+				e.printStackTrace();
+			}
+			
+			finally{
+				//System.out.println("retrieved");
+				//Database.closeConnection(conn);
+			}
+		}
+		
+		catch(Exception e){
+			System.out.println("Connection failed");
+			System.out.println(e);
+			e.printStackTrace();
+			
+		}
+		
+		finally{
+			
+			//System.out.println("retrieved");
+		}
+		
+	return isUpdated;
+	}
+		
+
+	public static boolean updateTAtoStudent(int UIN){
+		
+		boolean isUpdated=false;
+		
+		try{
+			Connection conn = Database.getConnection();
+			
+			try{
+				
+				    
+						
+						System.out.println("Updating data in the database");
+						String SQLDeptUpdate= "UPDATE people SET PositionID= ? where UIN=?;";
+						PreparedStatement stmt = conn.prepareStatement(SQLDeptUpdate);
+						stmt.setInt(1, 3);
+						stmt.setInt(2, UIN);
+						System.out.println(stmt);
+						int i = stmt.executeUpdate();
+						System.out.println(i);
+						System.out.println("Inserted");
+						isUpdated=true;
+						Database.commitTransaction(conn);
+						
+					
+					
+			}
+			
+			catch(SQLException e){
+				System.out.println("Error adding/updating to database");
+				System.out.println(e);	
+				e.printStackTrace();
+			}
+			
+			finally{
+				//System.out.println("retrieved");
+				//Database.closeConnection(conn);
+			}
+		}
+		
+		catch(Exception e){
+			System.out.println("Connection failed");
+			System.out.println(e);
+			e.printStackTrace();
+			
+		}
+		
+		finally{
+			
+			//System.out.println("retrieved");
+		}
+		
+	return isUpdated;
+	}
+	
 	static class AlreadyExistsInEmployeeException extends Exception {
 		private static final long serialVersionUID = 1L;
 		private String message = null;
@@ -602,6 +722,16 @@ public class TA extends Student {
 //		TA ta = new TA(4);
 //
 //		ta.updateTADept(16);
+		
+		try {
+			addTAToEmployee(451, 300);
+		} catch (AlreadyExistsInEmployeeException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (AccessDeniedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 
 	}
 

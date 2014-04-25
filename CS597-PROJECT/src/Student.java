@@ -12,12 +12,12 @@ import org.hamcrest.core.IsEqual;
 
 public class Student extends People {
 	
-	double GPA;
-	int level;	
-	JobApplication jobApplication=null;
+	protected double GPA;
+	protected int level;	
+	protected JobApplication jobApplication=null;
 	
 
-	public Student(int UIN) {
+	public Student(int UIN) throws PersonDoesNotExistException {
 		super(UIN);
 		calculateGPA(UIN);
 		
@@ -55,6 +55,7 @@ public class Student extends People {
 					{
 						
 						System.out.println("UIN does not exist in the student table");
+						throw new PersonDoesNotExistException();
 
 					}
 					
@@ -122,12 +123,16 @@ public class Student extends People {
 	}
 	
 
-	public static boolean addStudentToDb(String name, Department dept,int level){
+	public static boolean addStudentToDb(String name, Department dept,int level) throws levelNotExistException{
 		
 		boolean isAdded=false;
 		
 		if(dept==null){
 			throw new NullPointerException();
+		}
+		
+		if(level<0 ||level>4){
+			throw new levelNotExistException();
 		}
 		
 		int addedUIN;
@@ -144,7 +149,7 @@ public class Student extends People {
 				} catch (levelNotExistException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
-				}
+				} 
 				
 				
 				Connection conn = Database.getConnection();
@@ -163,6 +168,7 @@ public class Student extends People {
 	private static boolean addIntoStudentTable(int UIN, int level) throws levelNotExistException{
 		
 		boolean isAdded=false;
+		
 		if(level>3 || level<1){
 			throw new levelNotExistException();
 		}
@@ -554,6 +560,9 @@ public class Student extends People {
 	
 	public boolean updateStudentUserName(String userName){
 		
+		if(userName.equals("")){
+			throw new NullPointerException();
+		}
 		boolean isUpdated=false;
 		
 		try{
@@ -592,6 +601,10 @@ public class Student extends People {
 	}
 
 	public boolean updateStudentName(String name){
+		
+		if(name.equals("")){
+			throw new NullPointerException();
+		}
 		
 		boolean isUpdated=false;
 		
@@ -633,6 +646,8 @@ public class Student extends People {
 	
 	public boolean updateStudentDept(int deptID){
 		
+		//ask simant how to check for the dept
+		
 		boolean isUpdated=false;
 		
 		try{
@@ -670,6 +685,7 @@ public class Student extends People {
 		return isUpdated;
 				
 	}
+	
 	
 	private void calculateGPA(int UIN){
 		
@@ -745,6 +761,7 @@ public class Student extends People {
 		
 	}
 	
+	
 	static class levelNotExistException extends Exception{
 		private static final long serialVersionUID = 1L;
 		private String message = null;
@@ -769,6 +786,7 @@ public class Student extends People {
 	        return message;
 	    }
 	}
+	
 	
 	static class GPAnotValidException extends Exception{
 		private static final long serialVersionUID = 1L;
@@ -795,16 +813,63 @@ public class Student extends People {
 	    }
 	}
 	
+	static class AccessDeniedException extends Exception{
+		private static final long serialVersionUID = 1L;
+		private String message = null;
+		 
+	    public AccessDeniedException() {
+	        super();
+	        this.message = "You do not have the access";
+	    }
+	    
+	    public AccessDeniedException(String message) {
+	        super();
+	        this.message = message;
+	    }
+	 
+	    @Override
+	    public String toString() {
+	        return message;
+	    }
+	 
+	    @Override
+	    public String getMessage() {
+	        return message;
+	    }
+	}
 	
+	
+	@Override
+	public boolean equals(Object arg0) {
+		// TODO Auto-generated method stub
+		if(arg0 instanceof Student){
+			Student temp = (Student)arg0;
+			//ask sim to add a return stmt here
+		}
+		return super.equals(arg0);
+		
+	}
+
+
+	@Override
+	public int hashCode() {
+		// TODO Auto-generated method stub
+		return super.hashCode();
+	}
+
+
 	public static void main(String[] args){
 		
-//		try {
-//			Department dept=new Department(2);
-//			addStudentToDb("arihant", dept,1);
-//		} catch (Department.DepartmentDoesNotExistException e) {
-//			// TODO Auto-generated catch block
-//			e.printStackTrace();
-//		}
+		try {
+			Department dept=new Department(16);
+			addStudentToDb("arihant", dept,7);
+		} catch (Department.DepartmentDoesNotExistException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (levelNotExistException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		
 		
 //		try {
@@ -816,7 +881,12 @@ public class Student extends People {
 		
 		//getAllStudents();
 		
-		Student student=new Student(451);
+//		try {
+//			Student student=new Student(272);
+//		} catch (PersonDoesNotExistException e) {
+//			// TODO Auto-generated catch block
+//			e.printStackTrace();
+//		}
 		
 			
 			
