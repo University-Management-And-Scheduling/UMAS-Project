@@ -319,14 +319,14 @@ public class Student extends People {
 				         System.out.println("UIN:"+UIN+" Position ID:"+peopleRetrievedPositionID);
 				         
 				         
-				         if(peopleRetrievedPositionID == 3){
+				         if(peopleRetrievedPositionID == 3 || peopleRetrievedPositionID == 4){
 				        	 System.out.println("Student UIN exists");
 				        	 return true;
 				         }
 				         else 
 				         {
 				        	 System.out.println("UIN exists, but it is not a student");
-					return false;
+				        	 return false;
 						
 				         }
 				         

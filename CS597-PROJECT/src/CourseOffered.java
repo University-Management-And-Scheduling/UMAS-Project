@@ -692,10 +692,104 @@ public class CourseOffered {
 		return profCourses;
 	}
 	
-	//incomplete
-	public static ArrayList<CourseOffered> getAllTACourses(TA ta){
-		return null;
+	
+	public static ArrayList<CourseOffered> getAllCurrentCoursesTAedBy(TA ta){
+		if(ta == null)
+			return null;
+		
+		ArrayList<CourseOffered> taCourses = new ArrayList<CourseOffered>();
+		int TAID = ta.getUIN();
+		int currentSemesterID = getCurrentSemesterID();
+		
+		try{
+			Connection conn = Database.getConnection();
+			
+			try{
+				if(conn != null){
+					
+					//Retrieve the current semester ID
+					String SemesterSelect = "Select *"
+							+ " FROM university.coursesoffered as c join university.teachingassistant as t"
+							+ " WHERE c.SemesterID= ? and t.OfferID = c.OfferID and TaUIN= ?";
+					PreparedStatement statement = conn.prepareStatement(SemesterSelect);
+					statement.setInt(1, currentSemesterID);
+					statement.setInt(2, TAID);
+					ResultSet rs = statement.executeQuery();
+					
+					while(rs.next()){
+						CourseOffered c = new CourseOffered(rs.getInt("OfferID"));
+						taCourses.add(c);
+					}
+					
+				}
+					
+					
+				else{
+					throw new IllegalAccessException("TA does not exits - CoursesOffered.java");
+				}
+										
+					
+				
+			}
+			
+			catch(Exception e){
+				System.out.println(e.getMessage());
+				e.printStackTrace();
+				
+			}
+			
+		}
+		finally{
+		}
+		
+		return taCourses;
 	}
+
+	public static ArrayList<CourseOffered> getAllCurrentCoursesTakenBy(TA ta){
+		if(ta == null) {
+			throw new NullPointerException();
+		}
+		
+		ArrayList<CourseOffered> studentCourses = new ArrayList<CourseOffered>();
+		
+		try{
+			Connection conn = Database.getConnection();
+			
+			try{
+				if(conn != null){
+					
+					//Retrieve the current semester ID
+					String SemesterSelect = "Select *"
+							+ " FROM university.studentenrollment"
+							+ " WHERE UIN= ?";
+					PreparedStatement statement = conn.prepareStatement(SemesterSelect);
+					statement.setInt(1, ta.getUIN());
+					ResultSet rs = statement.executeQuery();
+					
+					while(rs.next()){
+						int offerID = rs.getInt(3);
+						CourseOffered course = new CourseOffered(offerID);
+						studentCourses.add(course);
+					}
+					
+				}
+					
+			}
+			
+			catch(Exception e){
+				System.out.println(e.getMessage());
+				e.printStackTrace();
+				
+			}
+					
+		}
+		
+		finally{
+		}
+		
+		return studentCourses;
+	}
+	
 	
 	//complete
 	public boolean isCourseFull() throws CourseOfferingDoesNotExistException{
@@ -982,7 +1076,7 @@ public class CourseOffered {
 	}
 	
 	//CourseDoesnotExist Exception
-	static class CourseOfferingDoesNotExistException extends Exception{
+	public static class CourseOfferingDoesNotExistException extends Exception{
 		private static final long serialVersionUID = 1L;
 		private String message = null;
 		 
@@ -1008,7 +1102,7 @@ public class CourseOffered {
 	}
 
 	//CourseOfferingAlreadyExistsException
-	static class CourseOfferingAlreadyExistsException extends Exception{
+	public static class CourseOfferingAlreadyExistsException extends Exception{
 		private static final long serialVersionUID = 1L;
 		private String message = null;
 		 
@@ -1034,7 +1128,7 @@ public class CourseOffered {
 	}
 
 	//CourseOfferingNotCurrent Exception
-	static class CourseOfferingNotCurrentException extends Exception{
+	public static class CourseOfferingNotCurrentException extends Exception{
 		private static final long serialVersionUID = 1L;
 		private String message = null;
 		 
@@ -1060,7 +1154,7 @@ public class CourseOffered {
 	}
 
 	//CourseOfferingNotSchedulable Exception
-	static class CourseOfferingNotSchedulable extends Exception{
+	public static class CourseOfferingNotSchedulable extends Exception{
 			private static final long serialVersionUID = 1L;
 			private String message = null;
 			 

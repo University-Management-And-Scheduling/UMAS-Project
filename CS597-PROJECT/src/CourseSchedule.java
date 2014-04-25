@@ -498,7 +498,7 @@ public class CourseSchedule {
 		Database.commitTransaction(Database.getConnection());
 	}
 	
-	private static void deleteAllCourseSchedule(){
+	static void deleteAllCourseSchedule(){
 		try{
 			Connection conn = Database.getConnection();
 			
@@ -531,7 +531,7 @@ public class CourseSchedule {
 		}
 	}
 	
-	private static void deleteAllCourseSchedule(Department department){
+	public static void deleteAllCourseSchedule(Department department){
 		ArrayList<CourseOffered> deptCoursesOffering = department.getDepartmentCourseOffered();
 		
 		for(CourseOffered co:deptCoursesOffering){

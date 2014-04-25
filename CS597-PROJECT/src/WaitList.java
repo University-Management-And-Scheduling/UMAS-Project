@@ -607,7 +607,38 @@ public class WaitList {
 		return isEmpty;
 	}
 	
-	//complete
+	public static boolean emptyWaitAndEmailList(){
+		boolean isWaitListEmpty = false;
+		boolean isEmailListEmpty = false;
+		try{
+			Connection conn = Database.getConnection();
+			
+			try{
+				if(conn != null){
+					String listDelete = "Delete from waitlist";
+					PreparedStatement statement = conn.prepareStatement(listDelete);
+					statement.executeUpdate();
+					
+					listDelete = "Delete from emailedwaitlist";
+					statement = conn.prepareStatement(listDelete);
+					statement.executeUpdate();
+					
+					return true;
+				}
+			}
+			
+			catch(SQLException e){
+				System.out.println(e.getMessage());
+				e.printStackTrace();
+			}			
+		}
+		
+		finally{
+		}
+		
+		return false;
+	}
+	
 	public static boolean isStudentEmailed(Student student, int offerID){
 		boolean isEmailed = false;
 		try{
