@@ -94,14 +94,10 @@ public class Employee extends People {
 				System.out.println(e);	
 			}
 			
-			finally{
-				//System.out.println("retrieved");
-				//Database.closeConnection(conn);
-			}
 		}
 		
 		catch(Exception e){
-			System.out.println("Connection failed");
+			System.out.println("Some Error");
 			e.printStackTrace();
 			System.out.println(e);
 			
@@ -978,7 +974,7 @@ public class Employee extends People {
 				         System.out.println("UIN:"+UIN+" Position ID:"+peopleRetrievedPositionID);
 				         
 				         
-				         if(peopleRetrievedPositionID <=2){
+				         if(peopleRetrievedPositionID <=2 || peopleRetrievedPositionID == 5){
 				        	 System.out.println("UIN is an employee");
 				        	 return true;
 				         }
@@ -1059,7 +1055,7 @@ public class Employee extends People {
 				          * Check if the position ID of the passed UIN is of a professor.
 				          */
 				         
-				         if(peopleRetrievedPositionID <=2)
+				         if(peopleRetrievedPositionID <=2 || peopleRetrievedPositionID == 5)
 				         {
 				        	 System.out.println("UIN is an employee");
 				        	 return true;
