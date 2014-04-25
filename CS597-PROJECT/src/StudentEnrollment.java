@@ -747,7 +747,11 @@ public class StudentEnrollment {
 	
 	public static void main(String[] args){
 		// Test getAllGradesOfStudent function
-		Student student = new Student(1);
+		try {
+			Student student = new Student(1);
+		} catch (People.PersonDoesNotExistException e) {
+			e.printStackTrace();
+		}
 //		StudentEnrollment enrolledStud = new StudentEnrollment(345678,1);
 //		HashMap<CourseOffered, String> grades = StudentEnrollment.getAllGradesOfStudent(student);
 //		for(CourseOffered offeredCourse: grades.keySet() ){
