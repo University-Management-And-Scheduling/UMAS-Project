@@ -80,7 +80,7 @@ public class Professor extends Employee {
 	
 	//CHECKING IF THE PERSON WHOS UIN IS INPUT IS A PROFESSOR OR NOT
 	public static boolean checkIfProfessor(int UIN){
-		
+		boolean ifProfessor = false;
 		try{
 			Connection conn = Database.getConnection();
 			String SQLPeopleSelect="";
@@ -89,8 +89,8 @@ public class Professor extends Employee {
 				if(conn != null){
 					
 					SQLPeopleSelect = "Select PositionID From People where UIN=?;";
-				}
 				
+				}				
 				
 				
 				PreparedStatement stmtForSelect = conn.prepareStatement(SQLPeopleSelect);
@@ -104,15 +104,15 @@ public class Professor extends Employee {
 				         int peopleRetrievedPositionID = rs.getInt("PositionID");
 				         System.out.println("UIN:"+UIN+" Position ID:"+peopleRetrievedPositionID);
 				         
-				         
 				         if(peopleRetrievedPositionID == 2){
 				        	 System.out.println("Professor UIN exists");
-				        	 return true;
+				        	 ifProfessor =  true;
 				         }
+				         
 				         else 
 				         {
 				        	 System.out.println("UIN exists, but it is not a professor");
-				        	 return false;
+				        	 ifProfessor = false;
 						
 				         }
 				         
@@ -122,9 +122,8 @@ public class Professor extends Employee {
 					
 					else
 					{
-						
 						System.out.println("UIN does not exist");
-						return false;
+						ifProfessor = false;
 
 					}
 					
@@ -135,13 +134,9 @@ public class Professor extends Employee {
 			
 			catch(SQLException e){
 				System.out.println(e);
-				
+				return ifProfessor;
 			}
 			
-			finally{
-				
-				//System.out.println("retrieved");
-			}
 		}
 		
 		catch(Exception e){
@@ -150,11 +145,9 @@ public class Professor extends Employee {
 		}
 		
 		finally{
-			
-			//System.out.println("retrieved");
 		}		
 		
-		return false;
+		return ifProfessor;
 	}
 	
 	public static boolean checkIfProfessor(String userName){
