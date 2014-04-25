@@ -1,3 +1,5 @@
+import java.io.FileWriter;
+import java.io.IOException;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -62,6 +64,12 @@ public class CourseOffered {
 			catch(SQLException e){
 				System.out.println("Error  course offering");
 				System.out.println(e.getMessage());
+				e.printStackTrace();
+			} catch (Student.AccessDeniedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (People.PersonDoesNotExistException e) {
+				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 			
@@ -430,9 +438,19 @@ public class CourseOffered {
 							return false;
 						System.out.println(generatedID);
 						//Database.commitTransaction(conn);
+						boolean tableFlag = CourseExams.createCourseExamMarksTable(course.getCourseName(), generatedID, getCurrentSemesterID());
 						boolean flag = CourseSchedule.scheduleCourseUsingID(generatedID, totalCap);
-						if(flag){
+						boolean fileFlag = makeDefaultCourseFile(generatedID, course.getCourseName(), professor.getName());
+						if(fileFlag){
+							String currentPath = System.getProperty("user.dir");
+							String fileDir = currentPath+"/Files/"+course.getCourseName()+"-"+generatedID;
+							String fileName = course.getCourseName()+generatedID+"-details.txt";
+							fileFlag = File.addFileToDB(fileName, fileDir, generatedID);
+						}
+						
+						if(flag && tableFlag && fileFlag){		
 							Database.commitTransaction(conn);
+							System.out.println("Added file------------------------");
 							addFlag = true;
 						}
 																				
@@ -488,6 +506,34 @@ public class CourseOffered {
 		
 	}
 	
+	private static boolean makeDefaultCourseFile(int offerID, String courseName, String Professor){
+		try{
+			String currentPath = System.getProperty("user.dir");
+			String fileDir = currentPath+"/Files/"+courseName+"-"+offerID;
+			boolean dir = new java.io.File(fileDir).mkdirs();
+			
+			
+			java.io.File newFile = new java.io.File(fileDir+"/"+courseName+offerID+"-details.txt");
+			FileWriter writer = new FileWriter(newFile);
+			writer.write("Course Details:\n Course name:"+courseName+"\nTaught by:"+Professor+"\nPlease check your"
+					+ " courses tab for more details");
+			writer.close();
+			return true;
+		}
+		
+		catch(IOException e){
+			System.out.println("IO error Not formed"+ e.getMessage());
+			e.printStackTrace();
+			return false;
+		}
+		
+		catch(Exception e){
+			System.out.println("Not formed");
+			return false;
+		}
+		
+		
+	}
 	//complete
 	//get all courses of the student passed
 	public static ArrayList<CourseOffered> getStudentCourses(final Student student) throws Course.CourseDoesNotExistException, CourseOfferingDoesNotExistException{
@@ -723,11 +769,11 @@ public class CourseOffered {
 			try{
 				if(conn != null){
 					String SQLcoursesOfferedSelect = "Select * FROM coursesoffered WHERE OfferID= ?;";
-					PreparedStatement statement = conn.prepareStatement(SQLcoursesOfferedSelect);
+					PreparedStatement statement = conn.prepareStatement(SQLcoursesOfferedSelect,ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_UPDATABLE);
 					statement.setInt(1, offerID);
 					ResultSet rs = statement.executeQuery();
 					if(rs.first()){
-						int currentlyFilled = rs.getInt(5);
+						int currentlyFilled = rs.getInt("SeatsFilled");
 						currentlyFilled -= 1;
 						rs.updateInt(5, currentlyFilled);
 						Database.commitTransaction(conn);
@@ -758,7 +804,7 @@ public class CourseOffered {
 	//if not current, throw courseOffering not current exception
 	public boolean checkIfScheduled() throws CourseOfferingNotCurrentException{
 		if(!checkIfCurrent()){
-			throw new CourseOfferingNotCurrentException("This course is not a currently offered course");
+			return false;
 		}
 		
 		boolean doesExist = false;
@@ -919,6 +965,22 @@ public class CourseOffered {
 		
 	}
 	
+	public boolean sendCourseFilesToStudent(Student s){
+		ArrayList<File> file = this.getFiles();
+		
+		String [] attachments = new String[file.size()];
+		for(int i=0;i<file.size();i++){
+			File f = file.get(i);
+			attachments[i] = f.getFileLocation()+"\\"+f.getFileName();
+		}
+		
+		Email email = Email.getInstance("umas.uic@gmail.com", "cs597project");
+		boolean isSent = email.sendEmailWithAttachments(s.getUserName()+"@umasuic.edu", "Course files for course "+this.getCourseName(), ""
+				+ "Find attachments", attachments);
+		
+		return isSent;
+	}
+	
 	//CourseDoesnotExist Exception
 	static class CourseOfferingDoesNotExistException extends Exception{
 		private static final long serialVersionUID = 1L;
@@ -1046,10 +1108,31 @@ public class CourseOffered {
 	}
 	
 	
-	public static void main(final String[] args) throws Course.CourseDoesNotExistException, CourseOfferingDoesNotExistException, CourseOfferingNotCurrentException, CourseOfferingAlreadyExistsException, CourseOfferingNotSchedulable{
-		//addCourseOfferingToDatabase(new Course(67), new Professor(289), 40);
-		System.out.println(getAllCurrentlyOfferedCourses().size());
-		System.out.println(getCurrentSemesterID());
+	public static void main(final String[] args) throws Course.CourseDoesNotExistException, CourseOfferingDoesNotExistException, CourseOfferingNotCurrentException, CourseOfferingAlreadyExistsException, CourseOfferingNotSchedulable, IOException{
+		//addCourseOfferingToDatabase(new Course(103), new Professor(289), 50);
+		//StudentEnrollment se = new StudentEnrollment(423, 451);
+		//se.unregisterStudent();
+//		CourseOffered c = new CourseOffered(424);
+//		ArrayList<File> file = c.getFiles();
+//		
+//		String [] attachments = new String[file.size()];
+//		for(int i=0;i<file.size();i++){
+//			File f = file.get(i);
+//			attachments[i] = f.getFileLocation()+"\\"+f.getFileName();
+//		}
+//		
+//		Email email = Email.getInstance("umas.uic@gmail.com", "cs597project");
+//		email.sendEmailWithAttachments("xyz@umas.com", "Course files", "Find attachments", attachments);
+		
+//		java.io.File file = new java.io.File("xyz.txt");
+//		FileWriter filewrite = new FileWriter(file);
+//		filewrite.write("Course details file");
+//		filewrite.close();
+//		System.out.println(file.getAbsolutePath());
+//		String x = "ssssdfdlssdfdmfdssmmvkc";
+//		System.out.println(x.lastIndexOf("s"));
+		
+		//System.out.println(System.getProperty("user.dir"));
 	}
 
 

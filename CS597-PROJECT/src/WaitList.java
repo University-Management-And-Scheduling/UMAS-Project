@@ -8,6 +8,9 @@ import java.util.HashMap;
 
 import org.joda.time.Period;
 
+
+
+
 public class WaitList {
 	int offerID;
 	int UIN;
@@ -177,6 +180,9 @@ public class WaitList {
 			catch(SQLException e){
 				System.out.println(e.getMessage());
 				e.printStackTrace();
+			} catch (People.PersonDoesNotExistException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
 			}			
 		}
 		
@@ -212,6 +218,9 @@ public class WaitList {
 			
 			catch(SQLException e){
 				System.out.println(e.getMessage());
+				e.printStackTrace();
+			} catch (People.PersonDoesNotExistException e) {
+				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}			
 		}
@@ -473,6 +482,9 @@ public class WaitList {
 				catch(SQLException e){
 					System.out.println(e.getMessage());
 					e.printStackTrace();
+				} catch (People.PersonDoesNotExistException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
 				}			
 			}
 			
@@ -674,6 +686,9 @@ public class WaitList {
 			
 			catch(SQLException e){
 				System.out.println(e.getMessage());
+				e.printStackTrace();
+			} catch (People.PersonDoesNotExistException e) {
+				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 		}

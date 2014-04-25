@@ -118,7 +118,7 @@ public class Email {
         }
     }
 
-    public void sendEmailWithAttachments(String toEmail, String subject, String body, String[] attachmentLocations){
+    public boolean sendEmailWithAttachments(String toEmail, String subject, String body, String[] attachmentLocations){
     	try{
     		 MimeMessage msg = new MimeMessage(session);
              //set message headers
@@ -165,10 +165,13 @@ public class Email {
             // Send message
             Transport.send(msg);
             System.out.println("Email Sent with all the attachments");
+            return true;
          }catch (MessagingException e) {
             e.printStackTrace();
+            return false;
          } catch (UnsupportedEncodingException e) {
             e.printStackTrace();
+            return false;
        }
    }
     
