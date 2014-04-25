@@ -5,7 +5,6 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 
-import org.hamcrest.core.IsEqual;
 
 
 
@@ -67,13 +66,7 @@ public class Student extends People {
 			catch(SQLException e){
 				System.out.print("SQL exception in student const");
 				System.out.println(e);
-				e.printStackTrace();
-				
-			}
-			
-			finally{
-				
-				//System.out.println("retrieved");
+				e.printStackTrace();	
 			}
 		}
 		
@@ -117,10 +110,70 @@ public class Student extends People {
 	}
 
 
-	public Student(String userName) {
-		super(userName);
-		// TODO Auto-generated constructor stub
-	}
+//	public Student(String userName) {
+//		super(userName);
+//		calculateGPA(this.getUIN());
+//		
+//		try{
+//			Connection conn = Database.getConnection();
+//			String SQLStudentGPASelect="";
+//			try{
+//			
+//				if(conn != null){
+//					
+//					SQLStudentGPASelect = "Select * From university.student where UIN=?;";
+//				}
+//				
+//				PreparedStatement stmtForSelect = conn.prepareStatement(SQLStudentGPASelect);
+//				stmtForSelect.setInt(1, this.getUIN());
+//				
+//				ResultSet rs =  stmtForSelect.executeQuery();
+//					
+//					if(rs.first())
+//					{
+//						int retrievedStudentUIN = rs.getInt("UIN");
+//				        double retrievedStudentGPA = rs.getDouble("GPA");
+//				        int retrievedStudentLevel = rs.getInt("Level");
+//				     
+//						
+//				         this.UIN=retrievedStudentUIN;
+//				         this.GPA=retrievedStudentGPA;
+//				         this.level=retrievedStudentLevel;
+//				         this.jobApplication=new JobApplication(retrievedStudentUIN);
+//
+//
+//					}
+//					
+//					else
+//					{
+//						System.out.println("UIN does not exist in the student table");
+//						throw new PersonDoesNotExistException();
+//					}
+//					
+//				
+//			
+//		
+//	}
+//			
+//			catch(SQLException e){
+//				System.out.print("SQL exception in student const");
+//				System.out.println(e);
+//				e.printStackTrace();	
+//			}
+//		}
+//		
+//		catch(Exception e){
+//			System.out.println(e);
+//			e.printStackTrace();
+//			
+//		}
+//		
+//		finally{
+//			
+//			//System.out.println("retrieved");
+//		}
+//		
+//	}
 	
 
 	public static boolean addStudentToDb(String name, Department dept,int level) throws levelNotExistException{
@@ -303,7 +356,7 @@ public class Student extends People {
 			finally{
 				
 				//System.out.println("retrieved");
-				Database.closeConnection(conn);
+				//Database.closeConnection(conn);
 			}
 		}
 		
@@ -473,12 +526,10 @@ public class Student extends People {
 					PreparedStatement statement = conn.prepareStatement(ProfessorSelect);
 					ResultSet rs = statement.executeQuery();
 					
-					while(rs.next()){
-						
-						
-						String retreivedStudentUserNames=rs.getString("Username");
+					while(rs.next()){						
+						int retreivedStudentUserUIN=rs.getInt("UIN");
 						//System.out.println(retreivedProfUserNames);
-						Student stud=new Student(retreivedStudentUserNames);
+						Student stud=new Student(retreivedStudentUserUIN);
 						allStudents.add(stud);
 						System.out.println(stud.getUserName());						
 					}
@@ -492,6 +543,9 @@ public class Student extends People {
 				System.out.println(e.getMessage());
 				e.printStackTrace();
 				
+			} catch (People.PersonDoesNotExistException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
 			}
 			
 				
@@ -692,6 +746,7 @@ public class Student extends People {
 		ArrayList<String> getGrades=new ArrayList<String>();
 		double finalGrade=0.0;
 		int count=0;
+		int maxLevel = GradeSystem.getMaxGradeLevel();
 		
 		try{
 			Connection conn = Database.getConnection();
@@ -712,7 +767,8 @@ public class Student extends People {
 					{
 						
 				        double retrievedStudentGradeLevel= rs.getDouble("GradeLevel");
-				        retrievedStudentGradeLevel=(retrievedStudentGradeLevel*4.0)/7.0;
+				        double normalizedLevel = maxLevel-retrievedStudentGradeLevel+1;
+				        retrievedStudentGradeLevel=(normalizedLevel*4.0)/7.0;
 				        finalGrade+=retrievedStudentGradeLevel;
 				        count++;
 
@@ -739,10 +795,6 @@ public class Student extends People {
 				
 			}
 			
-			finally{
-				
-				//System.out.println("retrieved");
-			}
 		}
 		
 		catch(Exception e){
