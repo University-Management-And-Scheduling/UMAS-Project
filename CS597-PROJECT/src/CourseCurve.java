@@ -489,22 +489,32 @@ public class CourseCurve {
 	public static void main(String[] args){
 		
 		// To test percentage curve
-//		int offerID = 345678;
-//		List<Integer> curvingCriteria = new ArrayList<Integer>();
-//		curvingCriteria.add(30);
-//		curvingCriteria.add(40);
-//		curvingCriteria.add(30);
-//				
-//		CourseCurve curve = CourseCurve.calculatePercentageCurve(offerID, curvingCriteria);
-//		
-//		HashMap<Student,String> courseCurve = curve.getCourseCurve();
-//		System.out.println("----------------------------------");
-//		for(Student students:courseCurve.keySet()){
-//			int UIN = students.getUIN();
-//			String grade = courseCurve.get(students);
-//			
-//			System.out.println("UIN: " + UIN + " Grade: " + grade);
-//		}
+		int offerID = 345678;
+		List<Integer> curvingCriteria = new ArrayList<Integer>();
+		curvingCriteria.add(30);
+		curvingCriteria.add(40);
+		curvingCriteria.add(30);
+				
+		CourseCurve curve = CourseCurve.calculatePercentageCurve(offerID, curvingCriteria);
+		
+		HashMap<Student,String> courseCurve = curve.getCourseCurve();
+		System.out.println("----------------------------------");
+		for(Student students:courseCurve.keySet()){
+			int UIN = students.getUIN();
+			String grade = courseCurve.get(students);
+			
+			System.out.println("UIN: " + UIN + " Grade: " + grade);
+		
+		}
+		CourseOffered offered = null;
+		try {
+			offered = new CourseOffered(offerID);
+		} catch (Course.CourseDoesNotExistException
+				| CourseOffered.CourseOfferingDoesNotExistException e) {
+			e.printStackTrace();
+		}
+		
+		StudentEnrollment.updateAllStudentGrade(courseCurve, offered);
 		
 		// To test absolute curve
 //		int offerID = 345678;

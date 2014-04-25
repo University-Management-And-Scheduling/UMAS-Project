@@ -99,12 +99,12 @@ public class CourseExamStructure {
 		
 	}
 	
-	public static boolean createCourseExamStructureTable(CourseOffered offeredCourse){
+	public static boolean createCourseExamStructureTable(String courseName, int offerID,int semID){
 		boolean tableAdded = false;
-		Course course = offeredCourse.getCourse();
-		String courseName = course.getCourseName();
-		int offerID= offeredCourse.getOfferID();
-		int semID = offeredCourse.getSemesterID();
+//		Course course = offeredCourse.getCourse();
+//		String courseName = course.getCourseName();
+//		int offerID= offeredCourse.getOfferID();
+//		int semID = offeredCourse.getSemesterID();
 		
 		String tableName = courseName + Integer.toString(offerID) + Integer.toString(semID) + "Structure"; 
 		

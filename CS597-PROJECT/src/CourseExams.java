@@ -63,12 +63,12 @@ public class CourseExams {
 		this.examMarks = examMarks;
 	}
 
-	public static boolean createCourseExamMarksTable(CourseOffered offeredCourse){
+	public static boolean createCourseExamMarksTable(String courseName, int offerID,int semID){
 		boolean tableAdded = false;
-		Course course = offeredCourse.getCourse();
-		String courseName = course.getCourseName();
-		int offerID= offeredCourse.getOfferID();
-		int semID = offeredCourse.getSemesterID();
+//		Course course = offeredCourse.getCourse();
+//		String courseName = course.getCourseName();
+//		int offerID= offeredCourse.getOfferID();
+//		int semID = offeredCourse.getSemesterID();
 		
 		
 		String tableName = courseName + Integer.toString(offerID) + Integer.toString(semID); 
@@ -100,7 +100,7 @@ public class CourseExams {
 
 					System.out.println("Before exam create");
 					statement.executeUpdate();
-					boolean isCourseAdded = CourseExamStructure.createCourseExamStructureTable(offeredCourse);
+					boolean isCourseAdded = CourseExamStructure.createCourseExamStructureTable(courseName, offerID,semID);
 					if(isCourseAdded == true){
 						Database.commitTransaction(conn);
 						tableAdded = true;
@@ -562,7 +562,7 @@ public class CourseExams {
 							
 							ResultSet rs =  statement.executeQuery();
 							//System.out.println(rs.getDouble());
-								if(rs.next()){
+								while(rs.next()){
 									int UIN = rs.getInt(1);
 									double marks = rs.getDouble(2); 
 									studentsMarks.put(UIN, marks);

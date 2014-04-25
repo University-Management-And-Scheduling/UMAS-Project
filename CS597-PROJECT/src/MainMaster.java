@@ -19,24 +19,21 @@ public class MainMaster {
 			
 			String username = user.getUsername();
 			People person = new People(username);
+			int positionID = person.getPositionID();
+			if(positionID == 1){ //Admin
+				adminFunctions();
+			} else if(positionID == 2){ //Professor
+				professorFunctions();
+			} else if(positionID == 3){ //Student
+				studentFunctions();
+			} else if(positionID == 4){ //TA
+				taFunctions();
+			} else if(positionID == 5){ //Super Admin
+				superAdminFunctions();
+			} else {
+				System.out.println("Data Corrupt. No such positionID");
+			}
 			
-			int option = 0;
-			do{
-				option = 0;
-				Scanner in = new Scanner(System.in);
-				switch (option) {
-		        case 1:  System.out.println("");
-		        		 
-		        		 
-		                 break;
-		        
-		        
-		        case 5: System.out.println("5. Exit");
-		        default: System.out.println("Invalid input. Enter again.");
-		                 break;
-		    }
-	
-			} while ((user != null) || (option != 5));
 		}
 	}
 
@@ -51,7 +48,7 @@ public class MainMaster {
 			String username = in.nextLine();
 			System.out.println("Enter Password: ");
 			String password = in.nextLine();
-			user = new Login(username, password);
+			user = new Login(username, password.toCharArray());
 			isValidUser = user.authenticate();
 			if(isValidUser == false ){
 				System.out.println("Invalid Username or Password. Try Again ? Y/N: ");
@@ -69,11 +66,119 @@ public class MainMaster {
 		return user;
 	}
 
-	private static int peopleFunctions(){
+	private static int adminFunctions(){
 		int option = 0;
-		
+	
+		do{
+			option = 0;
+			Scanner in = new Scanner(System.in);
+			switch (option) {
+	        case 1:  System.out.println("");
+	        		 
+	        		 
+	                 break;
+	        
+	        
+	        case 5: System.out.println("5. Exit");
+	        default: System.out.println("Invalid input. Enter again.");
+	                 break;
+	    }
+
+		} while (option != 5);
 		
 		return option;
 	}
 
+	private static int professorFunctions(){
+		int option = 0;
+
+		do{
+			option = 0;
+			Scanner in = new Scanner(System.in);
+			switch (option) {
+	        case 1:  System.out.println("");
+	        		 
+	        		 
+	                 break;
+	        
+	        
+	        case 5: System.out.println("5. Exit");
+	        default: System.out.println("Invalid input. Enter again.");
+	                 break;
+	    }
+
+		} while (option != 5);
+		
+		return option;
+	}
+	
+	private static int studentFunctions(){
+		int option = 0;
+	
+		do{
+			option = 0;
+			Scanner in = new Scanner(System.in);
+			switch (option) {
+	        case 1:  System.out.println("");
+	        		 
+	        		 
+	                 break;
+	        
+	        
+	        case 5: System.out.println("5. Exit");
+	        default: System.out.println("Invalid input. Enter again.");
+	                 break;
+	    }
+
+		} while (option != 5);
+		
+		return option;
+	}
+	
+	private static int taFunctions(){
+		int option = 0;
+		
+		do{
+			option = 0;
+			Scanner in = new Scanner(System.in);
+			switch (option) {
+	        case 1:  System.out.println("");
+	        		 
+	        		 
+	                 break;
+	        
+	        
+	        case 5: System.out.println("5. Exit");
+	        default: System.out.println("Invalid input. Enter again.");
+	                 break;
+	    }
+
+		} while (option != 5);
+		
+		return option;
+	}
+	
+	private static int superAdminFunctions(){
+		int option = 0;
+		
+		do{
+			option = 0;
+			Scanner in = new Scanner(System.in);
+			switch (option) {
+	        case 1:  System.out.println("");
+	        		 
+	        		 
+	                 break;
+	        
+	        
+	        case 5: System.out.println("5. Exit");
+	        default: System.out.println("Invalid input. Enter again.");
+	                 break;
+	    }
+
+		} while (option != 5);
+		
+		return option;
+	}
+	
 }
