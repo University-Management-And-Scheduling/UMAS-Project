@@ -71,9 +71,10 @@ public class Student extends People {
 			}
 		}
 		
-		catch(Exception e){
+		catch(PersonDoesNotExistException e){
 			System.out.println(e);
 			e.printStackTrace();
+			throw new PersonDoesNotExistException();
 			
 		}
 		

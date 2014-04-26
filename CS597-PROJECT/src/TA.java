@@ -10,10 +10,6 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 
 
-
-import com.mysql.jdbc.Statement;
-
-
 /**
  * @author Akshay
  * 
@@ -23,6 +19,8 @@ import com.mysql.jdbc.Statement;
 
 public class TA extends Student {
 	
+
+
 	@Target({ElementType.LOCAL_VARIABLE})
 	@Retention(RetentionPolicy.RUNTIME)
 	public @interface DBAnnotation {
@@ -35,6 +33,63 @@ public class TA extends Student {
 	public TA(int UIN) throws PersonDoesNotExistException {
 		super(UIN);
 		
+		try{
+			Connection conn = Database.getConnection();
+			String SQLStudentTASelect="";
+			try{
+			
+				if(conn != null){
+					
+					SQLStudentTASelect = "Select * From university.teachingassistant where TaUIN=?;";
+				}
+				
+				PreparedStatement stmtForSelect = conn.prepareStatement(SQLStudentTASelect);
+				stmtForSelect.setInt(1, UIN);
+				
+				ResultSet rs =  stmtForSelect.executeQuery();
+					
+					if(rs.first())
+					{
+						
+				        int retrievedTAOfferID = rs.getInt("OfferID");
+				        String retrievedTAOfficeHours = rs.getString("TaOfficeHours");
+				        String retrievedTAOfficeAddress = rs.getString("TaOfficeLocation");
+
+
+
+					}
+					
+					else
+					{
+						
+						System.out.println("UIN does not exist in the TA table");
+						throw new PersonDoesNotExistException();
+
+					}
+					
+				
+			
+		
+	}
+			
+			catch(SQLException e){
+				System.out.print("SQL exception in student const");
+				System.out.println(e);
+				e.printStackTrace();	
+			}
+		}
+		
+		catch(PersonDoesNotExistException e){
+			System.out.println(e);
+			e.printStackTrace();
+			throw new PersonDoesNotExistException();
+			
+		}
+		
+		finally{
+			
+			//System.out.println("retrieved");
+		}
 		// TODO Auto-generated constructor stub
 	}
 
@@ -52,172 +107,209 @@ public class TA extends Student {
 //	 * 
 //	 * else the function returns false
 //	 */
-//	public static boolean addTAToEmployee(int UIN, int offerID) throws AlreadyExistsInEmployeeException, AccessDeniedException {
-//
-//		boolean check=checkIfStudent(UIN);
-//		if(!check){
-//			throw new Student.AccessDeniedException();
-//		}
-//		
-//		boolean isAdded = false;
-//		double salary = 40000.00;
-//		String office_address = "to be decided";
-//		String office_hours = "to be decided";
-//
-//		try {
-//			Connection conn = Database.getConnection();
-//
-//			try {
-//
-//				boolean alreadyExists = addTAToEmployeeCheck(UIN, offerID);
-//
-//				if (alreadyExists) {
-//
-//					throw new AlreadyExistsInEmployeeException();
-//
-//				}
-//
-//				else {
-//					
-//					
-//
-//					System.out.println("Adding new data into the database");
-//					
-//					@DBAnnotation (
-//							variable = {"UIN","salary","office_address","office_hours"}, table = "employee", 
-//							column = {"UIN","Salary","OfficeAddress","OfficeHours"}, 
-//							isSource = false)
-//					
-//					String SQLPeopleInsert = "Insert into employee (UIN, Salary, OfficeAddress, OfficeHours) Values (?,?,?,?);";
-//					
-//					PreparedStatement stmt = conn
-//							.prepareStatement(SQLPeopleInsert);
-//					stmt = conn.prepareStatement(SQLPeopleInsert);
-//					stmt.setInt(1, UIN);
-//					stmt.setDouble(2, salary);
-//					stmt.setString(3, office_address);
-//					stmt.setString(4, office_hours);
-//					System.out.println(stmt);
-//					int i = stmt.executeUpdate();
-//					System.out.println(i);
-//					System.out.println("Inserted");
-//
-//					isAdded = addTAtoTAtable(UIN, offerID);
-//
-//					if (isAdded)
-//						isAdded = true;
-//				}
-//
-//			}
-//
-//			catch (SQLException e) {
-//				System.out.println("Error adding/updating to database");
-//				e.printStackTrace();
-//				System.out.println(e);
-//			}
-//
-//			catch (CourseOffered.CourseOfferingNotCurrentException e) {
-//				// TODO Auto-generated catch block
-//				e.printStackTrace();
-//			}
-//
-//			finally {
-//				// System.out.println("retrieved");
-//				// Database.closeConnection(conn);
-//			}
-//		}
-//
-//		finally {
-//
-//			// System.out.println("retrieved");
-//		}
-//
-//
-//		return isAdded;
-//
-//	}
-//
-//	/*This functions checks if the passed offer ID is a valid and current
-//	 * 
-//	 * if true it then checks if there exists an employee with the same UIN
-//	 * 
-//	 * if an employee exists it returns true
-//	 * 
-//	 * else it returns false
-//	 * 
-//	 * */
-//	public static boolean addTAToEmployeeCheck(int UIN, int offerID)
-//			throws CourseOffered.CourseOfferingNotCurrentException {
-//
-//		boolean isExisting = false;
-//
-//		CourseOffered offerIDcheck;
-//		boolean isCurrent = false;
-//
-//		try {
-//			offerIDcheck = new CourseOffered(offerID);
-//			isCurrent = offerIDcheck.checkIfCurrent();
-//		} catch (Course.CourseDoesNotExistException
-//				| CourseOffered.CourseOfferingDoesNotExistException e1) {
-//			return false;
-//		}
-//
-//		if (isCurrent) {
-//			try {
-//				Connection conn = Database.getConnection();
-//				String SQLPeopleSelect = "";
-//
-//				try {
-//
-//					SQLPeopleSelect = "Select UIN From employee where UIN=?;";
-//					PreparedStatement stmt = conn
-//							.prepareStatement(SQLPeopleSelect);
-//					stmt.setInt(1, UIN);
-//					ResultSet rs = stmt.executeQuery();
-//					System.out.println(stmt);
-//
-//					if (rs.first()) {
-//
-//						System.out.println(UIN + "already exists");
-//						return true;
-//					}
-//
-//				}
-//
-//				catch (SQLException e) {
-//					System.out.println("Error adding/updating to database");
-//					e.printStackTrace();
-//					System.out.println(e);
-//				}
-//
-//				finally {
-//					// System.out.println("retrieved");
-//					// Database.closeConnection(conn);
-//				}
-//			}
-//
-//			catch (Exception e) {
-//				System.out.println("Connection failed");
-//				e.printStackTrace();
-//				System.out.println(e);
-//
-//			}
-//
-//			finally {
-//
-//				// System.out.println("retrieved");
-//			}
-//
-//		}
-//
-//		else {
-//			throw new CourseOffered.CourseOfferingNotCurrentException();
-//		}
-//
-//		return isExisting;
-//
-//	}
-//
+
+	public static boolean updateTaOfficeAddress(int UIN, int offerID, String newOfficeAddress){
+		
+		boolean isUpdated=false;
+		
+		try{
+			Connection conn = Database.getConnection();
+			
+			try{
+				
+				    
+						
+						System.out.println("Updating data in the database");
+						String SQLPeopleInsert= "UPDATE teachingassistant SET TaOfficeLocation= ? where TaUIN=? and OfferID=? ;";
+						PreparedStatement stmt = conn.prepareStatement(SQLPeopleInsert);
+						stmt.setString(1, newOfficeAddress);
+						stmt.setInt(2, UIN);
+						stmt.setInt(3, offerID);
+						System.out.println(stmt);
+						int i = stmt.executeUpdate();
+						System.out.println(i);
+						System.out.println("Updated");
+						isUpdated=true;
+						
+						Database.commitTransaction(conn);
+						
+					
+					
+			}
+			
+			catch(SQLException e){
+				System.out.println("Error adding/updating to database");
+				System.out.println(e);	
+			}
+			
+		}
+		
+		catch(Exception e){
+			System.out.println("Connection failed");
+			System.out.println(e);
+			
+		}
+		
+		finally{
+			
+			//System.out.println("retrieved");
+		}
+		
+	return isUpdated;
+		
+	}
+	
+	public static boolean updateTaOfficeHours(int UIN, int offerID, String newOfficeHours){
+		
+		boolean isUpdated=false;
+		
+		try{
+			Connection conn = Database.getConnection();
+			
+			try{
+				
+				    
+						
+						System.out.println("Updating data in the database");
+						String SQLPeopleInsert= "UPDATE teachingassistant SET TaOfficeHours= ? where TaUIN=? and OfferID=? ;";
+						PreparedStatement stmt = conn.prepareStatement(SQLPeopleInsert);
+						stmt.setString(1, newOfficeHours);
+						stmt.setInt(2, UIN);
+						stmt.setInt(3, offerID);
+						System.out.println(stmt);
+						int i = stmt.executeUpdate();
+						System.out.println(i);
+						System.out.println("Updated");
+						isUpdated=true;
+						
+						Database.commitTransaction(conn);
+						
+					
+					
+			}
+			
+			catch(SQLException e){
+				System.out.println("Error adding/updating to database");
+				System.out.println(e);	
+			}
+			
+		}
+		
+		catch(Exception e){
+			System.out.println("Connection failed");
+			System.out.println(e);
+			
+		}
+		
+		finally{
+			
+			//System.out.println("retrieved");
+		}
+		
+	return isUpdated;
+		
+	}
+	
+	public static String getTAOfficeAddress(int UIN, int offerID){
+		
+		
+		try{
+			Connection conn = Database.getConnection();
+			
+			try{
+				
+				    
+						
+						System.out.println("selecting TA s office location");
+						String SQLTASelect= "select * from teachingassistant where TaUIN=? and OfferID=? ;";
+						PreparedStatement stmt = conn.prepareStatement(SQLTASelect);
+						stmt.setInt(1, UIN);
+						stmt.setInt(2, offerID);
+						System.out.println(stmt);
+						ResultSet rs=stmt.executeQuery();
+						System.out.println("Retreived");
+						
+						if(rs.first()){
+							
+							String getTAOfficeLocation=rs.getString("TaOfficeLocation");
+							return getTAOfficeLocation;
+						}
+					
+			}
+			
+			catch(SQLException e){
+				System.out.println("Error adding/updating to database");
+				System.out.println(e);	
+			}
+			
+		}
+		
+		catch(Exception e){
+			System.out.println("Connection failed");
+			System.out.println(e);
+			
+		}
+		
+		finally{
+			
+			//System.out.println("retrieved");
+		}
+		
+	return null;
+		
+	}
+	
+	
+	public static String getTAOfficeHours(int UIN, int offerID){
+		
+		
+		try{
+			Connection conn = Database.getConnection();
+			
+			try{
+				
+				    
+						
+						System.out.println("selecting TA s office hours");
+						String SQLTASelect= "select * from teachingassistant where TaUIN=? and OfferID=? ;";
+						PreparedStatement stmt = conn.prepareStatement(SQLTASelect);
+						stmt.setInt(1, UIN);
+						stmt.setInt(2, offerID);
+						System.out.println(stmt);
+						ResultSet rs=stmt.executeQuery();
+						System.out.println("Retreived");
+						
+						if(rs.first()){
+							
+							String getTAOfficeHours=rs.getString("TaOfficeHours");
+							return getTAOfficeHours;
+						}
+					
+			}
+			
+			catch(SQLException e){
+				System.out.println("Error adding/updating to database");
+				System.out.println(e);	
+			}
+			
+		}
+		
+		catch(Exception e){
+			System.out.println("Connection failed");
+			System.out.println(e);
+			
+		}
+		
+		finally{
+			
+			//System.out.println("retrieved");
+		}
+		
+	return null;
+		
+	}
+	
+	
 	
 	/*This functions checks if the passed offer ID is a valid and current
 	 * 
@@ -232,12 +324,22 @@ public class TA extends Student {
 	 * */	
 	public static boolean addTAtoTAtable(int UIN, int offerID) throws AlreadyExistsInTAException{
 
+				
 		boolean isAdded = false;
 
 		try {
 			Connection conn = Database.getConnection();
 
-			try {
+				try{
+					Student stud=new Student(UIN);
+				}
+				catch (Student.PersonDoesNotExistException e) {
+					System.out.println("Not a student");
+					e.printStackTrace();
+					System.out.println(e);
+					return false;
+
+				}
 
 				boolean ifExists = addTAtoTAtableCheck(UIN, offerID);
 
@@ -275,12 +377,13 @@ public class TA extends Student {
 				System.out.println(e);
 			}
 
-		}
+		
 
 		catch (Exception e) {
-			System.out.println("Connection failed");
+			System.out.println("Error");
 			e.printStackTrace();
 			System.out.println(e);
+			return false;
 
 		}
 
@@ -533,6 +636,13 @@ public class TA extends Student {
 	 */
 
 	public boolean updateTADept(int deptID) {
+		
+		try {
+			Department d=new Department(deptID);
+		} catch (Department.DepartmentDoesNotExistException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
 
 		boolean isUpdated = false;
 
@@ -725,6 +835,26 @@ public class TA extends Student {
 //			// TODO Auto-generated catch block
 //			e.printStackTrace();
 //		}
+		
+//		try {
+//			addTAtoTAtable(272, 295);
+//		} catch (AlreadyExistsInTAException e) {
+//			// TODO Auto-generated catch block
+//			e.printStackTrace();
+//		}
+		
+		try {
+			TA ta=new TA(3);
+//			updateTaOfficeAddress(3, 295, "priyanka2");
+//			updateTaOfficeHours(ta.getUIN(), ta.getOfferID(), "priyanka2");
+//			
+//			System.out.println("sss::::::"+ta.getOfficeAddress());
+//			System.out.println("sss::::::"+ta.getOfficeHours());
+		} catch (PersonDoesNotExistException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
 
 	}
 
