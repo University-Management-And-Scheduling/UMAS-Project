@@ -1,4 +1,8 @@
 
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -13,6 +17,17 @@ public class Classroom {
 	private ClassroomLocation classroomLocation;
 	private int classroomCapacity;
 	private int classroomID;
+	
+	
+	@Target({ElementType.LOCAL_VARIABLE})
+	@Retention(RetentionPolicy.RUNTIME)
+	public @interface DBAnnotation {
+		 String variable () default "";
+		 String table () default "";
+		 String column () default "";
+		 boolean isSource () default false; 
+	}
+	
 	
 	/**
 	 * @return the classroomID
@@ -50,7 +65,7 @@ public class Classroom {
 			try{
 				if(conn != null){
 					
-					//Retrieve the current semester ID
+					
 					String ClassroomSelect = "Select *"
 							+ " FROM university.classroom"
 							+ " WHERE classroomID= ?";
@@ -58,12 +73,21 @@ public class Classroom {
 					statement.setInt(1, classroomID);
 					ResultSet rs = statement.executeQuery();
 					
+					
 					if(rs.first()){
-						this.classroomCapacity = rs.getInt(4);
-						this.classroomName = ClassroomName.valueOf(rs.getString(2));
-						this.classroomLocation = ClassroomLocation.valueOf(rs.getString(3));
-						//System.out.println("Retreived:");
-						//System.out.println("ID:"+this.classroomID+" Name:"+this.classroomName.toString()+" Location:"+this.classroomLocation.toString());
+
+						@DBAnnotation(variable = "classroomCapacity",table = "classroom", column="ClassroomCapacity", isSource = true)
+						int classroomCapacity = rs.getInt("ClassroomCapacity");
+						
+						@DBAnnotation(variable = "classroomName",table = "classroom", column="ClassroomName", isSource = true)
+						String classroomName = rs.getString("ClassroomName"); 
+						
+						@DBAnnotation(variable = "classroomLocation",table = "classroom", column="ClassroomLocation", isSource = true)
+						String classroomLocation = rs.getString("ClassroomLocation");
+						
+						this.classroomCapacity = classroomCapacity;
+						this.classroomName = ClassroomName.valueOf(classroomName);
+						this.classroomLocation = ClassroomLocation.valueOf(classroomLocation);
 					}
 					
 					else{
@@ -80,10 +104,6 @@ public class Classroom {
 				e.printStackTrace();
 			}
 			
-			finally{
-				//Database.closeConnection(conn);
-			}
-			
 		}
 		
 		finally{
@@ -91,6 +111,8 @@ public class Classroom {
 
 	}
 		
+	
+	
 	public static void addNewClassroom(ClassroomName classroomName, ClassroomLocation classroomLocation, int capacity){
 		try{
 			Connection conn = Database.getConnection();
@@ -99,8 +121,6 @@ public class Classroom {
 			
 			try{
 				if(conn != null){
-					
-					//Retrieve the current semester ID
 					String classroomSelect = "Select ClassroomName"
 							+ " FROM university.classroom"
 							+ " WHERE ClassroomName= ? AND ClassroomLocation= ?";
@@ -133,15 +153,12 @@ public class Classroom {
 				//e.printStackTrace();
 			}
 			
-			finally{
-				//Database.commitTransaction(conn);
-			}
-			
 		}
 		
 		finally{
 		}
 	}
+	
 	
 	public Timeslots getEmptySlot(int timeSlotType){
 		if(!checkTimeSlotType(timeSlotType)){
@@ -161,9 +178,12 @@ public class Classroom {
 		else return null;
 	}
 	
+	
+	
 	public static boolean checkTimeSlotType(int timeSlotType){
 		return (timeSlotType == 1 || timeSlotType == 2);
 	}
+	
 	
 	public static Classroom getEmptyClassroom(ClassroomLocation location, int timeSlotType, int expectedCapacity){
 		System.out.println("xxxxxxxxxxxxxxxxINSIDE getEmptyCLassroom FUNCTIONxxxxxxxxxxxxxx");
@@ -194,6 +214,7 @@ public class Classroom {
 		return c;
 	}
 
+	
 	public static int getClassID(ClassroomName name, ClassroomLocation location){
 		String classroomName = name.toString();
 		String classroomLocation = location.toString();
@@ -214,7 +235,9 @@ public class Classroom {
 					ResultSet rs = statement.executeQuery();
 					
 					if(rs.first()){
-						id = rs.getInt("ClassroomID");
+						@DBAnnotation(variable = "classID",table = "classroom", column="ClassroomID", isSource = true)
+						int classID = rs.getInt("ClassroomID");
+						id = classID;
 					}
 					
 					else{
@@ -247,6 +270,7 @@ public class Classroom {
 		return id;
 	}
 	
+	
 	public static LinkedHashMap<Integer, Classroom> getAllEmptyClassroom(ClassroomLocation location, int timeSlotType, int expectedCapacity){
 		ArrayList<ClassroomName> names = new ArrayList<ClassroomName>(Arrays.asList(ClassroomName.values()));
 		LinkedHashMap<Integer, Classroom> classrooms = new LinkedHashMap<Integer, Classroom>();
@@ -275,6 +299,7 @@ public class Classroom {
 		return classrooms;
 	}
 	
+	
 	public ArrayList<Timeslots> findOpenSlotsForClassroom(int timeSlotType){
 		if(timeSlotType < 1 || timeSlotType > 2)
 			return null;
@@ -298,7 +323,8 @@ public class Classroom {
 					ArrayList<Timeslots> occupiedTimeslots = new ArrayList<Timeslots>();
 					//System.out.println("-----Printing occupied slots---------");
 					while(rs.next()){
-						int timeslotID = rs.getInt(1);
+						@DBAnnotation(variable = "timeslotID",table = "timeslots", column="TimeSlotID", isSource = true)
+						int timeslotID = rs.getInt("TimeSlotID");
 						Timeslots t = new Timeslots(timeslotID);
 						//System.out.println("Slot:"+t.getTimeSlotID()+" start:"+t.getStartHour()+" end:"+t.getEndHour());
 						occupiedTimeslots.add(t);
@@ -313,7 +339,10 @@ public class Classroom {
 					
 					System.out.println("-------------Looking for time conflicts-------------");
 					while(rs.next()){
-						Timeslots t = new Timeslots(rs.getInt(1));
+						@DBAnnotation(variable = "timeslotID",table = "timeslots", column="TimeSlotID", isSource = true)
+						int timeslotID = rs.getInt("TimeSlotID");
+						
+						Timeslots t = new Timeslots(timeslotID);
 						boolean conflict = false;
 						for(Timeslots slot:occupiedTimeslots){
 							if(Timeslots.isConflict(t, slot)){
@@ -350,6 +379,7 @@ public class Classroom {
 		
 		return timeslots;
 	}
+	
 	
 	public static boolean isEmpty(Classroom classroom, Timeslots t){
 		int classroomID = classroom.getClassroomID();
@@ -395,6 +425,7 @@ public class Classroom {
 		
 	}
 	
+	
 	public String toString(){
 		String toReturn = "";
 		toReturn+= "Classroom Location:"+this.getClassroomLocation().toString();
@@ -404,13 +435,7 @@ public class Classroom {
 	}
 		
 	//to be implemented
-	public ArrayList<CourseOffered> getCourseScheduledInClassroom(){
-		return null;
-	}
-	
-	public static void main(String[] args){
-		System.out.println(isEmpty(new Classroom(20), new Timeslots(16)));
-	}
+		
 
 	/* (non-Javadoc)
 	 * @see java.lang.Object#equals(java.lang.Object)
