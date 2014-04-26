@@ -59,9 +59,18 @@ public class WaitList {
 		this.queuePos = queuePos;
 	}
 
-	public static void addStudentToWaitList(Student student, int offerID) throws Course.CourseDoesNotExistException, CourseOffered.CourseOfferingDoesNotExistException{
+	/*
+	 * Adds the specified student to the wait list for the offerid mentioned
+	 */
+	public static boolean addStudentToWaitList(Student student, int offerID) throws Course.CourseDoesNotExistException, CourseOffered.CourseOfferingDoesNotExistException{
+		/*
+		 * check if the student is eligible to be added to the wait list
+		 */
+		boolean isAdded = false;
 		if(canBeAddedToWaitList(student, offerID)){
-			//add to wait list
+			/*
+			 * get the queue position for the addition
+			 */
 			int queuePos = getLastQueuePos(offerID) + 1;
 			int UIN = student.getUIN();
 			
@@ -70,6 +79,9 @@ public class WaitList {
 				
 				try{
 					if(conn != null){
+						/*
+						 * Insert the student in the waitlist
+						 */
 						System.out.println("Inserting student in wait list");
 						String WaitListInsert = "INSERT INTO university.waitlist "
 								+ "(UIN, OfferID, QueuePos) "
@@ -79,7 +91,8 @@ public class WaitList {
 						statement.setInt(2, offerID);
 						statement.setInt(3, queuePos);
 						statement.executeUpdate();
-						Database.commitTransaction(conn);											
+						Database.commitTransaction(conn);
+						isAdded = true;
 					}
 				}
 				
@@ -93,8 +106,12 @@ public class WaitList {
 			}
 			
 		}
+		return isAdded;
 	}
 	
+	/*
+	 * returns the last queue position number for the specified offer id
+	 */
 	private static int getLastQueuePos(int OfferID){
 		int queuePos = 0;
 		try{
@@ -102,12 +119,19 @@ public class WaitList {
 			
 			try{
 				if(conn != null){
+					/*
+					 * Retrieve the max queue number for the offer id
+					 */
 					String SemesterSelect = "Select max(QueuePos) as QueuePos"
 							+ " FROM university.waitlist"
 							+ " WHERE offerID= ?";
 					PreparedStatement statement = conn.prepareStatement(SemesterSelect);
 					statement.setInt(1, OfferID);
 					ResultSet rs = statement.executeQuery();
+					/*
+					 * if found, return the found queue number
+					 * else zero (0) is returned as no student was found on the wait list
+					 */
 					if(rs.first()){
 						queuePos = rs.getInt(1);
 					}					
@@ -127,6 +151,9 @@ public class WaitList {
 		
 	}
 	
+	/*
+	 * Works same as the above function, just gives the minimum queue position
+	 */
 	private static int getFirstQueuePosition(int OfferID){
 		int queuePos = 0;
 		try{
@@ -158,6 +185,9 @@ public class WaitList {
 		return queuePos;
 	}
 	
+	/*
+	 * Retrieves all the students who are emailed and allowed to register for the specified offerid
+	 */
 	public static ArrayList<Student> getStudentsOnEmailList(int offerID){
 		ArrayList<Student> students = new ArrayList<Student>();
 		
@@ -166,12 +196,19 @@ public class WaitList {
 			
 			try{
 				if(conn != null){
+					/*
+					 * Get all the emailed students for the offer id
+					 */
 					String SemesterSelect = "Select StudentUIN"
 							+ " FROM university.emailedwaitlist"
 							+ " WHERE offerID= ?";
 					PreparedStatement statement = conn.prepareStatement(SemesterSelect);
 					statement.setInt(1, offerID);
 					ResultSet rs = statement.executeQuery();
+					
+					/*
+					 * Add all student to array list
+					 */
 					while(rs.next()){
 						students.add(new Student(rs.getInt("StudentUIN")));
 					}
@@ -193,6 +230,9 @@ public class WaitList {
 		return students;
 	}
 	
+	/*
+	 * Get all wait list student for the specified offer id
+	 */
 	public static ArrayList<Student> getStudentsOnWaitList(int offerID){
 		ArrayList<Student> students = new ArrayList<Student>();
 		if(isWaitListEmpty(offerID)){
@@ -204,6 +244,9 @@ public class WaitList {
 			
 			try{
 				if(conn != null){
+					/*
+					 * Select all wait list students for the offer id
+					 */
 					String SemesterSelect = "Select *"
 							+ " FROM university.waitlist"
 							+ " WHERE offerID= ?"
@@ -211,6 +254,9 @@ public class WaitList {
 					PreparedStatement statement = conn.prepareStatement(SemesterSelect);
 					statement.setInt(1, offerID);
 					ResultSet rs = statement.executeQuery();
+					/*
+					 * add all retrieved students to wait list
+					 */
 					while(rs.next()){
 						students.add(new Student(rs.getInt("UIN")));
 					}
@@ -232,6 +278,9 @@ public class WaitList {
 		return students;
 	}
 	
+	/*
+	 * Get all wait list courses of the student specified
+	 */
 	public static ArrayList<CourseOffered> getWaitListCoursesOfStudent(Student s){
 		ArrayList<CourseOffered> waitListCourses = new ArrayList<CourseOffered>();
 		try{
@@ -270,9 +319,15 @@ public class WaitList {
 		return waitListCourses;
 	}
 	
+	/*
+	 * Checks if the course can accommodate a new student if the student was moved from wait list 
+	 * to email list ad allowed to register
+	 */
 	private static boolean canCourseAccomodateNewStudentFromWaitList(int offerID){
 		CourseOffered c = null;
-		
+		/*
+		 * mathematical calculations to check if the course can accommodate a new student
+		 */
 		try {
 			c = new CourseOffered(offerID);
 			int seatRem = c.getTotalCapacity() - c.getCurrentlyFilled();
@@ -292,6 +347,9 @@ public class WaitList {
 		
 	}
 	
+	/*
+	 * Checks if the student is eligible to be put on waitlist
+	 */
  	public static boolean canBeAddedToWaitList(Student student, int offerID) throws Course.CourseDoesNotExistException, CourseOffered.CourseOfferingDoesNotExistException{
 		boolean canBeAdded = false;
 		CourseOffered courseOffered = new CourseOffered(offerID);
@@ -311,7 +369,12 @@ public class WaitList {
 		
 		return canBeAdded;
 	}
-			
+	
+ 	/*
+ 	 * Removes the specified student from the waitlist of the offer id
+ 	 * this can be called directly by the automatic scanner which scans for students
+ 	 * who are eligible to be put from wait to email list ad allowed to register
+ 	 */
 	public static boolean removeFromWaitList(Student student, int offerID){
 		int UIN = student.getUIN();
 		boolean isRemoved = false;
@@ -344,7 +407,9 @@ public class WaitList {
 		return isRemoved;
 	}
 	
-	//this function is externally called when a student removes self from waitlist
+	/*
+	 * this function is externally called when a student removes self from waitlist
+	 */
 	public static boolean removeFromWaitListAndCommit(Student student, int offerID){
 		int UIN = student.getUIN();
 		boolean isRemoved = false;
@@ -377,6 +442,9 @@ public class WaitList {
 		return isRemoved;
 	}
 
+	/*
+	 * This function removes the eligibility of the students to register for the course because of the timeout in registration
+	 */
 	public static void removeFromEmailedList(int UIN, int offerID){
 		try{
 			Connection conn = Database.getConnection();
@@ -404,6 +472,13 @@ public class WaitList {
 		}
 	}
 	
+	/*
+	 * Checks for the first student on the queue of the wait list for the specified offer
+	 * Removes the student from wait list
+	 * Adds to email list
+	 * allows the student to register
+	 * sends an intimation email to student
+	 */
 	public static void emailFirstStudentOnWaitList(int offerID){
 		if(!canCourseAccomodateNewStudentFromWaitList(offerID)){
 			System.out.println("Course cannot accomodate new student, not sending email");
@@ -455,6 +530,9 @@ public class WaitList {
 		}
 	}
 	
+	/*
+	 * Retrieves the first student from the wait list of the specified course
+	 */
 	private static Student getStudentFirstOnWaitList(int offerID){
 		Student student = null;
 		int queuePos = getFirstQueuePosition(offerID);
@@ -498,6 +576,9 @@ public class WaitList {
 		return student;
 	}
 	
+	/*
+	 * Checks if the student is already registered for the course
+	 */
 	public static boolean isStudentRegistered(Student student, int offerID){
 		boolean isRegistered = false;
 		try{
@@ -535,6 +616,9 @@ public class WaitList {
 		return isRegistered;
 	}
 	
+	/*
+	 * checks if the student is on the wait list
+	 */
 	public static boolean isStudentOnWaitList(Student student, int offerID){
 		boolean isOnWaitList = false;
 		try{
@@ -572,6 +656,9 @@ public class WaitList {
 		return isOnWaitList;
 	}
 
+	/*
+	 * checks if the wait list is empty
+	 */
 	public static boolean isWaitListEmpty(int offerID){
 		boolean isEmpty = false;
 		try{
@@ -608,6 +695,9 @@ public class WaitList {
 		return isEmpty;
 	}
 	
+	/*
+	 * empty the wait and email lists for initialization of the new semester
+	 */
 	public static boolean emptyWaitAndEmailList(){
 		boolean isWaitListEmpty = false;
 		boolean isEmailListEmpty = false;
@@ -640,6 +730,9 @@ public class WaitList {
 		return false;
 	}
 	
+	/*
+	 * checks if the student has already been sent email to register
+	 */
 	public static boolean isStudentEmailed(Student student, int offerID){
 		boolean isEmailed = false;
 		try{
@@ -678,6 +771,9 @@ public class WaitList {
 		return isEmailed;
 	}
 	
+	/*
+	 *checks the registration ticket expiration status of the emailed students and thus allows new students to register 
+	 */
 	private static void checkTheStatusOfEmailedStudents(){
 		try{
 			Connection conn = Database.getConnection();
@@ -693,11 +789,20 @@ public class WaitList {
 						Timestamp t1 = rs.getTimestamp("TimeEmailed");;
 						Timestamp t2 = new Timestamp(System.currentTimeMillis());
 						long hoursElapsed = findTimeDifference(t1, t2);
-						if(hoursElapsed >= 1){
+						Student s = new Student(rs.getInt("StudentUIN"));
+						int offerID = rs.getInt("offerID");
+						if(isStudentRegistered(s, offerID)){
+							removeFromEmailedList(s.getUIN(), rs.getInt("offerID"));
+							Email email = Email.getInstance("umas.uic@gmail.com", "cs597project");
+							email.sendEmail(s.getUserName()+"@umas.edu", "Your registered for the course", "You registrated for course:"+offerID+" after waitlist");
+							//email new student for the same offer id
+							emailFirstStudentOnWaitList(offerID);
+							Database.commitTransaction(Database.getConnection());
+						}
+						
+						else if(hoursElapsed >= 1){
 							//remove student from e-mailed list and email the student
-							int UIN = rs.getInt("StudentUIN");
-							int offerID = rs.getInt("offerID");
-							Student s = new Student(UIN);
+							int UIN = s.getUIN();
 							System.out.println("Removing student from email list:"+UIN);
 							removeFromEmailedList(UIN, offerID);
 							Email email = Email.getInstance("umas.uic@gmail.com", "cs597project");
@@ -729,6 +834,9 @@ public class WaitList {
 		}
 	}
 	
+	/*
+	 * find time difference between the time the student was emailed to register and the current time
+	 */
 	private static long findTimeDifference(Timestamp t1, Timestamp t2){
 		Period p = new Period(t1.getTime(),t2.getTime());
 		System.out.println(t1);
@@ -737,6 +845,10 @@ public class WaitList {
 		return p.getHours();
 	}
 	
+	/*
+	 * performs a completer scan of the wait list and adds, update deletes student from  waitlist and email list
+	 * as and when it is necessary
+	 */
 	public static void scanWaitList(){
 		HashMap<Integer, CourseSchedule> allScheduledCourses = CourseSchedule.getHaspMapForSchedule();
 		checkTheStatusOfEmailedStudents();

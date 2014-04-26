@@ -241,7 +241,7 @@ public class Course {
 		 * Checks if the course exists
 		 * Doesn't update if the target is not present
 		 */
-		if(!isExists(courseName, department))
+		if(isExists(courseName, department))
 			return isUpdated;
 		
 		try{
