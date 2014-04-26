@@ -673,23 +673,7 @@ public class Job {
 	 */
 	public static void main(String[] args) {
 
-		// try {
-		// postJob(272, 1, 2.0, 1.0, true, true, true, true, false);
-		// postJob(272, 1, 2.5, 1.0, true, true, true, true, false);
-		// postJob(272, 2, 2.0, 1.0, false, true, false, true, true);
-		// postJob(273, 2, 2.5, 1.5, true, true, true, true, true);
-		// postJob(274, 3, 2.0, 1.0, true, false, true, true, true);
-		// postJob(274, 3, 2.5, 1.0, false, true, false, true, true);
-		// postJob(275, 4, 3.3, 3.0, true, false, true, true, true);
-		// postJob(276, 4, 2.5, 3.0, false, true, true, true, true);
-		// postJob(275, 5, 3.0, 1.0, false, true, false, true, true);
-		// postJob(274, 8, 1.5, 3.0, true, false, true, true, true);
-		// postJob(272, 10, 1.0, 2.0, false, true, true, true, false);
 
-		// } catch (NoPermissionException e) {
-		// // TODO Auto-generated catch block
-		// e.printStackTrace();
-		// }
 
 	}
 

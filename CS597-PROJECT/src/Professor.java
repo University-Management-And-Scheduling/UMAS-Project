@@ -1,750 +1,652 @@
-
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 
+/**
+ * @author Akshay
+ * 
+ */
 
+/*************** PROFESSOR.JAVA CLASS WAS WRITTEN BY AKSHAY THIRKATEH ********************************/
 
 public class Professor extends Employee {
-	
-	
-	/* Due to some unknown error some functions and some updates have been deleted. I am writing them and updating them as i remember
-	 * 
-	 *  
-	 *  PLease let me know if you think of any other functions, write the function signature so that i will know what to do
-	 *  
-	 *  */
-	
-	//This is a professor class
-	
-	
-	
-	//prof constructor
-	public Professor(String name, String userName, int deptID){
-		super(name, userName, deptID, 2);	
+
+	// prof constructor takes in name, username and dept ID
+	public Professor(String name, String userName, int deptID) {
+		super(name, userName, deptID, 2);
 	}
-	
-	public Professor(int UIN) throws Student.AccessDeniedException, PersonDoesNotExistException{
-		super(UIN);
-		boolean check=checkIfProfessor(UIN);
-		
-		if(!check){
-			throw new Student.AccessDeniedException();
+
+	//this is a professor class constructor which passes the UIN and initializes the details
+	public Professor(int UIN) throws Student.AccessDeniedException, PersonDoesNotExistException {
+		super(UIN);//calls the super class
+		boolean check = checkIfProfessor(UIN);//checking if the UIN is a professor 
+
+		if (!check) {
+			throw new Student.AccessDeniedException();//if its not a professor then throw an exception
 		}
-		
+
 	}
-	
-	public Professor(String userName){
+	/*calls the professor constructor with the username*/
+	public Professor(String userName) {
 		super(userName);
 	}
-	
-	//prof adding
-	public static boolean addProfToDb(String name, Department dept){
-		
-		boolean isAdded=false;
+
+	/*prof adding to the database
+	 * 
+	 * pass the name and the dept to the function
+	 * 
+	 * return type is boolean
+	 * 
+	 * */
+	public static boolean addProfToDb(String name, Department dept) {
+
+		boolean isAdded = false;
 		int returnedUIN;
-		
-		if(dept==null)
-		{
-			throw new NullPointerException();
+
+		if (dept == null) {
+			throw new NullPointerException();//if the object is null then throw an exception
 		}
-		
-		if(name.equals("")){
-			throw new NullPointerException();
+
+		if (name.equals("")) {
+			throw new NullPointerException();//if the name is empty then throw an exception
 		}
-		
+
 		try {
-			returnedUIN = addIntoDatabase(name, dept, 2);
-			if(returnedUIN!=-1){
-				
+			returnedUIN = addIntoDatabase(name, dept, 2);//add into the database
+			if (returnedUIN != -1) {//check the returned UIN
+
 				System.out.println(returnedUIN);
 
-				isAdded=Employee.addEmployee(returnedUIN);
-				
-				Connection conn=Database.getConnection();
-				Database.commitTransaction(conn);
+				isAdded = Employee.addEmployee(returnedUIN);//add to employee
+
+				Connection conn = Database.getConnection();
+				Database.commitTransaction(conn);//commit
+			}
 		}
-		}
-			
-			catch (People.loginDetailsnotAdded e) {
+		//catch
+		catch (People.loginDetailsnotAdded e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		
 
 		return isAdded;
-		
+
 	}
 
-	
-	//CHECKING IF THE PERSON WHOS UIN IS INPUT IS A PROFESSOR OR NOT
-	public static boolean checkIfProfessor(int UIN){
+	// CHECKING IF THE PERSON WHOS UIN IS INPUT IS A PROFESSOR OR NOT
+	public static boolean checkIfProfessor(int UIN) {
 		boolean ifProfessor = false;
-		try{
-			Connection conn = Database.getConnection();
-			String SQLPeopleSelect="";
-			try{
-			
-				if(conn != null){
-					
-					SQLPeopleSelect = "Select PositionID From People where UIN=?;";
-				
-				}				
-				
-				
-				PreparedStatement stmtForSelect = conn.prepareStatement(SQLPeopleSelect);
-				stmtForSelect.setInt(1, UIN);
-				
-				ResultSet rs =  stmtForSelect.executeQuery();
-					
-					if(rs.first())
-					{
-						
-				         int peopleRetrievedPositionID = rs.getInt("PositionID");
-				         System.out.println("UIN:"+UIN+" Position ID:"+peopleRetrievedPositionID);
-				         
-				         if(peopleRetrievedPositionID == 2){
-				        	 System.out.println("Professor UIN exists");
-				        	 ifProfessor =  true;
-				         }
-				         
-				         else 
-				         {
-				        	 System.out.println("UIN exists, but it is not a professor");
-				        	 ifProfessor = false;
-						
-				         }
-				         
+		try {
+			Connection conn = Database.getConnection();//connection
+			String SQLPeopleSelect = "";
+			try {
 
-				         
+				if (conn != null) {
+
+					SQLPeopleSelect = "Select PositionID From People where UIN=?;";//write query
+
+				}
+
+				PreparedStatement stmtForSelect = conn.prepareStatement(SQLPeopleSelect);
+				stmtForSelect.setInt(1, UIN);//set the values
+
+				ResultSet rs = stmtForSelect.executeQuery();//execute the query
+
+				if (rs.first()) {
+					//if the resultset exists
+					int peopleRetrievedPositionID = rs.getInt("PositionID");
+					System.out.println("UIN:" + UIN + " Position ID:"+ peopleRetrievedPositionID);
+
+					if (peopleRetrievedPositionID == 2) {//check the position ID
+						System.out.println("Professor UIN exists");
+						ifProfessor = true;
 					}
-					
-					else
-					{
-						System.out.println("UIN does not exist");
+
+					else {
+						System.out.println("UIN exists, but it is not a professor");
 						ifProfessor = false;
 
 					}
-					
-				
-			
-		
-	}
-			
-			catch(SQLException e){
+
+				}
+
+				else {
+					System.out.println("UIN does not exist");
+					ifProfessor = false;
+
+				}
+
+			}
+			//catch block
+			catch (SQLException e) {
 				System.out.println(e);
 				return ifProfessor;
 			}
-			
+
 		}
-		
-		catch(Exception e){
+		//catch blcok
+		catch (Exception e) {
 			System.out.println(e);
-			
+
 		}
-		
-		finally{
-		}		
-		
+		/*The code thats placed in the finally block gets executed no matter what. But 
+		here the finally block does not contain any general statements*/
+		finally {
+		}
+
 		return ifProfessor;
 	}
-	
-	public static boolean checkIfProfessor(String userName){
-		
-		try{
-			Connection conn = Database.getConnection();
-			String SQLProfSelect="";
-			try{
-			
-				if(conn != null){
-					
-					SQLProfSelect = "Select PositionID From People where Username=?;";
+	/*this function mainly checks if the username beongs to the professor or not*/
+	public static boolean checkIfProfessor(String userName) {
+
+		try {
+			Connection conn = Database.getConnection();// get the connection
+			String SQLProfSelect = "";
+			try {
+
+				if (conn != null) {
+
+					SQLProfSelect = "Select PositionID From People where Username=?;";//write the query
 				}
-				
-				
-				
+
 				PreparedStatement stmtForSelect = conn.prepareStatement(SQLProfSelect);
-				stmtForSelect.setString(1, userName);
-				
-				ResultSet rs =  stmtForSelect.executeQuery();
-					
-					if(rs.first())
-					{
-						
-						 int peopleRetrievedPositionID = rs.getInt("PositionID");
-				         System.out.println("Username:"+userName+" Position ID:"+peopleRetrievedPositionID);
-				         /*Check here if the position ID id of a professor i.e 2, UIN exists for students
-				          * professors, admins TA and virtually every person existing in the university
-				          * Check if the position ID of the passed UIN is of a professor.
-				          */
-				         
-				         if(peopleRetrievedPositionID == 2)
-				         {
-				        	 return true;
-				         }
-				         else {
-				        	 return false;
-				         }
-				         //System.out.println("Professor UIN exists");
+				stmtForSelect.setString(1, userName);//set the values
 
+				ResultSet rs = stmtForSelect.executeQuery();//execute the query
 
-				         
-					}
-					
-					else
-					{
-						
-						System.out.println("username does not exist");
+				if (rs.first()) {
+
+					int peopleRetrievedPositionID = rs.getInt("PositionID");//retreive the position ID
+					System.out.println("Username:" + userName + " Position ID:"+ peopleRetrievedPositionID);
+					/*
+					 * Checking if the position ID id of a professor i.e 2,
+					 * UIN exists for students professors, admins TA and
+					 * virtually every person existing in the university Check
+					 * if the position ID of the passed UIN is of a professor.
+					 */
+
+					if (peopleRetrievedPositionID == 2) {
+						return true;
+					} else {
 						return false;
-
 					}
-					
-				
-			
-		
-	}
-			
-			catch(SQLException e){
+
+				}
+
+				else {
+
+					System.out.println("username does not exist");
+					return false;
+
+				}
+
+			}
+			//catch block 
+			catch (SQLException e) {
 				System.out.println(e);
-				
+
 			}
-			
-			finally{
-				
-				//System.out.println("retrieved");
-			}
+
 		}
-		
-		catch(Exception e){
+
+		catch (Exception e) {
 			System.out.println(e);
-			
+
 		}
-		
-		finally{
-			
-			//System.out.println("retrieved");
-		}		
-		
+		/*The code thats placed in the finally block gets executed no matter what. But 
+														here the finally block does not contain any general statements*/
+		finally {
+
+			// System.out.println("retrieved");
+		}
+
 		return false;
 	}
+
 	
-	//SAME APPLIES TO THE NAME RETRIEVAL AND OTHER FUNCTIONS
-	
-	//prof retrieval by UIN
-	public static Professor retrieveProfDetailsByUIN(int UIN){
-		
-		boolean check=checkIfProfessor(UIN);
-		
-		if(check==true)
-		{
-		//retireveDetailsByUIN(12);
-		Professor professor;
-		try {
-			professor = new Professor(UIN);
-			return professor;
-		} catch (PersonDoesNotExistException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace(); 
-		} catch (Student.AccessDeniedException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+	// retrieval of the details of the professor by UIN
+	public static Professor retrieveProfDetailsByUIN(int UIN) {
+
+		boolean check = checkIfProfessor(UIN);//checking if the UIN is a professor
+
+		if (check == true) {
+			// retireveDetailsByUIN(12);
+			Professor professor;//set the class object
+			try {
+				professor = new Professor(UIN);//send the UIN to the constructor
+				return professor;
+			} catch (PersonDoesNotExistException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (Student.AccessDeniedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+
 		}
-		
-		}
-		
-		else
-		{
+
+		else {
 			System.out.println("There exists no professor with that UIN");
 			return null;
 		}
-		
-	return null;	
+
+		return null;
 	}
-	
-	//prof retrieval by userName
-	public static Professor retrieveProfDetailsByUserName(String userName){
-		
-		boolean check=checkIfProfessor(userName);
-		
-		if(check==true)
-		{
-			Professor professor = new Professor(userName);
-			//System.out.println(professor.getUIN());
+
+	// retrieve the details of the professor when a username is passed
+	public static Professor retrieveProfDetailsByUserName(String userName) {
+
+		boolean check = checkIfProfessor(userName);//check if its a professor
+
+		if (check == true) {
+			Professor professor = new Professor(userName);//set it as a object
+			// System.out.println(professor.getUIN());
 			return professor;
-			
-		}
-		else
-		{
+
+		} else {
 			System.out.println("There exists no professor with that username");
 			return null;
 		}
-		
-		
+
 	}
-	
-	//prof deletion	by UIN
-	public static void deleteProfFromDbUsingUIN(int UIN){
-		
-		boolean check=checkIfProfessor(UIN);
-		
-		if(check==true)
-		{
-		deleteFromDatabaseByUIN(UIN);
-		Employee.deleteFromDatabaseByUIN(UIN);
-		
-		Connection conn=Database.getConnection();
-		Database.commitTransaction(conn);
+
+	// Delete a professor by passing a uin
+	public static void deleteProfFromDbUsingUIN(int UIN) {
+
+		boolean check = checkIfProfessor(UIN);//CHECK IF ITS A PROFESSOR
+
+		if (check == true) {
+			deleteFromDatabaseByUIN(UIN);//delete from database in the people table
+			Employee.deleteFromDatabaseByUIN(UIN);//delete from the employee table too
+
+			Connection conn = Database.getConnection();
+			Database.commitTransaction(conn);
+		} else {
+			System.out.println("There exists no professor with that UIN");
 		}
-		else
-		{
-			System.out.println("There exists no professor with that UIN");	
-		}
-		
-		
+
 	}
-	
-	//prof deletion	by username	
-	public static boolean deleteProfFromDbUsingUserName(String userName){
-		
-		boolean isDeleted=false;
-		
-		boolean check=checkIfProfessor(userName);
-		
-		if(check==true)
-		{
-		deleteFromDatabaseByUserName(userName);
-		isDeleted=Employee.deleteFromDatabaseByUserName(userName);
-		}
-		else
-		{
+
+	// prof deletion by username
+	public static boolean deleteProfFromDbUsingUserName(String userName) {
+
+		boolean isDeleted = false;
+
+		boolean check = checkIfProfessor(userName);//CHECK IF ITS A PROFESSOR
+
+		if (check == true) {
+			deleteFromDatabaseByUserName(userName);//delete from database in the people table
+			isDeleted = Employee.deleteFromDatabaseByUserName(userName);//delete from the employee table too
+		} else {
 			System.out.println("There exists no professor with that username");
 		}
-		
+
 		return isDeleted;
 	}
-	
-	public String toString(){
-		
-		return getUIN()+" "+getUserName()+" "+getName()+" "+getDeptID()+" "+getPositionID();
-		
-		
+
+	public String toString() {
+
+		return getUIN() + " " + getUserName() + " " + getName() + " "
+				+ getDeptID() + " " + getPositionID();
+
 	}
 	
-	public static ArrayList<Professor> getAllProfInADept(int departmentID) throws ProfessorDoesNotExistException  {
-		//if(Professor == null)
-			//throw new NullPointerException();
-		
-		ArrayList<Professor> ProfOfOneDept = new ArrayList<Professor>();
-		
-		try{
-			Connection conn = Database.getConnection();
-			
-			try{
-				if(conn != null){
-					
-					Department dept=new Department(departmentID);
-					
-					
-					//Retrieve all the professors from one department
+	/*getting all the professors in a department when passed a dept ID*/
+	public static ArrayList<Professor> getAllProfInADept(int departmentID)
+			throws ProfessorDoesNotExistException {
+		// if(Professor == null)
+		// throw new NullPointerException();
+
+		ArrayList<Professor> ProfOfOneDept = new ArrayList<Professor>();//initialize the prof arraylist
+
+		try {
+			Connection conn = Database.getConnection();//get the connection
+
+			try {
+				if (conn != null) {
+
+					Department dept = new Department(departmentID);//get the dept object
+
+					// Retrieve all the professors from one department
 					String ProfessorSelect = "Select *"
 							+ " FROM university.people"
 							+ " WHERE DepartmentID= ? and PositionID=2";
 					PreparedStatement statement = conn.prepareStatement(ProfessorSelect);
-					statement.setInt(1, departmentID);
+					statement.setInt(1, departmentID);//set the dept ID
 					ResultSet rs = statement.executeQuery();
-					
-					while(rs.next()){
-						
-						
-						String retreivedProfUserNames=rs.getString("Username");
-						//System.out.println(retreivedProfUserNames);
-						Professor prof=new Professor(retreivedProfUserNames);
-						ProfOfOneDept.add(prof);
-						System.out.println(prof.toString());						
+
+					while (rs.next()) {
+
+						String retreivedProfUserNames = rs
+								.getString("Username");
+						Professor prof = new Professor(retreivedProfUserNames);
+						ProfOfOneDept.add(prof);//add it to the arraylist
+						System.out.println(prof.toString());
 					}
-					
+
 				}
-					
+
 			}
-			
-			catch(SQLException e){
+			//catch block
+			catch (SQLException e) {
 				System.out.println("Error fetching all the professors of the department ");
 				System.out.println(e.getMessage());
 				e.printStackTrace();
-				
+
 			}
-			
-			catch(Department.DepartmentDoesNotExistException e){
+			//catch block
+			catch (Department.DepartmentDoesNotExistException e) {
 				System.out.println("Error fetching the department ");
 				System.out.println(e.getMessage());
 				e.printStackTrace();
-				
+
 			}
-				
-			finally{
-				//Database.commitTransaction(conn);
-			}
-			
-		
+
+
 			return ProfOfOneDept;
 		}
-		
-		finally{
+		/*The code thats placed in the finally block gets executed no matter what. But 
+															here the finally block does not contain any general statements*/
+		finally {
 		}
-		
+
 	}
-	
-	public static ArrayList<Professor> getAllProfInADept(String DepartmentName) throws ProfessorDoesNotExistException {
-		//if(Professor == null)
-			//throw new NullPointerException();
-		
-		ArrayList<Professor> ProfOfOneDept = new ArrayList<Professor>();
-		
-		try{
-			Connection conn = Database.getConnection();
-			
-			try{
-				if(conn != null){
-					
-					int retreivedDepartmentID=0;
-					
-					try{
+
+	/*get all professors in a dept when passed a dept name*/
+	public static ArrayList<Professor> getAllProfInADept(String DepartmentName)
+			throws ProfessorDoesNotExistException {
+		// if(Professor == null)
+		// throw new NullPointerException();
+
+		ArrayList<Professor> ProfOfOneDept = new ArrayList<Professor>();//initialize the araaylist
+
+		try {
+			Connection conn = Database.getConnection();//get the connection
+
+			try {
+				if (conn != null) {
+
+					int retreivedDepartmentID = 0;
+
+					try {
 						String getDeptID = "Select DepartmentID"
 								+ " FROM university.department"
 								+ " WHERE DepartmentName= ?";
-						
+
 						PreparedStatement statement = conn.prepareStatement(getDeptID);
-						statement.setString(1, DepartmentName);
+						statement.setString(1, DepartmentName);//set the dept ID
 						ResultSet rs1 = statement.executeQuery();
-						
-						if(rs1.first()){
-							
-							retreivedDepartmentID=rs1.getInt("DepartmentID");
-							
+
+						if (rs1.first()) {
+
+							retreivedDepartmentID = rs1.getInt("DepartmentID");//retrieve the dept ID
+
+						} else {
+
+							throw new Department.DepartmentDoesNotExistException();//throw an exception
 						}
-						else{
-							
-							throw new Department.DepartmentDoesNotExistException();
-						}
-					
-						
+
 					}
-					
-					catch(SQLException e){
-						System.out.println("Error finding the department name ");
+					//catch block
+					catch (SQLException e) {
+						System.out
+								.println("Error finding the department name ");
 						System.out.println(e.getMessage());
 						e.printStackTrace();
-						
+
 					}
-					
-					catch(Department.DepartmentDoesNotExistException e){
+					//catch block
+					catch (Department.DepartmentDoesNotExistException e) {
 						System.out.println("Error fetching the department ");
 						System.out.println(e.getMessage());
 						e.printStackTrace();
-						
+
 					}
-					
-					//Retrieve all the professors from one department
+
+					// Retrieve all the professors from one department
 					String SemesterSelect = "Select *"
 							+ " FROM university.people"
 							+ " WHERE DepartmentID= ? and PositionID=2";
-					PreparedStatement statement1 = conn.prepareStatement(SemesterSelect);
+					PreparedStatement statement1 = conn
+							.prepareStatement(SemesterSelect);
 					statement1.setInt(1, retreivedDepartmentID);
 					ResultSet rs = statement1.executeQuery();
-					
-					while(rs.next()){
-						
-						String retreivedProfUserNames=rs.getString("Username");
-						//System.out.println(retreivedProfUserNames);
-						Professor prof=new Professor(retreivedProfUserNames);
-						ProfOfOneDept.add(prof);
-						System.out.println(prof.toString());						
+
+					while (rs.next()) {
+
+						String retreivedProfUserNames = rs.getString("Username");
+
+						Professor prof = new Professor(retreivedProfUserNames);
+						ProfOfOneDept.add(prof);//add the professor objects to te arraylist
+						System.out.println(prof.toString());
 					}
-					
+
 				}
-					
+
 			}
-			
-			catch(SQLException e){
+			//catch the SQL exception
+			catch (SQLException e) {
 				System.out.println("Error fetching all the professors of the department ");
 				System.out.println(e.getMessage());
 				e.printStackTrace();
-				
+
 			}
-				
-			finally{
-				//Database.commitTransaction(conn);
-			}
-			
-		
+
 			return ProfOfOneDept;
 		}
-		
-		finally{
+
+		/*The code thats placed in the finally block gets executed no matter what. But 
+														here the finally block does not contain any general statements*/
+		finally {
 		}
-		
+
 	}
-	
+
+	/*get all professors from the people table*/
 	public static ArrayList<Professor> getAllProf() {
-		//if(Professor == null)
-			//throw new NullPointerException();
-		
-		ArrayList<Professor> allProfs = new ArrayList<Professor>();
-		
-		try{
-			Connection conn = Database.getConnection();
-			
-			try{
-				if(conn != null){
-					
-					
-					
-					//Retrieve all the professors from one department
+
+		ArrayList<Professor> allProfs = new ArrayList<Professor>();//initialize the arraylist
+
+		try {
+			Connection conn = Database.getConnection();//get the connection
+
+			try {
+				if (conn != null) {
+
+					// Retrieve all the professors from one department
 					String ProfessorSelect = "Select *"
-							+ " FROM university.people"
-							+ " WHERE PositionID=2";
+							+ " FROM university.people" + " WHERE PositionID=2";
 					PreparedStatement statement = conn.prepareStatement(ProfessorSelect);
-					ResultSet rs = statement.executeQuery();
-					
-					while(rs.next()){
-						
-						
-						String retreivedProfUserNames=rs.getString("Username");
-						//System.out.println(retreivedProfUserNames);
-						Professor prof=new Professor(retreivedProfUserNames);
-						allProfs.add(prof);
-						System.out.println(prof.getUserName());						
+					ResultSet rs = statement.executeQuery();//execute the query
+
+					while (rs.next()) {
+
+						String retreivedProfUserNames = rs.getString("Username");//retieve the username
+						Professor prof = new Professor(retreivedProfUserNames);
+						allProfs.add(prof);//add it to the arraylist the professor objects
+						System.out.println(prof.getUserName());
 					}
-					
+
 				}
-					
+
 			}
-			
-			catch(SQLException e){
+			//catch block
+			catch (SQLException e) {
 				System.out.println("Error fetching all the professors");
 				System.out.println(e.getMessage());
 				e.printStackTrace();
-				
+
 			}
-			
-				
-			finally{
-				//Database.commitTransaction(conn);
-			}
-			
-		
+
+
 			return allProfs;
 		}
-		
-		finally{
+		/*The code thats placed in the finally block gets executed no matter what. But 
+														here the finally block does not contain any general statements*/
+		finally {
 		}
-		
+
 	}
-	
-	public boolean updateProfUserName(String userName){
-		
-		boolean isUpdated=false;
-		
-		try{
-			Connection conn = Database.getConnection();
-			
-			try{
-				
-				boolean ifAddedInLogin=People.updateUserNameIntoLoginTable(userName, this.getUserName());
-				if(ifAddedInLogin)
-					isUpdated=true;
-					
+
+	//update the professor username
+	public boolean updateProfUserName(String userName) {
+
+		boolean isUpdated = false;
+
+		try {
+			Connection conn = Database.getConnection();//get the connection
+
+			try {
+
+				boolean ifAddedInLogin = People.updateUserNameIntoLoginTable(userName, this.getUserName());//update in login table
+				if (ifAddedInLogin)
+					isUpdated = true;
+
 			}
-			
-			catch(Exception e){
+			//catch the exception
+			catch (Exception e) {
 				System.out.println("Error adding/updating to database");
 				e.printStackTrace();
-				System.out.println(e);	
+				System.out.println(e);
 			}
-			
+
 		}
-		
-		catch(Exception e){
+		//catch the exception
+		catch (Exception e) {
 			System.out.println("Connection failed");
 			e.printStackTrace();
 			System.out.println(e);
-			
+
 		}
 		
-		finally{
-			
-			//System.out.println("retrieved");
+		/*The code thats placed in the finally block gets executed no matter what. But 
+														here the finally block does not contain any general statements*/
+		finally {
+
+			// System.out.println("retrieved");
 		}
 
 		return isUpdated;
-				
+
 	}
 	
-	public boolean updateProfName(String name){
-		
-		boolean isUpdated=false;
-		
-		try{
-			Connection conn = Database.getConnection();
-			
-			try{
-				
-				boolean ifUpdatedInPeople=People.updateNameIntoPeopleTable(name, this.getUIN());
-				if(ifUpdatedInPeople)
-					isUpdated=true;
-				
-					
+	//update the professor name
+	public boolean updateProfName(String name) {
+
+		boolean isUpdated = false;
+
+		try {
+			Connection conn = Database.getConnection();//get the connection
+
+			try {
+
+				boolean ifUpdatedInPeople = People.updateNameIntoPeopleTable(name, this.getUIN());//update into the people table
+				if (ifUpdatedInPeople)
+					isUpdated = true;
+
 			}
-			
-			catch(Exception e){
+			//catch block
+			catch (Exception e) {
 				System.out.println("Error adding/updating to database");
 				e.printStackTrace();
-				System.out.println(e);	
+				System.out.println(e);
 			}
-			
+
 		}
-		
-		catch(Exception e){
+		//catch block
+		catch (Exception e) {
 			System.out.println("Connection failed");
 			e.printStackTrace();
 			System.out.println(e);
-			
+
 		}
-		
-		finally{
-			
-			//System.out.println("retrieved");
+		/*The code thats placed in the finally block gets executed no matter what. But 
+													here the finally block does not contain any general statements*/
+		finally {
+
+			// System.out.println("retrieved");
 		}
 
 		return isUpdated;
-				
-	}
-	
 
-	public boolean updateProfDept(int deptID){
-		
-		
+	}
+
+	//update the prof dept
+	public boolean updateProfDept(int deptID) {
+
 		// how to check if the dept ID is not existing
-		boolean isUpdated=false;
-		
-		try{
-			Connection conn = Database.getConnection();
-			
-			try{
-				
-				boolean ifUpdatedInPeople=People.updateDeptIntoPeopleTable(deptID, this.getUIN());
-				if(ifUpdatedInPeople)
-					isUpdated=true;
-				
-					
+		boolean isUpdated = false;
+
+		try {
+			Connection conn = Database.getConnection();//get the connection
+
+			try {
+
+				boolean ifUpdatedInPeople = People.updateDeptIntoPeopleTable(deptID, this.getUIN());//update the dept
+				if (ifUpdatedInPeople)
+					isUpdated = true;
+
 			}
-			
-			catch(Exception e){
+			//catch block
+			catch (Exception e) {
 				System.out.println("Error adding/updating to database");
 				e.printStackTrace();
-				System.out.println(e);	
+				System.out.println(e);
 			}
-			
+
 		}
-		
-		catch(Exception e){
+		//catch block
+		catch (Exception e) {
 			System.out.println("Connection failed");
 			e.printStackTrace();
 			System.out.println(e);
-			
+
 		}
-		
-		finally{
-			
-			//System.out.println("retrieved");
+
+		finally {
+
+			// System.out.println("retrieved");
 		}
 
 		return isUpdated;
-				
+
 	}
-	//add files
-	
-	//get all course taken by the professor
-	
-	//add exams
-	
-	//grade exams
-	
-	public static class ProfessorDoesNotExistException extends Exception{
+
+	//new exceptions added that can be thrown 
+	public static class ProfessorDoesNotExistException extends Exception {
 		private static final long serialVersionUID = 1L;
 		private String message = null;
-		 
-	    public ProfessorDoesNotExistException() {
-	        super();
-	        this.message = "Professor does not exist";
-	    }
-	    
-	    public ProfessorDoesNotExistException(String message) {
-	        super();
-	        this.message = message;
-	    }
-	 
-	    @Override
-	    public String toString() {
-	        return message;
-	    }
-	 
-	    @Override
-	    public String getMessage() {
-	        return message;
-	    }
-	}
-	
-	
-	public static void main(String[] args){
-		
-//		try {
-//			Department dept=new Department(2);
-//			addProfToDb("Simant", dept);
-//		} catch (Department.DepartmentDoesNotExistException e) {
-//			// TODO Auto-generated catch block
-//			e.printStackTrace();
-//		}
-//		
-		
-		
-		//Professor x = new Professor("priyanka", "maravapa", 2);
-		
-		//x.addProfToDb();
-		
-		//retrieveProfDetailsByUserName("maravapa");
-		
-//		try {
-//			getAllProfInADept("aksh");
-//		} catch (ProfessorDoesNotExistException e) {
-//			// TODO Auto-generated catch block
-//			e.printStackTrace();
-//		}
-		
-		try {
-			Professor prof=new Professor(672);
-			System.out.println(prof.getName());
-		} catch (PersonDoesNotExistException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (Student.AccessDeniedException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+
+		public ProfessorDoesNotExistException() {
+			super();
+			this.message = "Professor does not exist";
 		}
 
-		
-		//prof.updateProfDept(16);
-		
-		
-		
-		
-		
-		//People.
-		
-		
+		public ProfessorDoesNotExistException(String message) {
+			super();
+			this.message = message;
+		}
+
+		@Override
+		public String toString() {
+			return message;
+		}
+
+		@Override
+		public String getMessage() {
+			return message;
+		}
+	}
+
+	/*
+	 * All professor functions add, update, retrieve are specified in the this class
+	 * 
+	 * local main class is used for testing functions and specific executions
+	 */
+	public static void main(String[] args) {
+
 	}
 
 }
-
