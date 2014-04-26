@@ -12,11 +12,7 @@ public class Course {
 	int courseID;
 	String courseName;
 	
-	/**
-	 * @param department
-	 * @param courseID
-	 * @param courseName
-	 */
+	/*Basic constructor when all the initialization values are known*/
 	public Course(int courseID, Department department, String courseName) {
 		super();
 		this.courseID = courseID;
@@ -24,7 +20,12 @@ public class Course {
 		this.courseName = courseName;
 	}
 	
-	//retrieve course using ID
+
+	/*This constructor takes the course id as an input and retrieves and initializes all the
+	 * course fields for the object.
+	 * Throws an CourseDoesNotExistException if the course id passed is not existing in the database.
+	 */
+	
 	public Course(int cID) throws CourseDoesNotExistException {
 		
 		System.out.println("Searching for course with ID:"+cID);
@@ -42,10 +43,10 @@ public class Course {
 					ResultSet rs =  statement.executeQuery();
 					
 					if(rs.first()){
-						//The object with the CourseName already exists
-						//Just update the current object with new values
-						//Storing the current values to execute update
-						System.out.println("Retreiving the Course");
+						/*The course with the specified id is found.
+						 * Initialize the object instance variables with the values retrieved from the database
+						 */
+						//System.out.println("Retreiving the Course");
 						int courseID = rs.getInt(1);
 						String courseName = rs.getString(2);
 						this.courseID = courseID;
@@ -55,22 +56,22 @@ public class Course {
 					}
 					
 					else{
+						/*
+						 * Throw an exception as the course with the id does not exist
+						 */
 						throw new CourseDoesNotExistException();
 					}
 				}
 			}
 			
 			catch(SQLException e){
-				System.out.println("Error updating/adding");
+				System.out.println("Error retrieving course");
 				System.out.println(e.getMessage());
 			} catch (Department.DepartmentDoesNotExistException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 			
-			finally{
-				//Database.closeConnection(conn);
-			}
 			
 		}
 		
@@ -78,6 +79,9 @@ public class Course {
 		}
 	}
 
+	/*
+	 * Constructor to initialize a course object using the course name
+	 */
 	public Course(String courseName) throws CourseDoesNotExistException{
 		try{
 			Connection conn = Database.getConnection();
@@ -92,7 +96,10 @@ public class Course {
 					ResultSet rs =  statement.executeQuery();
 					
 					if(rs.first()){
-						//The object with the CourseName already exists
+						/*
+						 * The object with the CourseName exists
+						 * Initialize the instance variables 
+						 */
 						System.out.println("Retreiving the Course");
 						int courseID = rs.getInt("CourseID");
 						String cName = rs.getString("CourseName");
@@ -103,13 +110,16 @@ public class Course {
 					}
 					
 					else{
+						/*
+						 * Throw the exception as course with the course name does not exist
+						 */
 						throw new CourseDoesNotExistException();
 					}
 				}
 			}
 			
 			catch(SQLException e){
-				System.out.println("Error getting");
+				System.out.println("Error getting course");
 				System.out.println(e.getMessage());
 			} catch (Department.DepartmentDoesNotExistException e) {
 				// TODO Auto-generated catch block
@@ -121,6 +131,11 @@ public class Course {
 		finally{
 		}
 	}
+
+	
+	/*
+	 * Getters and Setters************************************************
+	 */
 	
 	/**
 	 * @return the department
@@ -156,17 +171,22 @@ public class Course {
 	public void setCourseName(String courseName) {
 		this.courseName = courseName;
 	}
+	
+	
 
-	//Add a course to the database
+	/*
+	 * Add a course to the database using a course name and a department object
+	 */
 	public static boolean addCourse(String courseName, Department department) throws CourseAlreadyExistsException{
 		boolean isAdded = false;
 		
 		if(department == null || courseName.length()<1 || courseName == null)
 			return isAdded;
 		
-		//Check if the course with the same name exists
-		System.out.println("Searching for course with name:"+courseName);
-		
+		/*
+		 * Check if the course with the same name exists
+		 * If yes, then throw Course already exists exception
+		 */
 		if(isExists(courseName, department))
 			throw new CourseAlreadyExistsException();
 		
@@ -175,7 +195,9 @@ public class Course {
 			
 			try{
 				if(conn != null){
-					//add the data to the course table
+					/*
+					 * Add the course data to the course table
+					 */
 					System.out.println("Inserting new course");
 					String SQLInsert= "Insert into university.courses (CourseName, DepartmentID) Values (?,?);";
 					PreparedStatement statement;
@@ -189,7 +211,7 @@ public class Course {
 			}
 			
 			catch(SQLException e){
-				System.out.println("Error adding");
+				System.out.println("Error adding course to the table, check your sql query");
 				System.out.println(e.getMessage());
 			}
 						
@@ -198,11 +220,18 @@ public class Course {
 		finally{
 		}
 		
+		/*
+		 * returns if the course was successfully added to the database table
+		 */
 		return isAdded; 
 	}
 
+	/*
+	 * Update the course to the specified department
+	 */
 	public boolean updateCourse(String courseName, Department department){
 		boolean isUpdated = false;
+		
 		if(department == null || courseName.length()<1 || courseName == null)
 			return isUpdated;
 		
@@ -247,6 +276,9 @@ public class Course {
 
 	}
 	
+	/*
+	 * Checks if the specified course exists in the specified department
+	 */
 	private static boolean isExists(String courseName, Department department){
 		boolean isExists = false;
 		int deptID = department.getDepartmentID();
@@ -329,6 +361,9 @@ public class Course {
 		
 	}
 	
+	/*
+	 * Returns a Map of all the courses with their course ids as keys for the map
+	 */
 	public static LinkedHashMap<Integer,Course> getAllCourses(){
 		LinkedHashMap<Integer,Course> courses = new LinkedHashMap<Integer,Course>();
 		try{
@@ -366,6 +401,9 @@ public class Course {
 		return courses;
 	}
 	
+	/*
+	 * Returns a Map of all the course offerings for the course offered during the course of time
+	 */
 	public LinkedHashMap<Integer, CourseOffered> getCurrentOfferings(){
 		LinkedHashMap<Integer, CourseOffered> courseOfferings = new LinkedHashMap<Integer, CourseOffered>();
 		
@@ -409,6 +447,9 @@ public class Course {
 		return courseOfferings;
 	}
 	
+	/*
+	 * Returns a List of all the courses in the specified department
+	 */
  	public static ArrayList<Course> getCoursesOfDepartment(Department d){
 		int deptID = d.getDepartmentID();
 		ArrayList<Course> deptCourses = new ArrayList<Course>();
@@ -450,11 +491,13 @@ public class Course {
 	
 		
 	}
-	//CourseDoesnotExist Exception
+	
+ 	
+ 	/*
+ 	 * CourseDoesnotExist Exception is thrown when an object is tried to be initialized which does not exist
+ 	 */
 	static class CourseDoesNotExistException extends Exception{
-		/**
-		 * 
-		 */
+		
 		private static final long serialVersionUID = 1L;
 		private String message = null;
 		 
@@ -479,7 +522,10 @@ public class Course {
 	    }
 	}
 
-	//CourseDoesnotExist Exception
+	
+	/*
+	 * CourseAlreadyExist Exception when a course which already exists is tried to be added
+	 */
 	static class CourseAlreadyExistsException extends Exception{
 		/**
 		 * 
@@ -508,6 +554,10 @@ public class Course {
 	    }
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * @see java.lang.Object#toString()
+	 */
 	public String toString(){
 		String toReturn = "";
 		toReturn+="\nCourse Name:"+this.getCourseName();
@@ -516,12 +566,4 @@ public class Course {
 		
 	}
 
-	public static void main(String[] args) throws CourseDoesNotExistException{
-		LinkedHashMap<Integer, CourseOffered> co = new LinkedHashMap<Integer, CourseOffered>();
-		Course c = new Course(19);
-		co = c.getCurrentOfferings();
-		for(Integer i:co.keySet()){
-			System.out.println(co.get(i).getOfferID());
-		}
-	}
 }
