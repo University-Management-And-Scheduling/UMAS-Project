@@ -21,8 +21,12 @@ public class CourseOffered {
 	private int totalCapacity;
 	private int currentlyFilled;	
 	
-	
-	public CourseOffered(final int offerID) throws Course.CourseDoesNotExistException, CourseOfferingDoesNotExistException{
+	/*
+	 * Initialize a course offered object using the offer id
+	 * Throws a course offering does not exist exception if the offering does not exist and
+	 * throws a course does not exist exception if the course itself is non existent 
+	 */
+	public CourseOffered(int offerID) throws Course.CourseDoesNotExistException, CourseOfferingDoesNotExistException{
 		this.offerID = offerID;
 		try{
 			Connection conn = Database.getConnection();
@@ -63,7 +67,7 @@ public class CourseOffered {
 			}
 			
 			catch(SQLException e){
-				System.out.println("Error  course offering");
+				System.out.println("Error retrieving course offering");
 				System.out.println(e.getMessage());
 				e.printStackTrace();
 			} catch (Student.AccessDeniedException e) {
@@ -73,11 +77,7 @@ public class CourseOffered {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
-			
-			finally{
-				//Database.closeConnection(conn);
-			}
-			
+						
 		}
 		
 		finally{
@@ -87,6 +87,9 @@ public class CourseOffered {
 	}
 	
 	
+	/*
+	 * Getters and setters start*****************************************************
+	 */
 	/**
 	 * @return the offerID
 	 */
@@ -254,7 +257,15 @@ public class CourseOffered {
 		return times;
 		
 	}
-	//get all current current course offerings
+	
+	/*
+	 * Getters and settes end********************************************************
+	 */
+	
+	
+	/*
+	 * Returns all the current offerings as a ArrayList of CourseOffered objects
+	 */
 	public static ArrayList<CourseOffered> getAllCurrentlyOfferedCourses(){
 		ArrayList<CourseOffered> currentOffering = new ArrayList<CourseOffered>();
 		int currentSemID = getCurrentSemesterID();
@@ -266,10 +277,10 @@ public class CourseOffered {
 				if(conn != null){
 					
 					//Retrieve the current semester ID
-					String SemesterSelect = "Select *"
+					String SQLSelect = "Select *"
 							+ " FROM university.coursesoffered"
 							+ " WHERE SemesterID= ?";
-					PreparedStatement statement = conn.prepareStatement(SemesterSelect);
+					PreparedStatement statement = conn.prepareStatement(SQLSelect);
 					statement.setInt(1, currentSemID);
 					ResultSet rs = statement.executeQuery();
 					
@@ -282,7 +293,7 @@ public class CourseOffered {
 			}
 			
 			catch(SQLException e){
-				System.out.println("Error  course offering");
+				System.out.println("Error retrieving course offering");
 				System.out.println(e.getMessage());
 				e.printStackTrace();
 			} catch (Course.CourseDoesNotExistException e) {
@@ -298,6 +309,9 @@ public class CourseOffered {
 		return currentOffering;
 	}
 	
+	/*
+	 * Returns a HashMap of OfferID and CourseOffered for all the currently offered courses
+	 */
 	public static HashMap<Integer,CourseOffered> getAllOfferedIDAndCourseOffered(){
 		HashMap<Integer, CourseOffered> offerdCourses = new HashMap<Integer, CourseOffered>();
 		int currentSemID = getCurrentSemesterID();
@@ -341,8 +355,9 @@ public class CourseOffered {
 		return offerdCourses;
 	}
 	
-	//gets all current and previously offered courses
-	//get all present and past courses
+	/*
+	 * Returns all the current and previous offerings as a ArrayList of CourseOffered objects
+	 */
 	public static ArrayList<CourseOffered> getAllOfferedCourses(){
 		ArrayList<CourseOffered> currentOffering = new ArrayList<CourseOffered>();		
 		try{
@@ -382,10 +397,14 @@ public class CourseOffered {
 		return currentOffering;
 	}
 	
-	//function revision pending
-	//to be added functionality to check if this course can be scheduled if offered
-	//also schedule the course on a available slot after adding
-	//Add the courseOffered object to the database
+	/*
+	 * Add the course offering as a current offering to the database for the specified course, professor and capacity combo
+	 * The functions tries to see if the course can be scheduled in any classroom or not and schedules it if possible
+	 * The function also creates a default information file for the course offering  and adds the file to the course folder
+	 * Class the function in CourseExam to create a table to store all the course exam and test details
+	 * Throws a CourseOffering already exists exception if the offering already exists in the database for the current semester
+	 * Throws a COurseOffering not schedulable exception is the course offering cannot be scheduled in any classroom
+	 */
 	public static boolean addCourseOfferingToDatabase(final Course course,  final Professor professor, final int capacity) throws CourseOfferingAlreadyExistsException, CourseOfferingNotSchedulable{
 		int profID = professor.getUIN();
 		int courseID = course.getCourseID();
@@ -412,15 +431,22 @@ public class CourseOffered {
 					ResultSet rs =  statement.executeQuery();
 					
 					if(rs.first()){
-						//course offerings with the same courses exist
+						/*
+						 * course offerings with the same courses exist
+						 */
 						throw new CourseOfferingAlreadyExistsException();
 					}
 					
 					else{
+						/*
+						 * Check if the course offering is schedulable
+						 */
 						if(!CourseSchedule.isAnotherCourseSchedulable(capacity))
 							throw new CourseOfferingNotSchedulable();
 						
-						//add the object data to the courseOffered table
+						/*
+						 * Add the object data to the courseOffered table
+						 */
 						String SQLInsert = "Insert into university.coursesoffered"
 								+ "(CourseID,SemesterID,TotalCapacity,SeatsFilled,TaughtBy)"
 								+ "Values(?,?,?,?,?);";
@@ -432,16 +458,29 @@ public class CourseOffered {
 						statement.setInt(5, profID);
 						statement.executeUpdate();
 						ResultSet generatedSet = statement.getGeneratedKeys();
+						
 						int generatedID = -1;
+						
 						if(generatedSet.first())
 							generatedID = generatedSet.getInt(1);
 						else
 							return false;
-						System.out.println(generatedID);
-						//Database.commitTransaction(conn);
+						/*
+						 * flag to see if the table for exams was created
+						 */
 						boolean tableFlag = CourseExams.createCourseExamMarksTable(course.getCourseName(), generatedID, getCurrentSemesterID());
+						/*
+						 * flag to see if the course was successfully scheduled
+						 */
 						boolean flag = CourseSchedule.scheduleCourseUsingID(generatedID, totalCap);
+						/*
+						 * flag to see if the default file with course details was created to be added to this course
+						 */
 						boolean fileFlag = makeDefaultCourseFile(generatedID, course.getCourseName(), professor.getName());
+						
+						/*
+						 * Checks if the file was created and adds it to the database
+						 */
 						if(fileFlag){
 							String currentPath = System.getProperty("user.dir");
 							String fileDir = currentPath+"/Files/"+course.getCourseName()+"-"+generatedID;
@@ -449,6 +488,10 @@ public class CourseOffered {
 							fileFlag = File.addFileToDB(fileName, fileDir, generatedID);
 						}
 						
+						/*
+						 * If the scheduling, file creation, exam table creation and the file addition to database is successful
+						 * commit the whole transaction to the database
+						 */
 						if(flag && tableFlag && fileFlag){		
 							Database.commitTransaction(conn);
 							System.out.println("Added file------------------------");
@@ -474,6 +517,9 @@ public class CourseOffered {
 		
 	}
 
+	/*
+	 * Function to update the professor teaching the course currently
+	 */
 	public boolean updateCourseOffering(Professor professor) throws CourseOfferingDoesNotExistException{		
 		boolean isUpdated = false;	
 		try{
@@ -494,7 +540,7 @@ public class CourseOffered {
 			}
 			
 			catch(SQLException e){
-				System.out.println("Error updatint course offering");
+				System.out.println("Error updating course offering");
 				e.printStackTrace();
 			}
 			
@@ -506,13 +552,15 @@ public class CourseOffered {
 		return isUpdated;
 		
 	}
-	
+
+	/*
+	 * Makes a folder in the Files folder (present in the course folder) for storing all the course related files
+	 */
 	private static boolean makeDefaultCourseFile(int offerID, String courseName, String Professor){
 		try{
 			String currentPath = System.getProperty("user.dir");
 			String fileDir = currentPath+"/Files/"+courseName+"-"+offerID;
 			boolean dir = new java.io.File(fileDir).mkdirs();
-			
 			
 			java.io.File newFile = new java.io.File(fileDir+"/"+courseName+offerID+"-details.txt");
 			FileWriter writer = new FileWriter(newFile);
@@ -535,9 +583,12 @@ public class CourseOffered {
 		
 		
 	}
-	//complete
-	//get all courses of the student passed
-	public static ArrayList<CourseOffered> getStudentCourses(final Student student) throws Course.CourseDoesNotExistException, CourseOfferingDoesNotExistException{
+	
+	
+	/*
+	 * Returns an array list of all the current CourseOffered objects for the specified student 
+	 */
+	public static ArrayList<CourseOffered> getStudentCourses(Student student) throws Course.CourseDoesNotExistException, CourseOfferingDoesNotExistException{
 		if(student == null) {
 			throw new NullPointerException();
 		}
@@ -551,10 +602,10 @@ public class CourseOffered {
 				if(conn != null){
 					
 					//Retrieve the current semester ID
-					String SemesterSelect = "Select *"
+					String SQLSelect = "Select *"
 							+ " FROM university.studentenrollment"
 							+ " WHERE UIN= ?";
-					PreparedStatement statement = conn.prepareStatement(SemesterSelect);
+					PreparedStatement statement = conn.prepareStatement(SQLSelect);
 					statement.setInt(1, student.getUIN());
 					ResultSet rs = statement.executeQuery();
 					
@@ -569,7 +620,7 @@ public class CourseOffered {
 			}
 			
 			catch(SQLException e){
-				System.out.println("Error addind course offering");
+				System.out.println("Error retrieving course offering");
 				System.out.println(e.getMessage());
 				e.printStackTrace();
 				
@@ -587,8 +638,10 @@ public class CourseOffered {
 		
 	}
 	
-	//get all students in the current course offering object
-	public static ArrayList<Student> getAllStudentsInCourse(final CourseOffered courseOffered){
+	/*
+	 * returns all the students who have registered for the course offering 
+	 */
+	public static ArrayList<Student> getAllStudentsInCourse(CourseOffered courseOffered){
 		if(courseOffered == null) {
 			throw new NullPointerException();
 		}
@@ -640,7 +693,9 @@ public class CourseOffered {
 		
 	}
 	
-	//complete
+	/*
+	 * Returns all the current courses that the specified professor is teaching
+	 */
 	public static ArrayList<CourseOffered> getCurrentProfessorCourses(Professor professor){
 		if(professor == null)
 			return null;
@@ -656,10 +711,10 @@ public class CourseOffered {
 				if(conn != null){
 					
 					//Retrieve the current semester ID
-					String SemesterSelect = "Select *"
+					String SQLSelect = "Select *"
 							+ " FROM university.coursesoffered"
 							+ " WHERE TaughtBy=? and SemesterID= ?";
-					PreparedStatement statement = conn.prepareStatement(SemesterSelect);
+					PreparedStatement statement = conn.prepareStatement(SQLSelect);
 					statement.setInt(1, professorID);
 					statement.setInt(2, currentSemesterID);
 					ResultSet rs = statement.executeQuery();
@@ -693,7 +748,9 @@ public class CourseOffered {
 		return profCourses;
 	}
 	
-	
+	/*
+	 * Returns all the courses that are being currently TAed by the TA
+	 */
 	public static ArrayList<CourseOffered> getAllCurrentCoursesTAedBy(TA ta){
 		if(ta == null)
 			return null;
@@ -746,6 +803,9 @@ public class CourseOffered {
 		return taCourses;
 	}
 
+	/*
+	 * Returns all the courses that the TA is currently enrolled in
+	 */
 	public static ArrayList<CourseOffered> getAllCurrentCoursesTakenBy(TA ta){
 		if(ta == null) {
 			throw new NullPointerException();
@@ -792,12 +852,17 @@ public class CourseOffered {
 	}
 	
 	
-	//complete
+	/*
+	 * Returns if the course offering is full or not 
+	 */
 	public boolean isCourseFull() throws CourseOfferingDoesNotExistException{
 		return ((this.getTotalCapacity() - this.getCurrentlyFilled()) <= 0);
 	}
 	
-	//complete
+	/*
+	 * Adds one to the seats filled for the course offering
+	 * Called after a student registers for a course
+	 */
 	public boolean addOneSeatFilledToCourseOffered() throws CourseOfferingNotCurrentException{
 		boolean success = false;
 		int currentlyFilled = 0;
@@ -856,6 +921,9 @@ public class CourseOffered {
 		return success;
 	}
 	
+	/*
+	 * Subtracts one seat from the course offering after the student unregisters
+	 */
 	public boolean removeOneSeatFromCourseOffered() throws CourseOffered.CourseOfferingDoesNotExistException{
 		boolean seatRemoved = false;
 		int offerID = this.getOfferID();
@@ -893,10 +961,10 @@ public class CourseOffered {
 		return seatRemoved ;
 	}
 	
-	//complete
-	//check if the current course object is scheduled
-	//check first if the course offering is current
-	//if not current, throw courseOffering not current exception
+	/*
+	 * Checks if the current course offering is scheduled or not
+	 * Basically it acts as a safety check for some of the functions
+	 */
 	public boolean checkIfScheduled() throws CourseOfferingNotCurrentException{
 		if(!checkIfCurrent()){
 			return false;
@@ -939,7 +1007,9 @@ public class CourseOffered {
 		return doesExist;
 	}
 	
-	
+	/*
+	 * Checks of the offer id exists in the database 
+	 */
 	public static boolean checkIfExists(int offerID){
 		boolean doesExist = false;
 		
@@ -978,8 +1048,9 @@ public class CourseOffered {
 		return doesExist;
 	}
 	
-	//complete
-	//return current semesterID
+	/*
+	 * Returns the semester id of teh current on going semester
+	 */
 	public static int getCurrentSemesterID(){
 		int current = -1;
 		try{
@@ -1017,14 +1088,17 @@ public class CourseOffered {
 		}
 	}
 	
-	//complete
-	//check if the current courseOffering is current
+	/*
+	 * Checks of the course offering is current or if it was a previously offered course
+	 */
 	public boolean checkIfCurrent(){
 		int semID = this.getSemesterID();
 		return (semID == getCurrentSemesterID());
 	}
 	
-	//to check if the course can be registered by a student
+	/*
+	 * Checks if the course is register-able by the student passed
+	 */
 	public boolean isCourseRegistrableBy(Student student){
 		
 		//check if the student is already registered
@@ -1060,6 +1134,9 @@ public class CourseOffered {
 		
 	}
 	
+	/*
+	 * Sends all the course files to the student who is passed as a parameter
+	 */
 	public boolean sendCourseFilesToStudent(Student s){
 		ArrayList<File> file = this.getFiles();
 		
@@ -1076,7 +1153,9 @@ public class CourseOffered {
 		return isSent;
 	}
 	
-	//CourseDoesnotExist Exception
+	/*
+	 * CourseDoesnotExist Exception
+	 */
 	public static class CourseOfferingDoesNotExistException extends Exception{
 		private static final long serialVersionUID = 1L;
 		private String message = null;
@@ -1102,7 +1181,9 @@ public class CourseOffered {
 	    }
 	}
 
-	//CourseOfferingAlreadyExistsException
+	/*
+	 * CourseOfferingAlreadyExistsException
+	 */
 	public static class CourseOfferingAlreadyExistsException extends Exception{
 		private static final long serialVersionUID = 1L;
 		private String message = null;
@@ -1128,7 +1209,9 @@ public class CourseOffered {
 	    }
 	}
 
-	//CourseOfferingNotCurrent Exception
+	/*
+	 * CourseOfferingNotCurrent Exception
+	 */
 	public static class CourseOfferingNotCurrentException extends Exception{
 		private static final long serialVersionUID = 1L;
 		private String message = null;
@@ -1154,7 +1237,9 @@ public class CourseOffered {
 	    }
 	}
 
-	//CourseOfferingNotSchedulable Exception
+	/*
+	 * CourseOfferingNotSchedulable Exception
+	 */
 	public static class CourseOfferingNotSchedulable extends Exception{
 			private static final long serialVersionUID = 1L;
 			private String message = null;
@@ -1201,36 +1286,5 @@ public class CourseOffered {
 	public int hashCode() {
 		return (this.offerID*31);
 	}
-	
-	
-	public static void main(final String[] args) throws Course.CourseDoesNotExistException, CourseOfferingDoesNotExistException, CourseOfferingNotCurrentException, CourseOfferingAlreadyExistsException, CourseOfferingNotSchedulable, IOException{
-		//addCourseOfferingToDatabase(new Course(103), new Professor(289), 50);
-		//StudentEnrollment se = new StudentEnrollment(423, 451);
-		//se.unregisterStudent();
-//		CourseOffered c = new CourseOffered(424);
-//		ArrayList<File> file = c.getFiles();
-//		
-//		String [] attachments = new String[file.size()];
-//		for(int i=0;i<file.size();i++){
-//			File f = file.get(i);
-//			attachments[i] = f.getFileLocation()+"\\"+f.getFileName();
-//		}
-//		
-//		Email email = Email.getInstance("umas.uic@gmail.com", "cs597project");
-//		email.sendEmailWithAttachments("xyz@umas.com", "Course files", "Find attachments", attachments);
-		
-//		java.io.File file = new java.io.File("xyz.txt");
-//		FileWriter filewrite = new FileWriter(file);
-//		filewrite.write("Course details file");
-//		filewrite.close();
-//		System.out.println(file.getAbsolutePath());
-//		String x = "ssssdfdlssdfdmfdssmmvkc";
-//		System.out.println(x.lastIndexOf("s"));
-		
-		//System.out.println(System.getProperty("user.dir"));
-	}
-
-
-
 
 }
