@@ -43,22 +43,21 @@ public class Admin extends Employee {
 	 * 
 	 * else the function returns false
 	 */
-	public static boolean addAdmin(String name, Department dept)
-			throws loginDetailsnotAdded {
+	public static boolean addAdmin(String name, Department dept) throws loginDetailsnotAdded {
 
-		boolean isAdded = false;
+		boolean isAdded = false; //create a boolean value for returning. set it to false
 
 		if (dept == null) {
-
+			//if the dept object is null then return false
 			return false;
 		}
 
-		int addedUIN = Employee.addIntoDatabase(name, dept, 1);
+		int addedUIN = Employee.addIntoDatabase(name, dept, 1);//add the admin into the database with the name, dept and position ID
 
-		boolean isAddedtoEmp = Employee.addEmployee(addedUIN);
+		boolean isAddedtoEmp = Employee.addEmployee(addedUIN);//returns true if added
 
 		if (isAddedtoEmp)
-			isAdded = true;
+			isAdded = true;//return true
 
 		return isAdded;
 	}
@@ -73,10 +72,10 @@ public class Admin extends Employee {
 		// if(Professor == null)
 		// throw new NullPointerException();
 
-		ArrayList<Admin> getAllAdmin = new ArrayList<Admin>();
+		ArrayList<Admin> getAllAdmin = new ArrayList<Admin>();//declare a arraylist
 
 		try {
-			Connection conn = Database.getConnection();
+			Connection conn = Database.getConnection();//establish a connection
 
 			try {
 				if (conn != null) {
@@ -85,20 +84,19 @@ public class Admin extends Employee {
 					// Retrieve all the professors from one department
 					String adminSelect = "Select *" + " FROM university.people"
 							+ " WHERE PositionID=1";
-					PreparedStatement statement = conn
-							.prepareStatement(adminSelect);
-					ResultSet rs = statement.executeQuery();
+					PreparedStatement statement = conn.prepareStatement(adminSelect);
+					ResultSet rs = statement.executeQuery();//execute the query
 
 					while (rs.next()) {
 
-						int retreivedAdminUIN = rs.getInt("UIN");
-						// System.out.println(retreivedProfUserNames);
+						int retreivedAdminUIN = rs.getInt("UIN");//get the UIN and store it in a variable
 						Admin admins;
 						try {
-							admins = new Admin(retreivedAdminUIN);
-							getAllAdmin.add(admins);
+							admins = new Admin(retreivedAdminUIN);//put the retrieved UIN and put it in the admin object
+							getAllAdmin.add(admins);//add it to the arraylist
 							System.out.println(admins.getUserName());
 						} 
+						//catch the person does not exist exception
 						catch (PersonDoesNotExistException e) {
 							// TODO Auto-generated catch block
 							e.printStackTrace();
@@ -109,14 +107,15 @@ public class Admin extends Employee {
 				}
 
 			}
-
+			//catch the SQl exception
 			catch (SQLException e) {
 				System.out.println("Error fetching all the professors");
 				System.out.println(e.getMessage());
 				e.printStackTrace();
 
 			}
-
+			/*The code thats placed in the finally block gets executed no matter what. But 
+														here the finally block does not contain any general statements*/
 			finally {
 				// Database.commitTransaction(conn);
 			}
@@ -142,20 +141,20 @@ public class Admin extends Employee {
 	 */
 	public boolean updateAdminUserName(String userName) {
 
-		boolean isUpdated = false;
+		boolean isUpdated = false;//create a boolean value for returning. set it to false
+
 
 		try {
-			Connection conn = Database.getConnection();
+			Connection conn = Database.getConnection();//establish the connection
 
 			try {
 
-				boolean ifAddedInLogin = People.updateUserNameIntoLoginTable(
-						userName, this.getUserName());
+				boolean ifAddedInLogin = People.updateUserNameIntoLoginTable(userName, this.getUserName());//update the username inthe login table
 				if (ifAddedInLogin)
-					isUpdated = true;
+					isUpdated = true;//if updated set true
 
 			}
-
+			//catch block
 			catch (Exception e) {
 				System.out.println("Error adding/updating to database");
 				e.printStackTrace();
@@ -163,14 +162,15 @@ public class Admin extends Employee {
 			}
 
 		}
-
+		//catch block
 		catch (Exception e) {
 			System.out.println("Connection failed");
 			e.printStackTrace();
 			System.out.println(e);
 
 		}
-
+		/*The code thats placed in the finally block gets executed no matter what. But 
+														here the finally block does not contain any general statements*/
 		finally {
 
 			// System.out.println("retrieved");
@@ -196,17 +196,16 @@ public class Admin extends Employee {
 		boolean isUpdated = false;
 
 		try {
-			Connection conn = Database.getConnection();
+			Connection conn = Database.getConnection();//create a boolean value for returning. set it to false
 
 			try {
 
-				boolean ifUpdatedInLogin = People.updateNameIntoPeopleTable(
-						name, this.getUIN());
-				if (ifUpdatedInLogin)
-					isUpdated = true;
+				boolean ifUpdatedInPeople = People.updateNameIntoPeopleTable(name, this.getUIN());//update name in the people table
+				if (ifUpdatedInPeople)
+					isUpdated = true;//if added then set true
 
 			}
-
+			//catch block for the exception
 			catch (Exception e) {
 				System.out.println("Error adding/updating to database");
 				e.printStackTrace();
@@ -214,14 +213,16 @@ public class Admin extends Employee {
 			}
 
 		}
-
+		//catch block
 		catch (Exception e) {
 			System.out.println("Connection failed");
 			e.printStackTrace();
 			System.out.println(e);
 
 		}
-
+		
+		/*The code thats placed in the finally block gets executed no matter what. But 
+													here the finally block does not contain any general statements*/
 		finally {
 
 			// System.out.println("retrieved");
@@ -244,20 +245,20 @@ public class Admin extends Employee {
 
 	public boolean updateAdminDept(int deptID) {
 
-		boolean isUpdated = false;
+		boolean isUpdated = false;//create a boolean value for returning. set it to false
+
 
 		try {
-			Connection conn = Database.getConnection();
+			Connection conn = Database.getConnection();//establish a connection
 
 			try {
 
-				boolean ifUpdatedInPeople = People.updateDeptIntoPeopleTable(
-						deptID, this.getUIN());
+				boolean ifUpdatedInPeople = People.updateDeptIntoPeopleTable(deptID, this.getUIN());//update dept in people table
 				if (ifUpdatedInPeople)
-					isUpdated = true;
+					isUpdated = true;//set the return type to true
 
 			}
-
+			//catch block
 			catch (Exception e) {
 				System.out.println("Error adding/updating to database");
 				e.printStackTrace();
@@ -265,7 +266,7 @@ public class Admin extends Employee {
 			}
 
 		}
-
+		//catch block
 		catch (Exception e) {
 			System.out.println("Connection failed");
 			e.printStackTrace();
@@ -273,6 +274,8 @@ public class Admin extends Employee {
 
 		}
 
+		/*The code thats placed in the finally block gets executed no matter what. But 
+														here the finally block does not contain any general statements*/
 		finally {
 
 			// System.out.println("retrieved");
