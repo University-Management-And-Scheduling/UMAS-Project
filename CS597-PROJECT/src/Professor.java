@@ -724,7 +724,8 @@ public class Professor extends Employee {
 //		}
 		
 		try {
-			Professor prof=new Professor(451);
+			Professor prof=new Professor(672);
+			System.out.println(prof.getName());
 		} catch (PersonDoesNotExistException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

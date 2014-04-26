@@ -12,7 +12,7 @@ import com.mysql.jdbc.Statement;
 * 
 */
 
-/*************** ADMIN.JAVA CLASS WAS WRITTEN BY AKSHAY THIRKATEH ********************************/
+/*************** JOB.JAVA CLASS WAS WRITTEN BY AKSHAY THIRKATEH ********************************/
 
 public class Job {
 	
