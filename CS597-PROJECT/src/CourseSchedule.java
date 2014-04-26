@@ -90,9 +90,12 @@ public class CourseSchedule {
 		this.classroom = classroom;
 	}
 
-	public CourseSchedule(int offerID){
-		
-		
+	/*
+	 * Retrieves the course schedule for the specified course offer id
+	 * If the courseOffering is not current, it doesn't initialize the any value
+	 * Doesn't throw any exceptions as non-current course offerings do not have a schedule and that is acceptable 
+	 */
+	public CourseSchedule(int offerID){		
 		try{
 			Connection conn = Database.getConnection();
 			
@@ -100,10 +103,10 @@ public class CourseSchedule {
 				if(conn != null && CourseOffered.checkIfExists(offerID)){
 					
 					//Retrieve the current semester ID
-					String courseSelect = "Select *"
+					String scheduleSelect = "Select *"
 							+ " FROM university.courseschedule"
 							+ " WHERE offerID= ?";
-					PreparedStatement statement = conn.prepareStatement(courseSelect);
+					PreparedStatement statement = conn.prepareStatement(scheduleSelect);
 					statement.setInt(1, offerID);
 					ResultSet rs = statement.executeQuery();
 					
@@ -131,21 +134,24 @@ public class CourseSchedule {
 			}
 			
 			catch(SQLException e){
-				System.out.println("Error retreiving course");
+				System.out.println("Error retreiving schedule");
 				System.out.println(e.getMessage());
 				e.printStackTrace();
 			}
-			
-			finally{
-				//Database.closeConnection(conn);
-			}
-			
+						
 		}
 		
 		finally{
 		}
 	}
-		
+	
+	/*
+	 * Update the course schedule of the passed course offering, with the passed classroom and the passed time slot
+	 * Checks if the course offering is already scheduled, if not, it will not update the course schedule
+	 * Also checks if the classroom and the time slot requested are available, otherwise the updating will fail
+	 * Throws a course offering not current exception if the courseOffered passed is not a currently offered course
+	 * 
+	 */
 	public static void updateCourseSchedule(CourseOffered courseoffered, Classroom classroom, Timeslots timeslots) throws CourseOffered.CourseOfferingNotCurrentException{
 		if(courseoffered == null || classroom == null || timeslots == null){
 			return;
@@ -188,6 +194,9 @@ public class CourseSchedule {
 		//If none of the above steps throw an error schedule the course
 	}
 	
+	/*
+	 * Returns a Map of Course schedule id and the course schedule object for all the currently scheduled courses
+	 */
 	public static HashMap<Integer, CourseSchedule> getHaspMapForSchedule(){
 		HashMap<Integer, CourseSchedule> cs = new HashMap<Integer, CourseSchedule>();
 		for(CourseSchedule c: getAllScheduledCourses()){
@@ -197,6 +206,9 @@ public class CourseSchedule {
 		return cs;
 	}
 	
+	/*
+	 * Returns a ArrayList of Course schedule object for all the currently scheduled course
+	 */
 	public static ArrayList<CourseSchedule> getAllScheduledCourses(){
 		ArrayList<CourseSchedule> courseSchedule = new ArrayList<CourseSchedule>();
 		try{
@@ -232,6 +244,9 @@ public class CourseSchedule {
 		return courseSchedule;
 	}
 	
+	/*
+	 * Returns a ArrayList of all the scheduled courses in the specified department
+	 */
 	public static ArrayList<CourseSchedule> getAllScheduledCourses(Department department){
 		ArrayList<CourseSchedule> courseSchedule = new ArrayList<CourseSchedule>();
 		if(department == null)
@@ -279,16 +294,23 @@ public class CourseSchedule {
 		return courseSchedule;
 	}
 	
-	public static void scheduleCourse(CourseOffered courseOffered){
+	/*
+	 * Schedule the passed courseOffered course
+	 * The algorithm looks for a classroom with a empty time slot and schedules the course
+	 * If no class room is found, it will return false, indicating the course was not scheduled
+	 * Else it will schedule the course offering in the first empty classroom found
+	 */
+	public static boolean scheduleCourse(CourseOffered courseOffered){
 		//Check if the course is already scheduled
 		System.out.println("xxxxxxxxxxxxxxxxINSIDE SCHEDULE COURSE FUNCTIONxxxxxxxxxxxxxx");
 		Classroom c = null;
 		Timeslots t = null;
 		int timeSlotType = 1;
+		boolean isScheduled = false;
 		
 		if(isScheduled(courseOffered.getOfferID())){
 			System.out.println("Course is already scheduled");
-			return;
+			return isScheduled;
 		}
 		
 		//Find a classroom with empty slot
@@ -311,8 +333,10 @@ public class CourseSchedule {
 			timeSlotType++;
 		}
 		
-		if(c==null)
+		if(c==null){
 			System.out.println("Cannot schedule this course, no empty class found");
+			return isScheduled;
+		}
 		
 		if(c!=null){
 			t = c.getEmptySlot(timeSlotType);				
@@ -320,13 +344,15 @@ public class CourseSchedule {
 			int offerID = courseOffered.getOfferID();
 			int classroomID = c.getClassroomID();
 			int timeslotID = t.getTimeSlotID();
-			addSchedule(offerID, classroomID, timeslotID);
+			isScheduled = addSchedule(offerID, classroomID, timeslotID);
 		}
 		
-		
-		//Commit the schedule
+		return isScheduled;
 	}
 
+	/*
+	 * Similar to above function only input parameters are different
+	 */
 	public static boolean scheduleCourseUsingID(int offerID, int capacity){
 		Classroom c = null;
 		Timeslots t = null;
@@ -358,9 +384,10 @@ public class CourseSchedule {
 			timeSlotType++;
 		}
 		
-		if(c==null)
+		if(c==null){
 			System.out.println("Cannot schedule this course, no empty classroom found");
-		
+			return false;
+		}
 		if(c!=null){
 			t = c.getEmptySlot(timeSlotType);				
 			//Schedule the course in the empty slot
@@ -372,6 +399,9 @@ public class CourseSchedule {
 		return addFlag;
 	}
 	
+	/*
+	 * Checks if the course offering is scheduled or not	
+	 */
 	public static boolean isScheduled(int offerID){
 		boolean isScheduled = false;
 		try{
@@ -381,10 +411,10 @@ public class CourseSchedule {
 				if(conn != null){
 					
 					//Retrieve the current semester ID
-					String courseSelect = "Select *"
+					String SQLSelect = "Select *"
 							+ " FROM university.courseschedule"
 							+ " WHERE offerID= ?";
-					PreparedStatement statement = conn.prepareStatement(courseSelect);
+					PreparedStatement statement = conn.prepareStatement(SQLSelect);
 					statement.setInt(1, offerID);
 					ResultSet rs = statement.executeQuery();
 					
@@ -403,7 +433,7 @@ public class CourseSchedule {
 			}
 			
 			catch(SQLException e){
-				System.out.println("Error retreiving course");
+				System.out.println("Error retreiving schedule");
 				System.out.println(e.getMessage());
 				e.printStackTrace();
 			}
@@ -419,7 +449,10 @@ public class CourseSchedule {
 		
 		return isScheduled;
 	}
-	
+
+	/*
+	 * This function is called by the earlier functions to schedule the coure offering
+	 */
 	private static boolean addSchedule(int offerID, int classroomID, int timeslotID){
 		boolean addFlag = false;
 		
@@ -456,14 +489,23 @@ public class CourseSchedule {
 		return addFlag;
 	}
 	
+	
+	/*
+	 * Schedules/reschedules all the current course offerings
+	 */
 	public static void scheduleAllCurrentCourses(){
-		//Remove all the scheduled courses
+		/*
+		 * Remove all the scheduled courses
+		 */
 		deleteAllCourseSchedule();
-		//Get all the current course offerings
-		//Pick up one courseOffering at random
-		//Find a classroom and empty timeslot for the offering
-		//Schedule the courseOffering
-		//Repeat the steps with other offerings
+		
+		/*
+		 * Get all the current course offerings
+		 * Pick up one courseOffering at random
+		 * Find a classroom and an empty time slot for the offering
+		 * Schedule the courseOffering
+		 * Repeat the steps with other offerings
+		 */
 		
 		ArrayList<CourseOffered> allCourses = CourseOffered.getAllCurrentlyOfferedCourses();
 		Collections.shuffle(allCourses);
@@ -480,6 +522,10 @@ public class CourseSchedule {
 		Database.commitTransaction(Database.getConnection());
 	}
 	
+	
+	/*
+	 * Reschedule all the current course offerings for the specified department
+	 */
 	public static void scheduleAllCurrentCourses(Department department){
 		//Remove all the scheduled courses in the dept
 		
@@ -499,6 +545,9 @@ public class CourseSchedule {
 		Database.commitTransaction(Database.getConnection());
 	}
 	
+	/*
+	 * Deletes all the course schedule
+	 */
 	static void deleteAllCourseSchedule(){
 		try{
 			Connection conn = Database.getConnection();
@@ -532,6 +581,9 @@ public class CourseSchedule {
 		}
 	}
 	
+	/*
+	 * Deletes all the current course schedule for the course offering for the specified department 
+	 */
 	public static void deleteAllCourseSchedule(Department department){
 		ArrayList<CourseOffered> deptCoursesOffering = department.getDepartmentCourseOffered();
 		
@@ -540,6 +592,9 @@ public class CourseSchedule {
 		}
 	}
 	
+	/*
+	 * This function is used by deleteAlCourseSchedule function to delete course offerings one at a time
+	 */
 	private static void deleteSingleSchedule(int offerID){
 		try{
 			Connection conn = Database.getConnection();
@@ -575,6 +630,9 @@ public class CourseSchedule {
 		}
 	}
 	
+	/*
+	 * Checks of another course is schedulable for the capacity mentioned
+	 */
 	public static boolean isAnotherCourseSchedulable(int courseCapacity){
 		int timeSlotType = 1;
 		Classroom c = null;
@@ -593,13 +651,14 @@ public class CourseSchedule {
 		
 	}
 	
-	public static void main(String args[]) throws Course.CourseDoesNotExistException, CourseOffered.CourseOfferingDoesNotExistException{
-		//scheduleAllCurrentCourses();
-		try {
-			updateCourseSchedule(new CourseOffered(295), new Classroom(10), new Timeslots(31));
-		} catch (CourseOffered.CourseOfferingNotCurrentException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-	}
+	
+//	public static void main(String args[]) throws Course.CourseDoesNotExistException, CourseOffered.CourseOfferingDoesNotExistException{
+//		//scheduleAllCurrentCourses();
+//		try {
+//			updateCourseSchedule(new CourseOffered(295), new Classroom(10), new Timeslots(31));
+//		} catch (CourseOffered.CourseOfferingNotCurrentException e) {
+//			// TODO Auto-generated catch block
+//			e.printStackTrace();
+//		}
+//	}
 }

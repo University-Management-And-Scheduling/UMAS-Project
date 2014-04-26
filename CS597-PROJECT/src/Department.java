@@ -28,16 +28,19 @@ public class Department {
 	}
 		
 	
-	//Retrieve department from the database using the department ID;
+	/*
+	 * Retrieve department from the database using the department ID;
+	 */
 	public Department(int departmentID) throws DepartmentDoesNotExistException{
-		
-		System.out.println("Searching for department with ID:"+departmentID);
 		
 		try{
 			Connection conn = Database.getConnection();
 			
 			try{
 				if(conn != null){
+					/*
+					 * Try to look for the department in the department table
+					 */
 					String SQLSelect= "Select DepartmentID, DepartmentName"
 							+ " FROM university.department"
 							+ " WHERE DepartmentID= ?";
@@ -45,12 +48,15 @@ public class Department {
 					statement.setInt(1, departmentID);
 					ResultSet rs =  statement.executeQuery();
 					
+					/*
+					 * If he department is found in the database
+					 * Initialize the values of the object
+					 */
 					if(rs.first()){
-						//The object with the DepartmentName already exists
-						//Just update the current object with new values
-						
-						//Storing the current values to execute update
-						System.out.println("Retreiving the department");
+						/*
+						 * The object with the DepartmentName already exists
+						 * Just initialize the current object with new values
+						 */
 						int dID = rs.getInt(1);
 						String dName = rs.getString(2);
 						this.departmentID = dID;
@@ -58,8 +64,9 @@ public class Department {
 					}
 					
 					else{
-						//add the object data to the courseOffered table
-						System.out.println("----EXCEPTION:DEPARTMENT DOES NOT EXIST----");
+						/*
+						 * Throw department does not exists exception
+						 */
 						throw new DepartmentDoesNotExistException();
 					}
 				}
@@ -69,18 +76,17 @@ public class Department {
 				System.out.println("Error updating/adding");
 				System.out.println(e.getMessage());
 			}
-			
-			finally{
-				//Database.closeConnection(conn);
-			}
-			
+						
 		}
 		
 		finally{
 		}
 	}
 
-	//Retrieve department from the database using the department name, initialize the object if it does, else values remain null
+	/*
+	 * Retrieve department from the database using the department name, 
+	 * Initialize the object if it does, else values remain null
+	 */
 	public Department(String departmentName) throws DepartmentDoesNotExistException{
 			
 			System.out.println("Searching for department with Name:"+departmentName);
@@ -90,6 +96,9 @@ public class Department {
 				
 				try{
 					if(conn != null){
+						/*
+						 * Try to retrieve the department
+						 */
 						String SQLSelect= "Select DepartmentID, DepartmentName"
 								+ " FROM university.department"
 								+ " WHERE DepartmentName= ?";
@@ -97,12 +106,14 @@ public class Department {
 						statement.setString(1, departmentName);
 						ResultSet rs =  statement.executeQuery();
 						
+						/*
+						 * If the department is found, initialize the object with the retireved values
+						 */
 						if(rs.first()){
-							//The object with the DepartmentName already exists
-							//Just update the current object with new values
-							
-							//Storing the current values to execute update
-							System.out.println("Retreiving the department");
+							/*
+							 * The object with the DepartmentName already exist
+							 * Just initialize the current object with new values
+							 */
 							int dID = rs.getInt(1);
 							String dName = rs.getString(2);
 							this.departmentID = dID;
@@ -110,7 +121,9 @@ public class Department {
 						}
 						
 						else{
-							//add the object data to the courseOffered table
+							/*
+							 * Throw exception
+							 */
 							System.out.println("----DEPARTMENT DOES NOT EXIST----");
 							throw new DepartmentDoesNotExistException();
 						}
@@ -132,13 +145,19 @@ public class Department {
 			}
 		}
 		
-	//Add a new department, static method, can be accessed via class name only
+	
+	/*
+	 * Add a new department to the database
+	 */
 	public static void addNewDepartment(String departmentName) throws DepartmentAlreadyExistsException{
 		try{
 			Connection conn = Database.getConnection();
 			
 			try{
 				if(conn != null){
+					/*
+					 * Check to see if teh department with the same name exists already
+					 */
 					String SQLSelect= "Select DepartmentName"
 							+ " FROM university.department"
 							+ " WHERE DepartmentName= ?";
@@ -146,15 +165,18 @@ public class Department {
 					statement.setString(1, departmentName);
 					ResultSet rs =  statement.executeQuery();
 					
+					/*
+					 * If the department exists, throw exception
+					 */
 					if(rs.first()){
 						//The object with the DepartmentName already exists
-						System.out.println("Department already exists, use a different name");
 						throw new DepartmentAlreadyExistsException();
 					}
 					
 					else{
-						//add the object data to the courseOffered table
-						System.out.println("Inserting new department");
+						/*
+						 * Add the object data to the department table
+						 */
 						String SQLInsert= "Insert into university.department (DepartmentName) Values (?);";
 						statement.close();
 						statement = conn.prepareStatement(SQLInsert);
@@ -166,7 +188,7 @@ public class Department {
 			}
 			
 			catch(SQLException e){
-				System.out.println("Error adding");
+				System.out.println("Error adding department");
 				System.out.println(e.getMessage());
 			}
 			
@@ -181,7 +203,10 @@ public class Department {
 
 	}
 	
-	//Delete specified department
+
+	/*
+	 * Delete specified department
+	 */
 	@SuppressWarnings("unused")
 	private static void deleteDepartment(String departmentName) throws DepartmentDoesNotExistException{
 		boolean isDeleteSuccessfull = false;
@@ -242,9 +267,15 @@ public class Department {
 		}
 	}
 	
-	//Update the existing department uses the object values to update the database
+	/*
+	 * Update the existing department using the object values to update the database
+	 * It will update the department with the values of the instance variables
+	 */
 	public void updateDepartment() throws DepartmentDoesNotExistException{
 		
+		/*
+		 * Null checks
+		 */
 		if(this.getDepartmentName() == null || this.getDepartmentID() == 0)
 			throw new DepartmentDoesNotExistException("Un-initialized object");
 		
@@ -252,6 +283,9 @@ public class Department {
 			Connection conn = Database.getConnection();
 			try{
 				if(conn != null){
+					/*
+					 * Retrieve the department row
+					 */
 					String SQLSelect= "Select DepartmentID, DepartmentName"
 							+ " FROM university.department"
 							+ " WHERE DepartmentID= ?";
@@ -259,8 +293,13 @@ public class Department {
 					statement.setInt(1, this.getDepartmentID());
 					ResultSet rs =  statement.executeQuery();
 					
+					/*
+					 * Update the department row with new values and commit the update
+					 */
 					if(rs.first()){
-						//The object with the DepartmentName already exists
+						/*
+						 * Update with new values from the object instance variables
+						 */
 						System.out.println("Updating the department with new values");
 						rs.updateInt(1, this.getDepartmentID());
 						rs.updateString(2, this.getDepartmentName());
@@ -275,11 +314,7 @@ public class Department {
 				System.out.println("Error updating");
 				System.out.println(e.getMessage());
 			}
-			
-			finally{
-				//Database.closeConnection(conn);
-			}
-			
+						
 		}
 		
 		finally{
@@ -295,6 +330,9 @@ public class Department {
 	}
 	
 
+	/*
+	 * Method to retrieve a list of all the departments in a list
+	 */
 	public static ArrayList<Department> getAllDepartments(){
 		ArrayList<Department> departments = new ArrayList<Department>();
 		try{
@@ -302,11 +340,16 @@ public class Department {
 			
 			try{
 				if(conn != null){
+					/*
+					 * retrieve all the departments
+					 */
 					String SQLSelect= "Select *"
 							+ " FROM university.department";
 					PreparedStatement statement = conn.prepareStatement(SQLSelect);
 					ResultSet rs =  statement.executeQuery();
-					
+					/*
+					 * Add all the retrieved department to the List
+					 */
 					while(rs.next()){
 						try {
 							Department d = new Department(rs.getInt("DepartmentID"));
@@ -322,7 +365,7 @@ public class Department {
 			}
 			
 			catch(SQLException e){
-				System.out.println("Error updating/adding");
+				System.out.println("Error retrieving");
 				System.out.println(e.getMessage());
 			}			
 		}
@@ -333,7 +376,9 @@ public class Department {
 		return departments;
 	}
 	
-	//DepartmentDoesnotExist Exception
+	/*
+	 * DepartmentDoesnotExist Exception
+	 */
 	static class DepartmentDoesNotExistException extends Exception{
 		/**
 		 * 
@@ -362,7 +407,9 @@ public class Department {
 	    }
 	}
 
-	//DepartmentDoesnotExist Exception
+	/*
+	 * DepartmentDoesnotExist Exception
+	 */
 	static class DepartmentAlreadyExistsException extends Exception{
 		/**
 		 * 
@@ -387,7 +434,9 @@ public class Department {
 	    }
 	}
 	
-	//to be implemented
+	/*
+	 * Method to retrieve all the courses in the department
+	 */
 	public ArrayList<Course> getDepartmentCourses(){
 		ArrayList<Course> deptCourses = new ArrayList<Course>();
 		
@@ -396,13 +445,18 @@ public class Department {
 			
 			try{
 				if(conn != null){
+					/*
+					 * Retrieve all courses by filtering using the department id
+					 */
 					String SQLSelect= "Select CourseID"
 							+ " FROM university.department natural join university.courses"
 							+ " WHERE DepartmentID= ?";
 					PreparedStatement statement = conn.prepareStatement(SQLSelect);
 					statement.setInt(1, this.getDepartmentID());
 					ResultSet rs =  statement.executeQuery();
-					
+					/*
+					 * Add all the retrieved courses to the List
+					 */
 					while(rs.next()){
 						Course c = new Course(rs.getInt("CourseID"));
 						deptCourses.add(c);
@@ -430,6 +484,9 @@ public class Department {
 		return deptCourses;
 	}
 	
+	/*
+	 * Retrieve all the courses in the department that are currently offered
+	 */
 	public ArrayList<CourseOffered> getDepartmentCourseOffered(){
 		
 		ArrayList<CourseOffered> deptCourses = new ArrayList<CourseOffered>();
@@ -439,6 +496,9 @@ public class Department {
 			
 			try{
 				if(conn != null){
+					/*
+					 * Filter all the course offerings using the specified department
+					 */
 					String SQLSelect= "Select CourseID, OfferID"
 							+ " FROM university.coursesoffered natural join university.courses"
 							+ " WHERE DepartmentID= ? and SemesterID = ?";
@@ -447,6 +507,9 @@ public class Department {
 					statement.setInt(2, currentSemester);
 					ResultSet rs =  statement.executeQuery();
 					
+					/*
+					 * Add all the retrieved CoursesOffered to the list
+					 */
 					while(rs.next()){
 						CourseOffered co = new CourseOffered(rs.getInt("OfferID"));
 						deptCourses.add(co);
