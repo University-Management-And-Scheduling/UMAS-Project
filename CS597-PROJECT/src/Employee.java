@@ -4,6 +4,13 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 
+/**
+ * @author Akshay
+ * 
+ */
+
+/*************** EMPLOYEE.JAVA CLASS WAS WRITTEN BY AKSHAY THIRKATEH ********************************/
+
 public class Employee extends People {
 
 	/*class variables for employee specific use*/
