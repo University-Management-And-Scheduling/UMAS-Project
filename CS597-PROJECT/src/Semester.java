@@ -1,3 +1,4 @@
+
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -192,7 +193,11 @@ public class Semester {
 	}
 	
 	public String toString(){
-		return this.SemesterName+" "+this.SemesterYear;
+		long timeStamp = this.getSemesterYear().getTime();
+		Calendar c = Calendar.getInstance();
+		c.setTimeInMillis(timeStamp);
+		int year = c.get(Calendar.YEAR);
+		return this.getSemesterName()+" "+year;
 	}
 	
 	public static void main(String[] args){

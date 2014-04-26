@@ -1,3 +1,4 @@
+
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -362,7 +363,7 @@ public class Department {
 	}
 
 	//DepartmentDoesnotExist Exception
-	private static class DepartmentAlreadyExistsException extends Exception{
+	static class DepartmentAlreadyExistsException extends Exception{
 		/**
 		 * 
 		 */
