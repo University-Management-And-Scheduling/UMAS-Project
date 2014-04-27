@@ -5,8 +5,6 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
-
-
 public class Login {
 	String username;
 	String password;
@@ -36,6 +34,7 @@ public class Login {
 		this.password = password;
 	}
 
+	// Constructor
 	public Login(String username, char[] password) {
 		this.username = username;
 		this.password = new String(password);

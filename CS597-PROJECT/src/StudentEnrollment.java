@@ -29,15 +29,12 @@ public class StudentEnrollment {
 	 boolean[] isSource () default false; 
 	}
 	
-	// Stud obbj
-	//CREATE HashMap OF hashmap 3 nodes enrollmentID, offerID,grade
-	
-	// Constructor to populate object
 
 	public int getEnrollmentID() {
 		return enrollmentID;
 	}
 
+	// Constructor to populate object
 	public StudentEnrollment(int enrollmentID, int UIN, int offerID, String grade) {
 		super();
 		this.enrollmentID = enrollmentID;
@@ -45,7 +42,8 @@ public class StudentEnrollment {
 		this.offerID = offerID;
 		this.grade = grade;
 	}
-
+	
+	// Constructor to populate object
 	public StudentEnrollment(int UIN, int offerID, String grade) {
 		super();
 		this.offerID = offerID;
@@ -70,7 +68,6 @@ public class StudentEnrollment {
 		UIN = uIN;
 	}
 
-	
 	public int getOfferID() {
 		return offerID;
 	}
@@ -91,6 +88,7 @@ public class StudentEnrollment {
 		this.grade = grade;
 	}
 	
+	// Given a student this function returns all the grades of that student
 	public static HashMap<CourseOffered, String> getAllGradesOfStudent (Student student) {
 		int UIN = student.getUIN();
 		HashMap<CourseOffered, String> courseGrade = new HashMap<CourseOffered, String>();
@@ -146,7 +144,8 @@ public class StudentEnrollment {
 		return courseGrade;
 	
 	}
-	
+
+	// Given a student this function returns all the courses taken by that student till date 
 	public static ArrayList<CourseOffered> getStudentsAllCourses(Student student){
 		ArrayList<CourseOffered> coursesTaken = new ArrayList<CourseOffered>();
 		
@@ -197,6 +196,7 @@ public class StudentEnrollment {
 		return coursesTaken;
 	}
 	
+	// Given a course, this function retrives all the students in a particular course
  	public static ArrayList<Student> getStudentsInCourse(CourseOffered courseOffered) {
 		ArrayList<Student> enrolledStudents = new ArrayList<Student>();
 		
@@ -237,6 +237,7 @@ public class StudentEnrollment {
 		return enrolledStudents;
 	}
 	
+ 	// Given a student this function returns all the current courses taken by that student
 	public static ArrayList<CourseOffered> getCurrentCoursesOfStudent (Student student) {
 		ArrayList<CourseOffered> enrolledCourses = new ArrayList<CourseOffered>();
 		
@@ -292,6 +293,9 @@ public class StudentEnrollment {
 		return enrolledCourses;
 	}
 
+	// A synchronized function to enroll students in a course in a Firct Come First Served basis.
+	// This ensure the database integrity that values(like seats remaining) read are the same while enrolling
+	// and do not change in(i.e. the course is not filled up) in the middle of an enrollment.
 	public synchronized boolean enrollStudents(){
 		boolean isStudentEnrolled = false;
 		int UIN = this.getUIN();
@@ -389,6 +393,7 @@ public class StudentEnrollment {
 		return isStudentEnrolled;
 	}
 	
+	// Updates the grades of all the students in a course
 	public static boolean updateAllStudentGrade(HashMap<Student,String> studentGrades, CourseOffered offeredCourse){
 		boolean isGradeUpdated = false;
 		
@@ -419,6 +424,7 @@ public class StudentEnrollment {
 		return isGradeUpdated;
 	}
 	
+	// Updates the grade of a single student
 	public boolean updateStudentGrade(){
 		boolean isGradeUpdated = false;
 		int UIN = this.getUIN();
@@ -473,6 +479,7 @@ public class StudentEnrollment {
 		return isGradeUpdated;
 	}
 	
+	// To retrive the enrollment id for a student
 	private int getStudentEnrollmentID() {
 		int enrollmentID = 0;
 		int UIN = this.getUIN();
@@ -517,6 +524,7 @@ public class StudentEnrollment {
 		return enrollmentID;
 	}
 
+	// Unregisters a student from the student enrollment table
 	public boolean unregisterStudent(){
 		boolean studentUnregistered = false;
 		
@@ -594,6 +602,7 @@ public class StudentEnrollment {
 		return studentUnregistered;
 	}
 	
+	// Checks whether the student is enrolled or not
 	private boolean isStudentEnrolled(int UIN,int offerID){
 		boolean isStudentEnrolled = false;
 		
@@ -640,7 +649,8 @@ public class StudentEnrollment {
 		
 		return isStudentEnrolled;
 	}
-		
+	
+	// Checks whether a seat is available for the course or not
 	private boolean isSeatAvailable(){
 		boolean isSeatAvailable = false;
 		
@@ -691,6 +701,8 @@ public class StudentEnrollment {
 		return isSeatAvailable;
 	}
 	
+	// To update the number of seats for the mentioned course in the course offered table
+	// by increasing the number by one when a student is unregistered.
 	private  boolean removeOneSeatFromCourseOffered(CourseOffered courseOffered) throws CourseOffered.CourseOfferingDoesNotExistException{
 		boolean seatRemoved = false;
 		
@@ -745,14 +757,13 @@ public class StudentEnrollment {
 		return seatRemoved ;
 	}
 	
-	
 	public static void main(String[] args){
 		// Test getAllGradesOfStudent function
-		try {
-			Student student = new Student(1);
-		} catch (People.PersonDoesNotExistException e) {
-			e.printStackTrace();
-		}
+//		try {
+//			Student student = new Student(1);
+//		} catch (People.PersonDoesNotExistException e) {
+//			e.printStackTrace();
+//		}
 //		StudentEnrollment enrolledStud = new StudentEnrollment(345678,1);
 //		HashMap<CourseOffered, String> grades = StudentEnrollment.getAllGradesOfStudent(student);
 //		for(CourseOffered offeredCourse: grades.keySet() ){
