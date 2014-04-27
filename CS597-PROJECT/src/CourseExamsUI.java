@@ -72,6 +72,7 @@ public class CourseExamsUI extends JPanel {
 	}
 
 	
+	// Paints the UI for the CourseExams
 	public CourseExamsUI(CourseOffered courseOffer, boolean taFlag) {
 		courseOffered = courseOffer;
 		isTA = taFlag;
@@ -381,6 +382,7 @@ public class CourseExamsUI extends JPanel {
 		initialize();
 	}
 	
+	// To parse and evalute the grading criteria input entered by the user
 	public String[] parseGradeCriteriaString(String input){
 		String[] percentages = null;
 		if(input.matches("^[0-9]{1,3}(,[0-9]{1,3})*")){
@@ -390,6 +392,7 @@ public class CourseExamsUI extends JPanel {
 		return percentages;
 	}
 	
+	// To parse and evalute a different type of grading criteria input entered by the user
 	public String[] parseGradeCriteriaStringAbsolute(String input){
 		String[] percentages = null;
 		if(input.matches("^[0-9]{1,2}(,[0-9]{1,2})*")){
@@ -399,6 +402,7 @@ public class CourseExamsUI extends JPanel {
 		return percentages;
 	}
 	
+	// Creates a panel for each exam
 	public JPanel makePanel(final CourseExamStructure examStruc){
 		String exam = examStruc.getExamName();
 		int examMarks = examStruc.getExamTotal();
@@ -423,6 +427,7 @@ public class CourseExamsUI extends JPanel {
 		return p;
 	}
 
+	// To initialize the page and paint it with the current values
 	public static void initialize(){
 		int offerID = courseOffered.getOfferID();
 		CourseExams exam = new CourseExams(offerID);
@@ -444,6 +449,7 @@ public class CourseExamsUI extends JPanel {
 		
 	}
 
+	// Creates a panel to display grades of each student.
 	public JPanel makeGradePanel(int UIN, String grade){
 		
 		JPanel singleGradePanel = new JPanel();
