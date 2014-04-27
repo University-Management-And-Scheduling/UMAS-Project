@@ -10,6 +10,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 
 
+
 /**
  * @author Akshay
  * 
@@ -110,14 +111,29 @@ public class TA extends Student {
 
 	public static boolean updateTaOfficeAddress(int UIN, int offerID, String newOfficeAddress){
 		
-		boolean isUpdated=false;
+		boolean isUpdated=false; 
+		
+		if(newOfficeAddress==null){
+			return false;
+			
+		}
+		
+		if(newOfficeAddress.length()==0){
+			return false;
+		}
+		
+		
+		boolean check=addTAtoTAtableCheck(UIN, offerID);
+		if(!check){
+			return false;
+		}
 		
 		try{
 			Connection conn = Database.getConnection();
 			
 			try{
 				
-				    
+				CourseOffered c=new CourseOffered(offerID);
 						
 						System.out.println("Updating data in the database");
 						String SQLPeopleInsert= "UPDATE teachingassistant SET TaOfficeLocation= ? where TaUIN=? and OfferID=? ;";
@@ -144,11 +160,17 @@ public class TA extends Student {
 			
 		}
 		
+		catch (Course.CourseDoesNotExistException
+				| CourseOffered.CourseOfferingDoesNotExistException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
 		catch(Exception e){
 			System.out.println("Connection failed");
 			System.out.println(e);
 			
 		}
+	
 		
 		finally{
 			
@@ -161,14 +183,30 @@ public class TA extends Student {
 	
 	public static boolean updateTaOfficeHours(int UIN, int offerID, String newOfficeHours){
 		
-		boolean isUpdated=false;
+		boolean isUpdated=false; 
+		
+		if(newOfficeHours==null){
+			return false;
+			
+		}
+		
+		if(newOfficeHours.length()==0){
+			return false;
+		}
+		
+		
+		boolean check=addTAtoTAtableCheck(UIN, offerID);
+		if(!check){
+			return false;
+		}
+		
 		
 		try{
 			Connection conn = Database.getConnection();
 			
 			try{
 				
-				    
+				    CourseOffered c=new CourseOffered(offerID);
 						
 						System.out.println("Updating data in the database");
 						String SQLPeopleInsert= "UPDATE teachingassistant SET TaOfficeHours= ? where TaUIN=? and OfferID=? ;";
@@ -218,7 +256,7 @@ public class TA extends Student {
 			
 			try{
 				
-				    
+				    CourseOffered c=new CourseOffered(offerID);
 						
 						System.out.println("selecting TA s office location");
 						String SQLTASelect= "select * from teachingassistant where TaUIN=? and OfferID=? ;";
@@ -259,7 +297,6 @@ public class TA extends Student {
 		
 	}
 	
-	
 	public static String getTAOfficeHours(int UIN, int offerID){
 		
 		
@@ -268,7 +305,7 @@ public class TA extends Student {
 			
 			try{
 				
-				    
+				CourseOffered c=new CourseOffered(offerID);
 						
 						System.out.println("selecting TA s office hours");
 						String SQLTASelect= "select * from teachingassistant where TaUIN=? and OfferID=? ;";
@@ -332,6 +369,7 @@ public class TA extends Student {
 
 				try{
 					Student stud=new Student(UIN);
+					CourseOffered c=new CourseOffered(offerID);
 				}
 				catch (Student.PersonDoesNotExistException e) {
 					System.out.println("Not a student");
@@ -339,6 +377,12 @@ public class TA extends Student {
 					System.out.println(e);
 					return false;
 
+				} catch (Course.CourseDoesNotExistException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				} catch (CourseOffered.CourseOfferingDoesNotExistException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
 				}
 
 				boolean ifExists = addTAtoTAtableCheck(UIN, offerID);
@@ -379,11 +423,11 @@ public class TA extends Student {
 
 		
 
-		catch (Exception e) {
+		catch (AlreadyExistsInTAException e) {
 			System.out.println("Error");
 			e.printStackTrace();
 			System.out.println(e);
-			return false;
+			throw new AlreadyExistsInTAException();
 
 		}
 
@@ -534,6 +578,16 @@ public class TA extends Student {
 	 */
 	public boolean updateTAUserName(String userName) {
 
+		if(userName==null){
+			return false;
+			
+		}
+		
+		if(userName.length()==0){
+			return false;
+		}
+		
+		
 		boolean isUpdated = false;
 
 		try {
@@ -821,39 +875,6 @@ public class TA extends Student {
 	 */
 	public static void main(String[] args) {
 
-
-//		TA ta = new TA(4);
-//
-//		ta.updateTADept(16);
-		
-//		try {
-//			addTAToEmployee(451, 300);
-//		} catch (AlreadyExistsInEmployeeException e) {
-//			// TODO Auto-generated catch block
-//			e.printStackTrace();
-//		} catch (AccessDeniedException e) {
-//			// TODO Auto-generated catch block
-//			e.printStackTrace();
-//		}
-		
-//		try {
-//			addTAtoTAtable(272, 295);
-//		} catch (AlreadyExistsInTAException e) {
-//			// TODO Auto-generated catch block
-//			e.printStackTrace();
-//		}
-		
-		try {
-			TA ta=new TA(3);
-//			updateTaOfficeAddress(3, 295, "priyanka2");
-//			updateTaOfficeHours(ta.getUIN(), ta.getOfferID(), "priyanka2");
-//			
-//			System.out.println("sss::::::"+ta.getOfficeAddress());
-//			System.out.println("sss::::::"+ta.getOfficeHours());
-		} catch (PersonDoesNotExistException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
 		
 
 	}
