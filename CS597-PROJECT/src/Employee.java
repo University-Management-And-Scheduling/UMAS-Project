@@ -18,6 +18,7 @@ public class Employee extends People {
 	protected String officeAddress;
 	protected String officeHours;
 
+	
 	/*----------------GETTERS AND SETTERS START------------------------------------*/
 	public double getSalary() {
 		return salary;
