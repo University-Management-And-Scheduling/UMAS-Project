@@ -10,8 +10,8 @@ import java.sql.SQLException;
 
 public class GradeSystem {
 
-	String grade;
-	int gradeLevel;
+	String grade; // A+, A, A-, B+, B, B-, C
+	int gradeLevel; // 1, 2, 3, 4, 5, 6, 7
 
 	@Target({ElementType.LOCAL_VARIABLE})
 	@Retention(RetentionPolicy.RUNTIME)
@@ -39,17 +39,20 @@ public class GradeSystem {
 		this.gradeLevel = gradeLevel;
 	}
 
+	// Constructor
 	public GradeSystem(String grade) {
 		super();
 		this.grade = grade;
 	}
 	
+	// Constructor
 	public GradeSystem(String grade,int gradeLevel) {
 		super();
 		this.grade = grade;
 		this.gradeLevel = gradeLevel;
 	}
 	
+	// To insert a new typr of grade to the grade system 
 	public boolean insertNewGrade(){
 		boolean newGradeInserted = false;
 		
@@ -95,6 +98,7 @@ public class GradeSystem {
 		return newGradeInserted;
 	}
 	
+	// This function checks whether a grade is present or not
 	public boolean isGradePresent(){
 		boolean isGradePresent = false;
 		
@@ -132,6 +136,7 @@ public class GradeSystem {
 		return isGradePresent;
 	}
 	
+	// Checks whether a grade level is present or not
 	public static boolean isGradeLevelPresent(int gradeLevel){
 		boolean isGradeLevelPresent = false;
 		
@@ -169,6 +174,7 @@ public class GradeSystem {
 		return isGradeLevelPresent;
 	}
 
+	// Deletes a grade from the gradesystem table
 	public boolean deleteGrade(){
 		boolean isGradeDeleted = false;
 		
@@ -210,6 +216,7 @@ public class GradeSystem {
 		return isGradeDeleted;
 	}
 	
+	// Modifies a grade in the gradesystem table
 	public boolean modifyGrade(String newGrade){
 		boolean isGradeModified = false;
 		
@@ -251,6 +258,7 @@ public class GradeSystem {
 		return isGradeModified;
 	}
 	
+	// Modifies a grade level in the gradesystem table
 	public boolean modifyGradeLevel(int newGradeLevel){
 		boolean isGradeLevelModified = false;
 		
@@ -298,6 +306,7 @@ public class GradeSystem {
 		return isGradeLevelModified;
 	}
 
+	// Get the grade level when given a grade
 	public GradeSystem getGradeLevelForGrade(){
 		String grade = this.getGrade();
 		
@@ -338,6 +347,7 @@ public class GradeSystem {
 		return this;
 	}
 
+	// Get the grade when given a grade level 
 	public static GradeSystem getGradeForGradeLevel(int gradeLevel){
 		GradeSystem gradeObject = null;
 		boolean isGradeLevelPresent = isGradeLevelPresent(gradeLevel); 
@@ -377,6 +387,7 @@ public class GradeSystem {
 		return gradeObject;
 	}
 
+	// Get the maximum grade level in the university grading system
 	public static int getMaxGradeLevel(){
 		int maxGradeLevel = 0;
 		
