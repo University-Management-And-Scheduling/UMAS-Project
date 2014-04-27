@@ -58,10 +58,20 @@ public class People {
 
 					//DB annotation
 					//For a selected resultset we store the retrieved details in these local variables
+					
+					DBAnnotation.annoate("peopleRetrievedUIN", "people", "UIN", true);
 					int peopleRetrievedUIN = rs.getInt("UIN");//--------> get UIN from UIN column from database
+					
+					DBAnnotation.annoate("peopleRetrievedName", "people", "Name", true);
 					String peopleRetrievedName = rs.getString("Name");//--------> get name from name column from database
+					
+					DBAnnotation.annoate("peopleRetrieveduserName", "people", "UserName", true);
 					String peopleRetrieveduserName = rs.getString("UserName");//--------> get username from username column from database
+					
+					DBAnnotation.annoate("peopleRetrievedDeptID", "people", "DepartmentID", true);
 					int peopleRetrievedDeptID = rs.getInt("DepartmentID");//--------> get dept ID from dept ID UIN column from database
+					
+					DBAnnotation.annoate("peopleRetrievedPositionID", "people", "PositionID", true);
 					int peopleRetrievedPositionID = rs.getInt("PositionID");//--------> get position ID from position ID column from database
 
 					// initializing the class variables with the retrieved values
@@ -134,10 +144,19 @@ public class People {
 
 					// if the query is successful and returns an row, the details are then retrieved and stored in variables
 					
+					DBAnnotation.annoate("peopleRetrievedUIN", "people", "UIN", true);
 					int peopleRetrievedUIN = rs.getInt("UIN");//--------> get UIN from UIN column from database
+					
+					DBAnnotation.annoate("peopleRetrievedName", "people", "Name", true);
 					String peopleRetrievedName = rs.getString("Name");//--------> get name from name column from database
+					
+					DBAnnotation.annoate("peopleRetrieveduserName", "people", "UserName", true);
 					String peopleRetrieveduserName = rs.getString("UserName");//--------> get username from username column from database
+					
+					DBAnnotation.annoate("peopleRetrievedDeptID", "people", "DepartmentID", true);
 					int peopleRetrievedDeptID = rs.getInt("DepartmentID");//--------> get dept ID from dept ID column from database
+					
+					DBAnnotation.annoate("peopleRetrievedPositionID", "people", "PositionID", true);
 					int peopleRetrievedPositionID = rs.getInt("PositionID");//--------> get positionID from positionID column from database
 
 					// initializing the class variables with the retrieved values
@@ -272,6 +291,7 @@ public class People {
 					//if the query returns a successful resultset
 					if (rs.first()) {
 
+						DBAnnotation.annoate("peopleRetrieveduserName", "people", "UserName", true);
 						String peopleRetrieveduserName = rs.getString("UserName");//get the username from the username column in the database
 						System.out.println(peopleRetrieveduserName);
 						return true;
@@ -343,6 +363,10 @@ public class People {
 					stmt.setString(2, Password);//set the password
 					System.out.println(stmt);
 					int i = stmt.executeUpdate();//execute the query
+					
+					DBAnnotation.annoate("userName", "logindetails", "Username", false);
+					DBAnnotation.annoate("Password", "logindetails", "Password", false);
+					
 					System.out.println(i);
 					System.out.println("Inserted");
 					isAdded = true;
@@ -401,6 +425,10 @@ public class People {
 				stmt.setString(2, oldUserName);//where the old user name is 
 				System.out.println(stmt);
 				int i = stmt.executeUpdate();//execute the query
+				
+				DBAnnotation.annoate("newUserName", "logindetails", "Username", false);
+				DBAnnotation.annoate("oldUserName", "logindetails", "Username", false);
+				
 				System.out.println(i);
 				System.out.println("Inserted");
 				isUpdated = true;
@@ -458,6 +486,10 @@ public class People {
 				stmt.setInt(2, UIN);//for the given UIN
 				System.out.println(stmt);
 				int i = stmt.executeUpdate();//execute the query
+				
+				DBAnnotation.annoate("newName", "people", "Name", false);
+				DBAnnotation.annoate("UIN", "people", "UIN", false);
+				
 				System.out.println(i);
 				System.out.println("Inserted");
 				isUpdated = true;
@@ -517,6 +549,10 @@ public class People {
 				stmt.setInt(2, UIN);//for this UIN
 				System.out.println(stmt);
 				int i = stmt.executeUpdate();//execute the query.
+				
+				DBAnnotation.annoate("deptID", "people", "DepartmentID", false);
+				DBAnnotation.annoate("UIN", "people", "UIN", false);
+				
 				System.out.println(i);
 				System.out.println("Inserted");
 				isUpdated = true;
@@ -663,15 +699,23 @@ public class People {
 
 					else {
 						//add the new person into the people table
+						int getDeptID=dept.getDepartmentID();
 						System.out.println("Adding new data into the database");
+						
 						String SQLPeopleInsert = "Insert into People (Name, Username, DepartmentID, PositionID) Values (?,?,?,?);";
 						PreparedStatement stmt = conn.prepareStatement(SQLPeopleInsert,Statement.RETURN_GENERATED_KEYS);
 						stmt.setString(1, name);//set the name 
 						stmt.setString(2, userName);//set the username
-						stmt.setInt(3, dept.getDepartmentID());//set the department
+						stmt.setInt(3, getDeptID);//set the department
 						stmt.setInt(4, positionId);//set the position ID
 						System.out.println(stmt);
 						int i = stmt.executeUpdate();//execute the query
+						
+						DBAnnotation.annoate("name", "people", "Name", false);
+						DBAnnotation.annoate("userName", "people", "Username", false);
+						DBAnnotation.annoate("getDeptID", "people", "DepartmentID", false);
+						DBAnnotation.annoate("positionId", "people", "PositionID", false);
+						
 						ResultSet rs = stmt.getGeneratedKeys();
 						if (rs.first())
 							addedUIN = rs.getInt(1);// this is to retrieve the latest added UIN
@@ -787,10 +831,19 @@ public class People {
 
 					if (rs.first()) {
 
+						DBAnnotation.annoate("peopleRetrievedUIN", "people", "UIN", true);
 						int peopleRetrievedUIN = rs.getInt("UIN");//get the UIN and use this to delete
+						
+						DBAnnotation.annoate("peopleRetrievedName", "people", "Name", true);
 						String peopleRetrievedName = rs.getString("Name");
+						
+						DBAnnotation.annoate("peopleRetrieveduserName", "people", "UserName", true);
 						String peopleRetrieveduserName = rs.getString("UserName");
+						
+						DBAnnotation.annoate("peopleRetrievedDeptID", "people", "DepartmentID", true);
 						int peopleRetrievedDeptID = rs.getInt("DepartmentID");
+						
+						DBAnnotation.annoate("peopleRetrievedPositionID", "people", "PositionID", true);
 						int peopleRetrievedPositionID = rs.getInt("PositionID");
 
 						//Delete function to delete it from the people table
@@ -798,6 +851,9 @@ public class People {
 						stmt = conn.prepareStatement(SQLPeopleDelete);
 						stmt.setInt(1, UIN);
 						int rs1 = stmt.executeUpdate();//execute the query
+						
+						DBAnnotation.annoate("UIN", "people", "UIN", false);
+						
 						System.out.println(peopleRetrievedUIN + " is deleted");
 						isDeleted = true;
 
@@ -859,6 +915,9 @@ public class People {
 					PreparedStatement stmt = conn.prepareStatement(SQLPeopleDelete);
 					stmt.setString(1, userName);//set the username
 					int rs1 = stmt.executeUpdate();//execute the query
+					
+					DBAnnotation.annoate("userName", "people", "Username", false);
+					
 					System.out.println(userName + " is deleted");
 					isDeleted = true;
 				}
@@ -1040,7 +1099,10 @@ public class People {
 
 				if (rs.first()) {
 
-					People peopleDetails = new People(UIN);//setting the object
+					DBAnnotation.annoate("retrievedUIN", "people", "UIN", true);
+					int retrievedUIN= rs.getInt("UIN");
+							
+					People peopleDetails = new People(retrievedUIN);//setting the object
 					return peopleDetails;//return the object
 
 				}
@@ -1105,8 +1167,10 @@ public class People {
 				if (rs.first()) {
 
 					/*if the resultset exists then set the People object with the username passed*/
-
-					People peopleDetails = new People(userName);
+					DBAnnotation.annoate("retrievedUserName", "people", "Username", true);
+					String retrievedUserName=rs.getString("Username");
+					
+					People peopleDetails = new People(retrievedUserName);
 					return peopleDetails;
 
 				}

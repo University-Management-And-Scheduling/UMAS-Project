@@ -96,7 +96,9 @@ public class Professor extends Employee {
 
 				if (rs.first()) {
 					//if the resultset exists
+					DBAnnotation.annoate("peopleRetrievedPositionID", "people", "PositionID", true);
 					int peopleRetrievedPositionID = rs.getInt("PositionID");
+					
 					System.out.println("UIN:" + UIN + " Position ID:"+ peopleRetrievedPositionID);
 
 					if (peopleRetrievedPositionID == 2) {//check the position ID
@@ -157,8 +159,10 @@ public class Professor extends Employee {
 				ResultSet rs = stmtForSelect.executeQuery();//execute the query
 
 				if (rs.first()) {
-
+					
+					DBAnnotation.annoate("peopleRetrievedPositionID", "people", "PositionID", true);
 					int peopleRetrievedPositionID = rs.getInt("PositionID");//retreive the position ID
+					
 					System.out.println("Username:" + userName + " Position ID:"+ peopleRetrievedPositionID);
 					/*
 					 * Checking if the position ID id of a professor i.e 2,
@@ -319,8 +323,9 @@ public class Professor extends Employee {
 
 					while (rs.next()) {
 
-						String retreivedProfUserNames = rs
-								.getString("Username");
+						DBAnnotation.annoate("retreivedProfUserNames", "people", "Username", true);
+						String retreivedProfUserNames = rs.getString("Username");
+						
 						Professor prof = new Professor(retreivedProfUserNames);
 						ProfOfOneDept.add(prof);//add it to the arraylist
 						System.out.println(prof.toString());
@@ -381,6 +386,7 @@ public class Professor extends Employee {
 
 						if (rs1.first()) {
 
+							DBAnnotation.annoate("retreivedDepartmentID", "department", "DepartmentID", true);
 							retreivedDepartmentID = rs1.getInt("DepartmentID");//retrieve the dept ID
 
 						} else {
@@ -416,6 +422,7 @@ public class Professor extends Employee {
 
 					while (rs.next()) {
 
+						DBAnnotation.annoate("retreivedProfUserNames", "people", "Username", true);
 						String retreivedProfUserNames = rs.getString("Username");
 
 						Professor prof = new Professor(retreivedProfUserNames);
@@ -463,7 +470,9 @@ public class Professor extends Employee {
 
 					while (rs.next()) {
 
+						DBAnnotation.annoate("retreivedProfUserNames", "people", "Username", true);
 						String retreivedProfUserNames = rs.getString("Username");//retieve the username
+						
 						Professor prof = new Professor(retreivedProfUserNames);
 						allProfs.add(prof);//add it to the arraylist the professor objects
 						System.out.println(prof.getUserName());
