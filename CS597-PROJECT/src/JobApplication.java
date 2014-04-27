@@ -148,18 +148,36 @@ public class JobApplication {
 
 					//if the resultset is not empty then 
 					
+					DBAnnotation.annoate("retreivedApplicationID", "applicationdetails", "ApplicationID", true);
+					int retreivedApplicationID=rs.getInt("ApplicationID");
+					
+					DBAnnotation.annoate("RetrievedUIN", "applicationdetails", "ApplicantUIN", true);
 					int RetrievedUIN = rs.getInt("ApplicantUIN");//---retreive the UIN
+					
+					DBAnnotation.annoate("RetrievedWorkEx", "applicationdetails", "WorkExperience", true);
 					Double RetrievedWorkEx = rs.getDouble("WorkExperience");//---retreive the work Ex
+					
+					DBAnnotation.annoate("retreivedSkill1", "applicationdetails", "Skillset1", true);
 					boolean retreivedSkill1 = rs.getBoolean("Skillset1");//---retreive the skills
+					
+					DBAnnotation.annoate("retreivedSkill2", "applicationdetails", "Skillset2", true);
 					boolean retreivedSkill2 = rs.getBoolean("Skillset2");//---retreive the skills
+					
+					DBAnnotation.annoate("retreivedSkill3", "applicationdetails", "Skillset3", true);
 					boolean retreivedSkill3 = rs.getBoolean("Skillset3");//---retreive the skills
+					
+					DBAnnotation.annoate("retreivedSkill4", "applicationdetails", "Skillset4", true);
 					boolean retreivedSkill4 = rs.getBoolean("Skillset4");//---retreive the skills
+					
+					DBAnnotation.annoate("retreivedSkill5", "applicationdetails", "Skillset5", true);
 					boolean retreivedSkill5 = rs.getBoolean("Skillset5");//---retreive the skills
+					
+					DBAnnotation.annoate("retreivedScaledScore", "applicationdetails", "Scaledscore", true);
 					float retreivedScaledScore = rs.getFloat("Scaledscore");//---retreive the scaled score
 
 					//initilaize the class variables to the UIN specific
 					
-					this.ApplicationID = rs.getInt("ApplicationID");
+					this.ApplicationID = retreivedApplicationID;
 					this.UIN = RetrievedUIN;
 					this.workEx = RetrievedWorkEx;
 					this.skill1 = retreivedSkill1;
@@ -249,6 +267,16 @@ public class JobApplication {
 					stmt.setDouble(8, getScore);
 					System.out.println(stmt);
 					int i = stmt.executeUpdate();//execute the query
+					
+					DBAnnotation.annoate("UIN", "applicationdetails", "applicantUIN", false);											
+					DBAnnotation.annoate("workExp", "applicationdetails", "WorkExperience", false);						
+					DBAnnotation.annoate("skill1", "applicationdetails", "Skillset1", false);						
+					DBAnnotation.annoate("skill2", "applicationdetails", "Skillset2", false);						
+					DBAnnotation.annoate("skill3", "applicationdetails", "Skillset3", false);												
+					DBAnnotation.annoate("skill4", "applicationdetails", "Skillset4", false);						
+					DBAnnotation.annoate("skill5", "applicationdetails", "Skillset5", false);	
+					DBAnnotation.annoate("getScore", "applicationdetails", "ScaledScore", false);	
+					
 					System.out.println(i);
 					System.out.println("Inserted");
 
@@ -468,7 +496,10 @@ public class JobApplication {
 
 				while (rs.next()) {
 					//retreive the UINS
+					
+					DBAnnotation.annoate("selectedUIN", "applicationdetails", "ApplicantUIN", true);
 					int selectedUIN = rs.getInt("ApplicantUIN");
+					
 					counter++;
 
 					Student chosenStudents = new Student(selectedUIN);//pass the UIN to the student constructor to get the details in the object
@@ -529,7 +560,7 @@ public class JobApplication {
 							+ " and applicationdetails.ApplicantUIN not in "
 							+ "(select UIN from university.jobroster where applicationdetails.ApplicantUIN=jobroster.UIN and JobID=?)"
 							+ "ORDER BY "
-							+ "applicationdetails.Scaledscore DESC LIMIT 2;";
+							+ "applicationdetails.Scaledscore DESC LIMIT 10;";
 				}
 
 				PreparedStatement stmtForSelect = conn.prepareStatement(SQLPeopleSelect);
@@ -550,7 +581,10 @@ public class JobApplication {
 
 				while (rs.next()) {
 					//retrieve the UIN
+					
+					DBAnnotation.annoate("selectedUIN", "applicationdetails", "ApplicantUIN", true);
 					int selectedUIN = rs.getInt("ApplicantUIN");
+					
 					counter++;
 					Student chosenStudents = new Student(selectedUIN);//pass it to the constructor to get the object details
 					selectedStudents.put(chosenStudents.getUIN(),chosenStudents);//add it to the hashmap
@@ -629,6 +663,17 @@ public class JobApplication {
 					stmt.setInt(8, UIN);
 					System.out.println(stmt);
 					int i = stmt.executeUpdate();//execute the query
+														
+					DBAnnotation.annoate("workExp", "applicationdetails", "WorkExperience", false);						
+					DBAnnotation.annoate("skill1", "applicationdetails", "Skillset1", false);						
+					DBAnnotation.annoate("skill2", "applicationdetails", "Skillset2", false);						
+					DBAnnotation.annoate("skill3", "applicationdetails", "Skillset3", false);												
+					DBAnnotation.annoate("skill4", "applicationdetails", "Skillset4", false);						
+					DBAnnotation.annoate("skill5", "applicationdetails", "Skillset5", false);	
+					DBAnnotation.annoate("getScore", "applicationdetails", "ScaledScore", false);	
+					DBAnnotation.annoate("newScaledScore", "applicationdetails", "ScaledScore", false);
+					DBAnnotation.annoate("UIN", "applicationdetails", "applicantUIN", false);		
+					
 					System.out.println(i);
 					System.out.println("Updated");
 					isUpdated = true;
