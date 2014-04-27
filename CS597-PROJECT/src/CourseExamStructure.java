@@ -12,7 +12,7 @@ import java.util.HashMap;
 public class CourseExamStructure {
 	CourseOffered offeredCourse;
 	String examName;
-	int examTotal;
+	int examTotal; // Total Marks for that exam
 	
 	@Target({ElementType.LOCAL_VARIABLE})
 	@Retention(RetentionPolicy.RUNTIME)
@@ -47,16 +47,19 @@ public class CourseExamStructure {
 		this.examTotal = examTotal;
 	}
 	
+	
 	public CourseExamStructure() {
 		super();
 	}
 
+	// Constructor
 	public CourseExamStructure(CourseOffered offeredCourse, String examName, int examTotal) {
 		this.offeredCourse = offeredCourse;
 		this.examName = examName;
 		this.examTotal = examTotal;
 	}
 	
+	// Constructor
 	public CourseExamStructure(CourseOffered offeredCourse, String examName) {
 		this.offeredCourse = offeredCourse;
 		this.examName = examName;
@@ -100,6 +103,8 @@ public class CourseExamStructure {
 		
 	}
 	
+	// Called by createCourseExamTable function to create a table to record the 
+	// Course Structure
 	public static boolean createCourseExamStructureTable(String courseName, int offerID,int semID){
 		boolean tableAdded = false;
 //		Course course = offeredCourse.getCourse();
@@ -120,12 +125,10 @@ public class CourseExamStructure {
 			Connection conn = Database.getConnection();
 			try {
 				if (conn != null) {
-					System.out.println("Before struct create");
 					PreparedStatement statement = conn.prepareStatement(SQLExamStructureCreate);
 					//statement.setString(1, tableName);
 					statement.executeUpdate();
 					tableAdded = true;
-					System.out.println("After struct create");
 				}	
 			} catch (SQLException e) {
 				System.out.println(e);
@@ -139,12 +142,17 @@ public class CourseExamStructure {
 		return tableAdded;
 	}
 	
+	
+	// To retrive the total marks for an exam. 
 	public static int getTotalMarksForExam(String examName){
 		int totalMarks=0;
 		
 		return totalMarks;
 	}
 	
+	// To add a new exam.
+	// This function would internally call addNewExamColumn() of the CourseExam class to
+	// add a new column in the CourseExams table for this new exam
 	public boolean addNewExam(){
 		boolean examAdded = false;
 		
@@ -202,6 +210,7 @@ public class CourseExamStructure {
 		return examAdded;
 	}
 		
+	// Checks whether this exam is already present.
 	private boolean isExamPresent(String tableName, String examName) {
 		boolean isExamPresent = false;
 //		
@@ -247,6 +256,9 @@ public class CourseExamStructure {
 		return isExamPresent;
 	}
 
+	// To modify the name of an exam.
+	// It would internally call the function modifyExistingExamColumnName of the CourseExam 
+	// class to make the examnames consistent in both the tables
 	public boolean modifyExistingExamName(String newExamName){
 		boolean nameModified = false;
 		
@@ -305,6 +317,7 @@ public class CourseExamStructure {
 
 	}	
 
+	// To modify the total marks of an exam
 	public boolean modifyExistingExamTotalMarks(int newTotalMarks){
 		boolean marksModified = false;
 		
@@ -358,6 +371,9 @@ public class CourseExamStructure {
 		return marksModified;
 	}
 
+	// To delete an exam.
+	// This function would internally call the function deleteExistingExamColumn of 
+	// the CourseExam class to make the tables consistent.
 	public boolean deleteExistingExam(){
 		boolean examDeleted = false;
 		
@@ -414,6 +430,7 @@ public class CourseExamStructure {
 		return examDeleted;
 	}
 
+	// To view all the exams in the course
 	public static HashMap<String,Integer> viewExams(CourseOffered courseoffered){
 		HashMap<String,Integer> allExams = new HashMap<String,Integer>();
 		int offerID = courseoffered.getOfferID();
