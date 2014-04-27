@@ -16,7 +16,7 @@ import java.util.ArrayList;
  * 
  */
 
-/*************** TA.JAVA CLASS WAS WRITTEN BY AKSHAY THIRKATEH ********************************/
+/*************** ADMIN.JAVA CLASS WAS WRITTEN BY AKSHAY THIRKATEH ********************************/
 
 public class TA extends Student {
 	
@@ -641,6 +641,16 @@ public class TA extends Student {
 	public boolean updateTAName(String name) {
 
 		boolean isUpdated = false;
+		
+		if(name==null){
+			return false;
+			
+		}
+		
+		if(name.length()==0){
+			return false;
+		}
+		
 
 		try {
 			Connection conn = Database.getConnection();
@@ -794,6 +804,7 @@ public class TA extends Student {
 	public static boolean updateTAtoStudent(int UIN){
 		
 		boolean isUpdated=false;
+		
 		
 		try{
 			Connection conn = Database.getConnection();

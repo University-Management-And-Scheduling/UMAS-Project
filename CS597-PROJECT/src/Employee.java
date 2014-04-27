@@ -99,13 +99,6 @@ public class Employee extends People {
 			}
 
 		}
-		//the outer catch block catches the general exception
-		catch (Exception e) {
-			System.out.println("Some Error");
-			e.printStackTrace();
-			System.out.println(e);
-
-		}
 		/*The code thats placed in the finally block gets executed no matter what. But 
 													here the finally block does not contain any general statements*/
 		finally {
@@ -123,7 +116,7 @@ public class Employee extends People {
 	}
 
 	//construtor calls the super class
-	public Employee(String userName) {
+	public Employee(String userName){
 		super(userName);
 		// TODO Auto-generated constructor stub
 	}
@@ -270,6 +263,23 @@ public class Employee extends People {
 	 */
 	public static boolean updateEmpDetails(int UIN, String officeAddress,String officeHours) throws Student.AccessDeniedException {
 
+		
+		if(officeAddress==null){
+			return false;
+		}
+		
+		if(officeHours==null){
+			return false;
+		}
+		
+		if(officeAddress.length()==0){
+			return false;
+		}
+		
+		if(officeHours.length()==0){
+			return false;
+		}
+		
 		boolean check = checkIfEmployee(UIN);//check if the UIN passed is an employee
 		if (!check) {
 			throw new Student.AccessDeniedException();//else access is denied
@@ -1068,6 +1078,15 @@ public class Employee extends People {
 	 * return type is a boolean*/
 	public static boolean checkIfEmployee(String userName) {
 
+
+		if(userName==null){
+			return false;
+		}
+		
+		if(userName.length()==0){
+			return false;
+		}
+		
 		try {
 			Connection conn = Database.getConnection();//get the connection
 			String SQLEmpSelect = "";
