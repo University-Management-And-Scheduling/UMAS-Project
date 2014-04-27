@@ -49,7 +49,7 @@ public class Department {
 					ResultSet rs =  statement.executeQuery();
 					
 					/*
-					 * If he department is found in the database
+					 * If the department is found in the database
 					 * Initialize the values of the object
 					 */
 					if(rs.first()){
@@ -57,8 +57,12 @@ public class Department {
 						 * The object with the DepartmentName already exists
 						 * Just initialize the current object with new values
 						 */
-						int dID = rs.getInt(1);
+						DBAnnotation.annoate("dID", "department", "DepartmentID", true);
+						int dID = rs.getInt("DepartmentID");
+						
+						DBAnnotation.annoate("dName", "department", "DepartmentName", true);
 						String dName = rs.getString(2);
+						
 						this.departmentID = dID;
 						this.departmentName = dName;
 					}
@@ -73,7 +77,7 @@ public class Department {
 			}
 			
 			catch(SQLException e){
-				System.out.println("Error updating/adding");
+				System.out.println("Error in sql");
 				System.out.println(e.getMessage());
 			}
 						
@@ -114,8 +118,12 @@ public class Department {
 							 * The object with the DepartmentName already exist
 							 * Just initialize the current object with new values
 							 */
-							int dID = rs.getInt(1);
+							DBAnnotation.annoate("dID", "department", "DepartmentID", true);
+							int dID = rs.getInt("DepartmentID");
+							
+							DBAnnotation.annoate("dName", "department", "DepartmentName", true);
 							String dName = rs.getString(2);
+							
 							this.departmentID = dID;
 							this.departmentName = dName;
 						}
@@ -152,8 +160,9 @@ public class Department {
 			try{
 				if(conn != null){
 					/*
-					 * Check to see if teh department with the same name exists already
+					 * Check to see if the department with the same name exists already
 					 */
+					
 					String SQLSelect= "Select DepartmentName"
 							+ " FROM university.department"
 							+ " WHERE DepartmentName= ?";
@@ -173,6 +182,7 @@ public class Department {
 						/*
 						 * Add the object data to the department table
 						 */
+						DBAnnotation.annoate("departmentName", "department", "DepartmentName", false);
 						String SQLInsert= "Insert into university.department (DepartmentName) Values (?);";
 						statement.close();
 						statement = conn.prepareStatement(SQLInsert);
@@ -303,9 +313,15 @@ public class Department {
 						/*
 						 * Update with new values from the object instance variables
 						 */
+						DBAnnotation.annoate("dID", "department", "DepartmentID", false);
+						int dID = this.getDepartmentID();
+						
+						DBAnnotation.annoate("dName", "department", "DepartmentName", false);
+						String dName = this.getDepartmentName();
+						
 						System.out.println("Updating the department with new values");
-						rs.updateInt(1, this.getDepartmentID());
-						rs.updateString(2, this.getDepartmentName());
+						rs.updateInt(1, dID);
+						rs.updateString(2, dName);
 						rs.updateRow();	
 						Database.commitTransaction(conn);
 						return true;
@@ -402,7 +418,9 @@ public class Department {
 					 */
 					while(rs.next()){
 						try {
-							Department d = new Department(rs.getInt("DepartmentID"));
+							DBAnnotation.annoate("dID", "department", "DepartmentID", false);
+							int dID = rs.getInt("DepartmentID");
+							Department d = new Department(dID);
 							departments.add(d);
 						} catch (DepartmentDoesNotExistException e) {
 							// TODO Auto-generated catch block
@@ -508,7 +526,9 @@ public class Department {
 					 * Add all the retrieved courses to the List
 					 */
 					while(rs.next()){
-						Course c = new Course(rs.getInt("CourseID"));
+						DBAnnotation.annoate("cID", "department", "CourseID", true);
+						int cID = rs.getInt("CourseID");
+						Course c = new Course(cID);
 						deptCourses.add(c);
 					}
 				}
@@ -561,7 +581,9 @@ public class Department {
 					 * Add all the retrieved CoursesOffered to the list
 					 */
 					while(rs.next()){
-						CourseOffered co = new CourseOffered(rs.getInt("OfferID"));
+						DBAnnotation.annoate("offerID", "coursesoffered", "OfferID", true);
+						int offerID = rs.getInt("OfferID");
+						CourseOffered co = new CourseOffered(offerID);
 						deptCourses.add(co);
 					}
 				}

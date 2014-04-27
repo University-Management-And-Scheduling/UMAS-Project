@@ -111,9 +111,13 @@ public class CourseSchedule {
 					ResultSet rs = statement.executeQuery();
 					
 					if(rs.first()){
+						DBAnnotation.annoate("offID", "courseschedule", "OfferID", true);
 						int offID = rs.getInt("OfferID");
+						DBAnnotation.annoate("classroomID", "courseschedule", "ClassroomID", true);
 						int classroomID = rs.getInt("ClassroomID");
+						DBAnnotation.annoate("timeSlotID", "courseschedule", "TimeSlotID", true);
 						int timeSlotID = rs.getInt("TImeSlotID");
+						
 						Timeslots timeslot = new Timeslots(timeSlotID);
 						Classroom classroom = new Classroom(classroomID);
 						setClassroom(classroom);
@@ -166,13 +170,22 @@ public class CourseSchedule {
 				
 				try{
 					if(conn != null){
+						DBAnnotation.annoate("timeSlotID", "courseschedule", "TimeSlotID", false);
+						int timeSlotID = timeslots.getTimeSlotID();
+						
+						DBAnnotation.annoate("classroomID", "courseschedule", "ClassroomID", false);
+						int classroomID = classroom.getClassroomID();
+						
+						DBAnnotation.annoate("offerID", "courseschedule", "OfferID", false);						
+						int offerID = courseoffered.getOfferID();
+						
 						String scheduleInsert = "UPDATE university.courseschedule "
 								+ "SET TimeSlotID= ? , ClassroomID=? "
 								+ "WHERE OfferID= ?";
 						PreparedStatement statement = conn.prepareStatement(scheduleInsert, ResultSet.CONCUR_UPDATABLE);
-						statement.setInt(3, courseoffered.getOfferID());
-						statement.setInt(1, timeslots.getTimeSlotID());
-						statement.setInt(2, classroom.getClassroomID());
+						statement.setInt(1, timeSlotID);
+						statement.setInt(2, classroomID);
+						statement.setInt(3, offerID);
 						statement.executeUpdate();
 						Database.commitTransaction(conn);
 						return true;
@@ -226,7 +239,9 @@ public class CourseSchedule {
 					ResultSet rs =  statement.executeQuery();
 					
 					while(rs.next()){
-						CourseSchedule cs = new CourseSchedule(rs.getInt("OfferID"));
+						DBAnnotation.annoate("offerID", "coursesoffered", "OfferID", true);
+						int offerID = rs.getInt("OfferID");
+						CourseSchedule cs = new CourseSchedule(offerID);
 						courseSchedule.add(cs);
 					}
 					
@@ -268,7 +283,9 @@ public class CourseSchedule {
 					ResultSet rs =  statement.executeQuery();
 					
 					while(rs.next()){
-						CourseOffered co = new CourseOffered(rs.getInt("OfferID"));
+						DBAnnotation.annoate("offerID", "coursesoffered", "OfferID", true);
+						int offerID = rs.getInt("OfferID");
+						CourseOffered co = new CourseOffered(offerID);
 						if(co.getDepartmentName().equals(departmentName)){
 							courseSchedule.add(new CourseSchedule(co.getOfferID()));
 						}
@@ -439,11 +456,7 @@ public class CourseSchedule {
 				System.out.println(e.getMessage());
 				e.printStackTrace();
 			}
-			
-			finally{
-				//Database.closeConnection(conn);
-			}
-			
+						
 		}
 		
 		finally{
@@ -463,16 +476,24 @@ public class CourseSchedule {
 			
 			try{
 				if(conn != null){
+					DBAnnotation.annoate("offID", "courseschedule", "OfferID", false);
+					int offID = offerID;
+					
+					DBAnnotation.annoate("classID", "courseschedule", "ClassroomID", false);
+					int classID = classroomID;
+					
+					DBAnnotation.annoate("timeID", "courseschedule", "TimeslotID", false);
+					int timeID = timeslotID;
+					
 					String scheduleInsert = "Insert into university.courseschedule"
 							+ " (OfferID, TimeSlotID, ClassroomID)"
 							+ " Values(?,?,?)";
 					PreparedStatement statement = conn.prepareStatement(scheduleInsert);
-					statement.setInt(1, offerID);
-					statement.setInt(2, timeslotID);
-					statement.setInt(3, classroomID);
+					statement.setInt(1, offID);
+					statement.setInt(2, timeID);
+					statement.setInt(3, classID);
 					statement.executeUpdate();
 					System.out.println("Adding course schedule with offerID:"+offerID+" ClassroomID:"+classroomID+" TimeslotID:"+timeslotID);
-					//Database.commitTransaction(conn);
 					addFlag = true;
 				}
 			}
@@ -574,6 +595,7 @@ public class CourseSchedule {
 			catch(SQLException e){
 				System.out.println("Error deleting schedule");
 				System.out.println(e.getMessage());
+				Database.rollBackTransaction(conn);
 				e.printStackTrace();
 			}
 						
@@ -604,7 +626,14 @@ public class CourseSchedule {
 			try{
 				if(conn != null){
 					
-					//Retrieve the current semester ID
+					/*
+					 * Retrieve the current semester ID
+					 */
+					
+					/*
+					 * Delete from table annotation
+					 */
+					DBAnnotation.annoate("offerID", "courseschedule", "OfferID", false);
 					String courseScheduleDelete = "Delete"
 							+ " FROM university.courseschedule "
 							+ "WHERE OfferID = ?";
