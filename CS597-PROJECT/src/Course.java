@@ -46,13 +46,17 @@ public class Course {
 						/*The course with the specified id is found.
 						 * Initialize the object instance variables with the values retrieved from the database
 						 */
-						//System.out.println("Retreiving the Course");
-						int courseID = rs.getInt(1);
-						String courseName = rs.getString(2);
+						DBAnnotation.annoate("courseID", "courses", "CourseID", true);
+						int courseID = rs.getInt("CourseID");
+						
+						DBAnnotation.annoate("courseName", "courses", "CourseName", true);
+						String courseName = rs.getString("CourseName");
+												
+						DBAnnotation.annoate("courseDept", "courses", "DepartmentID", true);
+						Department courseDept = new Department(rs.getInt("DepartmentID"));
+						this.department = courseDept;
 						this.courseID = courseID;
 						this.courseName = courseName;
-						Department courseDept = new Department(rs.getInt(3));
-						this.department = courseDept;
 					}
 					
 					else{
@@ -103,13 +107,18 @@ public class Course {
 						 * The object with the CourseName exists
 						 * Initialize the instance variables 
 						 */
-						System.out.println("Retreiving the Course");
+						DBAnnotation.annoate("courseID", "courses", "CourseID", true);
 						int courseID = rs.getInt("CourseID");
+						
+						DBAnnotation.annoate("cName", "courses", "CourseName", true);
 						String cName = rs.getString("CourseName");
+						
+						DBAnnotation.annoate("courseDept", "courses", "DepartmentID", true);
+						Department courseDept = new Department(rs.getInt("DepartmentID"));
+						
+						this.department = courseDept;
 						this.courseID = courseID;
 						this.courseName = cName;
-						Department courseDept = new Department(rs.getInt("DepartmentID"));
-						this.department = courseDept;
 					}
 					
 					else{
@@ -201,12 +210,18 @@ public class Course {
 					/*
 					 * Add the course data to the course table
 					 */
-					System.out.println("Inserting new course");
+					/*
+					 * Annotations for the insert query used here
+					 */
+					DBAnnotation.annoate("courseName", "courses", "CourseName", false);
+					DBAnnotation.annoate("deptID", "courses", "DepartmentID", false);
+					
+					int deptID = department.getDepartmentID();
 					String SQLInsert= "Insert into university.courses (CourseName, DepartmentID) Values (?,?);";
 					PreparedStatement statement;
 					statement = conn.prepareStatement(SQLInsert);
 					statement.setString(1, courseName);
-					statement.setInt(2, department.getDepartmentID());
+					statement.setInt(2, deptID);					
 					statement.execute();
 					Database.commitTransaction(conn);
 					isAdded = true;
@@ -246,7 +261,18 @@ public class Course {
 			
 			try{
 				if(conn != null){
-					//add the data to the course table
+					/*
+					 * add the data to the course table
+					 */
+					/*
+					 * Annotations for the update query used here
+					 */
+					DBAnnotation.annoate("courseName", "courses", "CourseName", false);
+					DBAnnotation.annoate("deptID", "courses", "DepartmentID", false);
+					DBAnnotation.annoate("courseID", "courses", "CourseID", false);
+					
+					int deptID = department.getDepartmentID();
+					int courseID = this.getCourseID();
 					System.out.println("Updating course");
 					String SQLupdate= "UPDATE university.courses "
 							+ "SET CourseName= ?, DepartmentID= ? "
@@ -254,8 +280,8 @@ public class Course {
 					PreparedStatement statement;
 					statement = conn.prepareStatement(SQLupdate, ResultSet.CONCUR_UPDATABLE);
 					statement.setString(1, courseName);
-					statement.setInt(2, department.getDepartmentID());
-					statement.setInt(3, this.getCourseID());
+					statement.setInt(2, deptID);
+					statement.setInt(3, courseID);
 					statement.executeUpdate();
 					this.courseName = courseName;
 					this.department = department;
@@ -381,7 +407,9 @@ public class Course {
 					ResultSet rs =  statement.executeQuery();
 					
 					while(rs.next()){
-						Course c = new Course(rs.getInt("CourseID"));
+						DBAnnotation.annoate("courseID", "courses", "CourseID", true);
+						int courseID = rs.getInt("CourseID");
+						Course c = new Course(courseID);
 						courses.put(c.getCourseID(), c);
 					}
 					
@@ -423,7 +451,7 @@ public class Course {
 					ResultSet rs =  statement.executeQuery();
 					
 					while(rs.next()){
-						System.out.println("Retreiving the Course");
+						DBAnnotation.annoate("offerID", "university.coursesoffered", "OfferID", true);
 						int offerID = rs.getInt("OfferID");
 						CourseOffered co = new CourseOffered(offerID);
 						courseOfferings.put(offerID, co);						
@@ -470,7 +498,9 @@ public class Course {
 					ResultSet rs =  statement.executeQuery();
 					
 					while(rs.next()){
-						Course c = new Course(rs.getInt("CourseID"));
+						DBAnnotation.annoate("courseID", "courses", "CourseID", true);
+						int courseID = rs.getInt("CourseID");
+						Course c = new Course(courseID);
 						deptCourses.add(c);
 					}
 					
