@@ -1,8 +1,8 @@
 
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
+//import java.lang.annotation.ElementType;
+//import java.lang.annotation.Retention;
+//import java.lang.annotation.RetentionPolicy;
+//import java.lang.annotation.Target;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -14,14 +14,14 @@ public class CourseExamStructure {
 	String examName;
 	int examTotal; // Total Marks for that exam
 	
-	@Target({ElementType.LOCAL_VARIABLE})
-	@Retention(RetentionPolicy.RUNTIME)
-	public @interface DBAnnotation {
-	 String[] variable () default "";
-	 String[] table () default "";
-	 String[] column () default "";
-	 boolean[] isSource () default false; 
-	}
+//	@Target({ElementType.LOCAL_VARIABLE})
+//	@Retention(RetentionPolicy.RUNTIME)
+//	public @interface DBAnnotation {
+//	 String[] variable () default "";
+//	 String[] table () default "";
+//	 String[] column () default "";
+//	 boolean[] isSource () default false; 
+//	}
 	
 	public CourseOffered getOfferedCourse() {
 		return offeredCourse;
@@ -172,11 +172,11 @@ public class CourseExamStructure {
 			System.out.println("Exam already present. Please try again.");
 		} else {
 			
-		@DBAnnotation (
-				variable = {"examName","examTotal"},  
-				table = "tableName", 
-				column = {"ExamName","TotalMarks"}, 
-				isSource = false)
+//		@DBAnnotation (
+//				variable = {"examName","examTotal"},  
+//				table = "tableName", 
+//				column = {"ExamName","TotalMarks"}, 
+//				isSource = false)
 		String SQLExamStructureCreate = "INSERT INTO %s (ExamName,TotalMarks) VALUES(?,?) ;";
 		SQLExamStructureCreate = String.format(SQLExamStructureCreate, tableName);
 		
@@ -184,10 +184,12 @@ public class CourseExamStructure {
 			Connection conn = Database.getConnection();
 			try {
 				if (conn != null) {
-				 
+					
 					PreparedStatement statement = conn.prepareStatement(SQLExamStructureCreate);
 //					statement.setString(1, tableName);
+					DBAnnotation.annoate("examName", tableName, "ExamName", false);
 					statement.setString(1, examName);
+					DBAnnotation.annoate("examTotal", tableName, "TotalMarks", false);
 					statement.setInt(2, examTotal);
 					statement.executeUpdate();
 					examAdded = CourseExams.addNewExamColumn(this);
@@ -223,11 +225,11 @@ public class CourseExamStructure {
 //		String tableName = courseName + Integer.toString(offerID) + Integer.toString(semID) + "Structure";
 //	
 		
-		@DBAnnotation (
-				variable = {"tableExamName"},  
-				table = "tableName", 
-				column = {"ExamName"}, 
-				isSource = true)
+//		@DBAnnotation (
+//				variable = {"tableExamName"},  
+//				table = "tableName", 
+//				column = {"ExamName"}, 
+//				isSource = true)
 		String SQLExamStructureSelect = "Select ExamName FROM %s ;";
 		SQLExamStructureSelect = String.format(SQLExamStructureSelect, tableName);
 		try {
@@ -239,6 +241,7 @@ public class CourseExamStructure {
 //					statement.setString(1, tableName);
 					ResultSet rs = statement.executeQuery();
 					while(rs.next()){
+						DBAnnotation.annoate("tableExamName", tableName, "ExamName", true);
 						String tableExamName = rs.getString("ExamName");
 						if (tableExamName.equals(examName)){
 							isExamPresent = true;
@@ -277,11 +280,11 @@ public class CourseExamStructure {
 		
 		if ((isExamPresent == true) && (isNewExamPresent == false)){
 			
-		@DBAnnotation (
-				variable = {"newExamName"},  
-				table = "tableName", 
-				column = {"ExamName"}, 
-				isSource = false)
+//		@DBAnnotation (
+//				variable = {"newExamName"},  
+//				table = "tableName", 
+//				column = {"ExamName"}, 
+//				isSource = false)
 		String SQLExamStructureUpdate = "UPDATE %s SET ExamName = ? WHERE ExamName = ? ;";
 		SQLExamStructureUpdate = String.format(SQLExamStructureUpdate, tableName);
 		try {
@@ -291,7 +294,9 @@ public class CourseExamStructure {
 				 
 					PreparedStatement statement = conn.prepareStatement(SQLExamStructureUpdate);
 //					statement.setString(1, tableName);
+					DBAnnotation.annoate("newExamName", tableName, "ExamName", false);
 					statement.setString(1, newExamName);
+					DBAnnotation.annoate("examName", tableName, "ExamName", false);
 					statement.setString(2, examName);
 					statement.executeUpdate();
 					boolean modifiedColumn = CourseExams.modifyExistingExamColumnName(this, newExamName);
@@ -335,11 +340,11 @@ public class CourseExamStructure {
 		boolean isExamPresent = this.isExamPresent(tableName,examName);
 		if (isExamPresent == true){
 			
-		@DBAnnotation (
-				variable = {"newTotalMarks"},  
-				table = "tableName", 
-				column = {"TotalMarks"}, 
-				isSource = false)
+//		@DBAnnotation (
+//				variable = {"newTotalMarks"},  
+//				table = "tableName", 
+//				column = {"TotalMarks"}, 
+//				isSource = false)
 		String SQLExamStructureUpdate = "UPDATE %s SET TotalMarks = ? WHERE ExamName = ? ;";
 		SQLExamStructureUpdate = String.format(SQLExamStructureUpdate, tableName);
 		
@@ -350,8 +355,11 @@ public class CourseExamStructure {
 				 
 					PreparedStatement statement = conn.prepareStatement(SQLExamStructureUpdate);
 					//statement.setString(1, tableName);
+					DBAnnotation.annoate("newTotalMarks", tableName, "TotalMarks", false);
 					statement.setInt(1, newTotalMarks);
+					DBAnnotation.annoate("examName", tableName, "ExamName", false);
 					statement.setString(2, examName);
+					
 					statement.executeUpdate();
 					Database.commitTransaction(conn);
 					marksModified = true;
@@ -391,11 +399,11 @@ public class CourseExamStructure {
 		boolean isExamPresent = this.isExamPresent(tableName,examName);
 		if (isExamPresent == true){
 						
-		@DBAnnotation (
-				variable = {"examName"},  
-				table = "tableName", 
-				column = {"ExamName"}, 
-				isSource = false)
+//		@DBAnnotation (
+//				variable = {"examName"},  
+//				table = "tableName", 
+//				column = {"ExamName"}, 
+//				isSource = false)
 		String SQLExamStructureDelete = "DELETE FROM %s WHERE ExamName = ?  ;";
 		SQLExamStructureDelete = String.format(SQLExamStructureDelete, tableName);
 		
@@ -405,6 +413,7 @@ public class CourseExamStructure {
 				if (conn != null) {
 					PreparedStatement statement = conn.prepareStatement(SQLExamStructureDelete);
 //					statement.setString(1, tableName);
+					DBAnnotation.annoate("examName", tableName, "ExamName", false);
 					statement.setString(1, examName);
 					statement.executeUpdate();
 					boolean examColumnDeleted = CourseExams.deleteExistingExamColumn(this);
@@ -449,11 +458,11 @@ public class CourseExamStructure {
 		
 		String tableName = courseName + Integer.toString(offerID) + Integer.toString(semID) + "Structure"; 
 	
-		@DBAnnotation (
-				variable = {"examName","totalMarks"},  
-				table = "tableName", 
-				column = {"ExamName","TotalMarks"}, 
-				isSource = true)
+//		@DBAnnotation (
+//				variable = {"examName","totalMarks"},  
+//				table = "tableName", 
+//				column = {"ExamName","TotalMarks"}, 
+//				isSource = true)
 		String SQLExamSelect = "SELECT ExamName,TotalMarks FROM %s ;";
 		SQLExamSelect = String.format(SQLExamSelect, tableName);
 		
@@ -467,7 +476,9 @@ public class CourseExamStructure {
 					ResultSet rs =  statement.executeQuery();
 									
 					while(rs.next()){
+						DBAnnotation.annoate("examName", tableName, "ExamName", true);
 						String examName = rs.getString("ExamName");
+						DBAnnotation.annoate("totalMarks", tableName, "TotalMarks", true);
 						int totalMarks = rs.getInt("TotalMarks");
 						System.out.println(examName);
 						if(examName != null)

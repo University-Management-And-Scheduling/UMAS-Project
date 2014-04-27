@@ -1,8 +1,8 @@
 
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
+//import java.lang.annotation.ElementType;
+//import java.lang.annotation.Retention;
+//import java.lang.annotation.RetentionPolicy;
+//import java.lang.annotation.Target;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -19,14 +19,14 @@ public class CourseExams {
 	HashMap<Student,Double> examMarks = new HashMap<Student,Double>(); 
 	// <Student,MarksIn The Exam> 
 	
-	@Target({ElementType.LOCAL_VARIABLE})
-	@Retention(RetentionPolicy.RUNTIME)
-	public @interface DBAnnotation {
-	 String[] variable () default "";
-	 String[] table () default "";
-	 String[] column () default "";
-	 boolean[] isSource () default false; 
-	}
+//	@Target({ElementType.LOCAL_VARIABLE})
+//	@Retention(RetentionPolicy.RUNTIME)
+//	public @interface DBAnnotation {
+//	 String[] variable () default "";
+//	 String[] table () default "";
+//	 String[] column () default "";
+//	 boolean[] isSource () default false; 
+//	}
 	
 	// Constructor
 	public CourseExams(int offerID, String examName, HashMap<Student,Double> examMarks) {
@@ -152,11 +152,7 @@ public class CourseExams {
 			System.out.println("Exam already present. Please try again.");
 		} else {
 			
-		@DBAnnotation (
-				variable = {"examName",},  
-				table = "tableName", 
-				column = {"ExamName"}, 
-				isSource = false)
+		DBAnnotation.annoate("examName","tableName","ExamName",false);
 		String SQLExamAlter = "ALTER TABLE %s ADD COLUMN %s DECIMAL(4,1) Null DEFAULT 0 ;";
 		SQLExamAlter = String.format(SQLExamAlter, tableName,examName);
 		try {
@@ -185,11 +181,7 @@ public class CourseExams {
 	private static boolean isExamPresent(String tableName, String examName){
 		boolean isExamPresent = false;
 		
-		@DBAnnotation (
-				variable = {"tableName",},  
-				table = "INFORMATION_SCHEMA.COLUMNS", 
-				column = {"column_name"}, 
-				isSource = true)
+		DBAnnotation.annoate("tableName","INFORMATION_SCHEMA.COLUMNS","column_name",true);
 		String INFORMATION_SCHEMA_COLUMNS_Select = "SELECT ISC.column_name FROM INFORMATION_SCHEMA.COLUMNS ISC WHERE ISC.table_name = ?;";
 		
 		try {
@@ -198,10 +190,13 @@ public class CourseExams {
 				if (conn != null) {
 				 
 					PreparedStatement statement = conn.prepareStatement(INFORMATION_SCHEMA_COLUMNS_Select);
+					
 					statement.setString(1, tableName);
 					ResultSet rs = statement.executeQuery();
 					while(rs.next()){
+						DBAnnotation.annoate("tableExamName","INFORMATION_SCHEMA.COLUMNS","column_name",true);
 						String tableExamName = rs.getString("column_name");
+						
 						if(examName.equals(tableExamName)){
 							isExamPresent = true;
 							break;
@@ -240,11 +235,8 @@ public class CourseExams {
 		boolean isNewExamPresent = isExamPresent(tableName,newExamName);
 		if ((isExamPresent == true) && (isNewExamPresent== false) ){
 						
-		@DBAnnotation (
-				variable = {"tableName","examName","newExamName"},  
-				table = "tableName", 
-				column = {"ExamName"}, 
-				isSource = false)
+		
+		//DBAnnotation.annoate("newExamName","tableName","ExamName",false);
 		String SQLExamAlter = "ALTER TABLE %s CHANGE COLUMN %s %s DECIMAL(4,1) NULL;";
 		SQLExamAlter = String.format(SQLExamAlter, tableName, examName,newExamName);
 		
@@ -294,11 +286,7 @@ public class CourseExams {
 		boolean isExamPresent = isExamPresent(tableName,examName);
 		if (isExamPresent == true){
 						
-		@DBAnnotation (
-				variable = {"examName"},  
-				table = "tableName", 
-				column = {"ExamName"}, 
-				isSource = false)
+		DBAnnotation.annoate("examName","tableName","ExamName",false);
 		String SQLExamDelete = "ALTER TABLE %s DROP COLUMN %s ;";
 		SQLExamDelete = String.format(SQLExamDelete, tableName,examName);
 		try {
@@ -365,11 +353,6 @@ public class CourseExams {
 			// If enrolled, add his marks
 			if (isStudentEnrolled == true){
 				
-				@DBAnnotation (
-						variable = {"marks","UIN"},  
-						table = "tableName", 
-						column = {"ExamName","StudentUIN"}, 
-						isSource = false)
 				String SQLExamUpdate = "UPDATE %s SET %s = ? WHERE `StudentUIN`=?;";
 				SQLExamUpdate = String.format(SQLExamUpdate, tableName,examName);
 				try {
@@ -380,7 +363,9 @@ public class CourseExams {
 							PreparedStatement statement = conn.prepareStatement(SQLExamUpdate);
 //							statement.setString(1, tableName);
 //							statement.setString(2, examName);
+							DBAnnotation.annoate("marks","tableName","ExamName",false);
 							statement.setDouble(1, marks);
+							DBAnnotation.annoate("UIN","tableName","StudentUIN",false);
 							statement.setInt(2, UIN);
 							statement.executeUpdate();					
 							Database.commitTransaction(conn);
@@ -445,11 +430,7 @@ public class CourseExams {
 		int UIN = 0;
 		double studentTotalMarks = 0.0;
 		
-		@DBAnnotation (
-				variable = {"examName"},  
-				table = "tableName", 
-				column = {"ExamName"}, 
-				isSource = true)
+		
 		String SQLExamSelect = "SELECT * FROM %s ;";
 		SQLExamSelect = String.format(SQLExamSelect, tableName);
 
@@ -467,10 +448,12 @@ public class CourseExams {
 					} else {
 					
 						while(rs.next()){
+							DBAnnotation.annoate("UIN","tableName","StudentUIN",true);
 							UIN = rs.getInt("StudentUIN");
 							studentTotalMarks = 0.0;
 							System.out.println("-*-");
 							for(String examName:allExams){
+								DBAnnotation.annoate("studentTotalMarks","tableName",examName,true);
 								studentTotalMarks = studentTotalMarks + rs.getDouble(examName);
 							}
 							
@@ -514,11 +497,7 @@ public class CourseExams {
 		} else {
 			for(String oneExam: allExams){
 				
-				@DBAnnotation (
-						variable = {"examName"},  
-						table = "tableName", 
-						column = {"ExamName"}, 
-						isSource = true)
+		
 				String SQLExamSelect = "SELECT %s FROM %s WHERE StudentUIN = ?;";
 				SQLExamSelect = String.format(SQLExamSelect, oneExam, tableName);
 
@@ -528,10 +507,12 @@ public class CourseExams {
 						if (conn != null) {
 							PreparedStatement statement = conn.prepareStatement(SQLExamSelect);
 							// statement.setString(1, oneExam);
+							DBAnnotation.annoate("UIN","tableName","StudentUIN",false);
 							statement.setInt(1, UIN);
 							ResultSet rs =  statement.executeQuery();
 							//System.out.println(rs.getDouble());
 								if(rs.next()){
+									DBAnnotation.annoate("studentMarks","tableName",oneExam,true);
 									studentMarks = rs.getDouble(oneExam);
 									studentExamAndMarks.put(oneExam, studentMarks);
 								}
@@ -566,11 +547,11 @@ public class CourseExams {
 			if(isExamPresent == false){
 				System.out.println("Exam Absent");
 			} else {
-				@DBAnnotation (
-						variable = {"examName"},  
-						table = "tableName", 
-						column = {"ExamName"}, 
-						isSource = true)
+//				@DBAnnotation (
+//						variable = {"examName"},  
+//						table = "tableName", 
+//						column = {"ExamName"}, 
+//						isSource = true)
 				String SQLExamSelect = "SELECT StudentUIN, %s FROM %s;";
 				SQLExamSelect = String.format(SQLExamSelect, examName, tableName);
 
@@ -585,7 +566,9 @@ public class CourseExams {
 							ResultSet rs =  statement.executeQuery();
 							//System.out.println(rs.getDouble());
 								while(rs.next()){
+									DBAnnotation.annoate("UIN","tableName","StudentUIN",true);
 									int UIN = rs.getInt(1);
+									DBAnnotation.annoate("marks","tableName",examName,true);
 									double marks = rs.getDouble(2); 
 									studentsMarks.put(UIN, marks);
 								}
@@ -643,11 +626,11 @@ public class CourseExams {
 			// If enrolled, add his marks
 			if (isStudentEnrolled == true){
 				
-				@DBAnnotation (
-						variable = {"marks","UIN"},  
-						table = "tableName", 
-						column = {"ExamName","StudentUIN"}, 
-						isSource = false)
+//				@DBAnnotation (
+//						variable = {"marks","UIN"},  
+//						table = "tableName", 
+//						column = {"ExamName","StudentUIN"}, 
+//						isSource = false)
 				String SQLExamUpdate = "UPDATE %s SET %s = ? WHERE `StudentUIN`=?;";
 				SQLExamUpdate = String.format(SQLExamUpdate, tableName,examName);
 				try {
@@ -658,7 +641,9 @@ public class CourseExams {
 							PreparedStatement statement = conn.prepareStatement(SQLExamUpdate);
 //							statement.setString(1, tableName);
 //							statement.setString(2, examName);
+							DBAnnotation.annoate("marks","tableName",examName,false);
 							statement.setDouble(1, marks);
+							DBAnnotation.annoate("UIN","tableName","StudentUIN",false);
 							statement.setInt(2, UIN);
 							statement.executeUpdate();					
 							Database.commitTransaction(conn);
@@ -703,11 +688,11 @@ public class CourseExams {
 		
 		String tableName = courseName + Integer.toString(offerID) + Integer.toString(semID) + "Structure"; 
 	
-		@DBAnnotation (
-				variable = {"examName"},  
-				table = "tableName", 
-				column = {"ExamName"}, 
-				isSource = true)
+//		@DBAnnotation (
+//				variable = {"examName"},  
+//				table = "tableName", 
+//				column = {"ExamName"}, 
+//				isSource = true)
 		String SQLExamSelect = "SELECT ExamName FROM %s ;";
 		SQLExamSelect = String.format(SQLExamSelect, tableName);
 		
@@ -721,6 +706,7 @@ public class CourseExams {
 					ResultSet rs =  statement.executeQuery();
 									
 					while(rs.next()){
+						DBAnnotation.annoate("examName","tableName","ExamName",true);
 						String examName = rs.getString("ExamName");
 						System.out.println(examName);
 						if(examName != null)

@@ -1,17 +1,18 @@
 
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
+//import java.lang.annotation.ElementType;
+//import java.lang.annotation.Retention;
+//import java.lang.annotation.RetentionPolicy;
+//import java.lang.annotation.Target;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -25,14 +26,14 @@ public class CourseCurve {
 	List<Integer> curvingCriteria; // <10,20,10>
 	HashMap<Student,String> courseCurve; // <Student,Grade>
 	
-	@Target({ElementType.LOCAL_VARIABLE})
-	@Retention(RetentionPolicy.RUNTIME)
-	public @interface DBAnnotation {
-	 String[] variable () default "";
-	 String[] table () default "";
-	 String[] column () default "";
-	 boolean[] isSource () default false; 
-	}
+//	@Target({ElementType.LOCAL_VARIABLE})
+//	@Retention(RetentionPolicy.RUNTIME)
+//	public @interface DBAnnotation {
+//	 String variable () default "";
+//	 String table () default "";
+//	 String column () default "";
+//	 boolean isSource () default false; 
+//	}
 	
 	// Constructor. Takes offerID and curvingCriteria to create CourseCurve
 	// object used to calculate curve
@@ -88,11 +89,7 @@ public class CourseCurve {
 		
 		String tableName = courseName + Integer.toString(offerID) + Integer.toString(semID) + "Structure";
 		
-			@DBAnnotation (
-				variable = {""},  
-				table = "tableName", 
-				column = {"TotalMarks"}, 
-				isSource = false)
+		
 		String SQLExamStructureSelect = "Select sum(TotalMarks) As TotalMarks2 FROM %s;";
 			SQLExamStructureSelect = String.format(SQLExamStructureSelect, tableName);
 		try {
@@ -105,6 +102,8 @@ public class CourseCurve {
 					ResultSet rs = statement.executeQuery();
 					
 					while(rs.next()){
+						
+						DBAnnotation.annoate("totalCourseMarks",tableName,"TotalMarks2",true);
 						totalCourseMarks = rs.getInt(1);
 						System.out.println("---------------------");
 						System.out.println("totalCourseMarks: " + totalCourseMarks);
