@@ -21,9 +21,9 @@ import java.util.Map.Entry;
 
 public class CourseCurve {
 
-	int offerID;
-	List<Integer> curvingCriteria;
-	HashMap<Student,String> courseCurve;
+	int offerID; // CourseOffered offerID
+	List<Integer> curvingCriteria; // <10,20,10>
+	HashMap<Student,String> courseCurve; // <Student,Grade>
 	
 	@Target({ElementType.LOCAL_VARIABLE})
 	@Retention(RetentionPolicy.RUNTIME)
@@ -34,6 +34,8 @@ public class CourseCurve {
 	 boolean[] isSource () default false; 
 	}
 	
+	// Constructor. Takes offerID and curvingCriteria to create CourseCurve
+	// object used to calculate curve
 	public CourseCurve(int offerID, List<Integer> curvingCriteria) {
 		super();
 		this.offerID = offerID;
@@ -64,6 +66,7 @@ public class CourseCurve {
 		this.courseCurve = courseCurve;
 	}
 	
+	// To retrieve the total marks for the course
 	private int getTotalCourseMarks(){
 		int totalCourseMarks = 0;
 		
@@ -119,6 +122,8 @@ public class CourseCurve {
 		
 	}
 	
+	// Get the total marks of all the exams for all students 
+	// Example: <Student, 87>
 	private HashMap<Student,Double> getStudentTotalMarks(){
 		HashMap<Student,Double> studentTotalMarks = new HashMap<Student,Double>();
 		
@@ -131,6 +136,7 @@ public class CourseCurve {
 		
 	}
 	
+	// Gets the percentage of the last student in the course
 	public double getLastStudentPercent(){
 		double percent = 0.0;
 		HashMap<Student,Double> studentTotalMarks = new HashMap<Student,Double>();
@@ -447,6 +453,7 @@ public class CourseCurve {
 		return curve;
 	}
 	
+	// Function to update the final grades in the StudentEnrollment table
 	public boolean UpdateGrades(){
 		boolean gradesUpdated = false;
 		
@@ -465,6 +472,8 @@ public class CourseCurve {
 		return gradesUpdated;
 	}
 	
+	// To sort a HashMap
+	// [1] http://stackoverflow.com/questions/8119366/sorting-hashmap-by-values
 	private static HashMap<Student, Double> sortHashMap(HashMap<Student, Double> unsortedStudentTotalMarks)
     {
 
@@ -487,35 +496,36 @@ public class CourseCurve {
         return sortedstudentTotalMarks;
     }
 
+	
 	public static void main(String[] args){
 		
 		// To test percentage curve
-		int offerID = 345678;
-		List<Integer> curvingCriteria = new ArrayList<Integer>();
-		curvingCriteria.add(30);
-		curvingCriteria.add(40);
-		curvingCriteria.add(30);
-				
-		CourseCurve curve = CourseCurve.calculatePercentageCurve(offerID, curvingCriteria);
-		
-		HashMap<Student,String> courseCurve = curve.getCourseCurve();
-		System.out.println("----------------------------------");
-		for(Student students:courseCurve.keySet()){
-			int UIN = students.getUIN();
-			String grade = courseCurve.get(students);
-			
-			System.out.println("UIN: " + UIN + " Grade: " + grade);
-		
-		}
-		CourseOffered offered = null;
-		try {
-			offered = new CourseOffered(offerID);
-		} catch (Course.CourseDoesNotExistException
-				| CourseOffered.CourseOfferingDoesNotExistException e) {
-			e.printStackTrace();
-		}
-		
-		StudentEnrollment.updateAllStudentGrade(courseCurve, offered);
+//		int offerID = 345678;
+//		List<Integer> curvingCriteria = new ArrayList<Integer>();
+//		curvingCriteria.add(30);
+//		curvingCriteria.add(40);
+//		curvingCriteria.add(30);
+//				
+//		CourseCurve curve = CourseCurve.calculatePercentageCurve(offerID, curvingCriteria);
+//		
+//		HashMap<Student,String> courseCurve = curve.getCourseCurve();
+//		System.out.println("----------------------------------");
+//		for(Student students:courseCurve.keySet()){
+//			int UIN = students.getUIN();
+//			String grade = courseCurve.get(students);
+//			
+//			System.out.println("UIN: " + UIN + " Grade: " + grade);
+//		
+//		}
+//		CourseOffered offered = null;
+//		try {
+//			offered = new CourseOffered(offerID);
+//		} catch (Course.CourseDoesNotExistException
+//				| CourseOffered.CourseOfferingDoesNotExistException e) {
+//			e.printStackTrace();
+//		}
+//		
+//		StudentEnrollment.updateAllStudentGrade(courseCurve, offered);
 		
 		// To test absolute curve
 //		int offerID = 345678;
