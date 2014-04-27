@@ -62,7 +62,7 @@ public class StudentMarksUI extends JFrame {
 		
 	}
 	
-	
+	// Makes a panel to display the UIN and marks of each student
 	public JPanel makePanel(final int UIN, final double marks, final CourseOffered courseOffered, final String examName){
 		JPanel studentmarks = new JPanel();
 		studentmarks.setLayout(new GridLayout(1,3,0,0));
