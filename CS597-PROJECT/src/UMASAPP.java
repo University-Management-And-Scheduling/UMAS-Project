@@ -59,8 +59,8 @@ public class UMASAPP {
 		Thread taListMonitor = new Thread(new TAListScanner());
 		taListMonitor.start();
 		
-		Thread waitListMonitor = new Thread(new WaitListScan());
-		waitListMonitor.start();
+//		Thread waitListMonitor = new Thread(new WaitListScan());
+//		waitListMonitor.start();
 	}
 	
 	public static void initializeLoggedInUser(String username, boolean isLoggedIn){
@@ -128,7 +128,7 @@ public class UMASAPP {
 		else if(positionID == 3){
 			ArrayList<Student> students = Student.getAllStudents();
 			for(Student s :students){
-				
+				Student.calculateGPA(s.getUIN());
 			}
 			JOptionPane.showMessageDialog(null, "Student logged in");
 			frame.remove(loginui);
@@ -156,6 +156,15 @@ public class UMASAPP {
 		}
 		
 		else if(positionID == 4){
+			ArrayList<Student> students = Student.getAllStudents();
+			for(Student s :students){
+				Student.calculateGPA(s.getUIN());
+			}
+			
+			ArrayList<TA> tas = TA.getAllTAs();
+			for(TA ta: tas){
+				TA.calculateGPA(ta.getUIN());
+			}
 			JOptionPane.showMessageDialog(null, "TA logged in");
 			frame.remove(loginui);
 			frame.revalidate();

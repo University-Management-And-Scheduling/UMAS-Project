@@ -19,14 +19,6 @@ public class Classroom {
 	private int classroomID;
 	
 	
-	@Target({ElementType.LOCAL_VARIABLE})
-	@Retention(RetentionPolicy.RUNTIME)
-	public @interface DBAnnotation {
-		 String variable () default "";
-		 String table () default "";
-		 String column () default "";
-		 boolean isSource () default false; 
-	}
 	
 	
 	/**
@@ -82,13 +74,13 @@ public class Classroom {
 					 */
 					if(rs.first()){
 
-						@DBAnnotation(variable = "classroomCapacity",table = "classroom", column="ClassroomCapacity", isSource = true)
+						DBAnnotation.annoate("classroomCapacity", "classroom", "ClasssroomCapacity", true);
 						int classroomCapacity = rs.getInt("ClassroomCapacity");
 						
-						@DBAnnotation(variable = "classroomName",table = "classroom", column="ClassroomName", isSource = true)
-						String classroomName = rs.getString("ClassroomName"); 
+						DBAnnotation.annoate("classroomName", "classroom", "ClasssroomName", true);
+						String classroomName = rs.getString("ClassroomName"); 						
 						
-						@DBAnnotation(variable = "classroomLocation",table = "classroom", column="ClassroomLocation", isSource = true)
+						DBAnnotation.annoate("classroomLocation", "classroom", "ClasssroomLocation", true);
 						String classroomLocation = rs.getString("ClassroomLocation");
 						
 						this.classroomCapacity = classroomCapacity;
@@ -126,6 +118,9 @@ public class Classroom {
 	 * Not used currently in the main code
 	 */
 	public static boolean addNewClassroom(ClassroomName classroomName, ClassroomLocation classroomLocation, int capacity){
+		if(classroomName == null || classroomLocation == null || capacity <=0)
+			return false;
+		
 		boolean isAdded = false;
 		try{
 			Connection conn = Database.getConnection();
@@ -219,6 +214,9 @@ public class Classroom {
 	 */
 	public static Classroom getEmptyClassroom(ClassroomLocation location, int timeSlotType, int expectedCapacity){
 
+		if(location == null || expectedCapacity<=0)
+			return null;
+		
 		if(!checkTimeSlotType(timeSlotType))
 			return null;
 		
@@ -268,6 +266,9 @@ public class Classroom {
 	 * Get the classroom id for the specified location and name
 	 */
 	public static int getClassID(ClassroomName name, ClassroomLocation location){
+		if(location == null || name==null)
+			return -1;
+		
 		String classroomName = name.toString();
 		String classroomLocation = location.toString();
 		int id = -1;
@@ -280,7 +281,7 @@ public class Classroom {
 					/*
 					 * try to look for the classroom and location combination
 					 */
-					String ClassroomSelect = "Select *"
+					String ClassroomSelect = "Select ClassroomID"
 							+ " FROM university.classroom"
 							+ " WHERE classroomName= ? and classroomLocation= ?";
 					PreparedStatement statement = conn.prepareStatement(ClassroomSelect);
@@ -293,7 +294,7 @@ public class Classroom {
 					 */
 					
 					if(rs.first()){
-						@DBAnnotation(variable = "classID",table = "classroom", column="ClassroomID", isSource = true)
+						DBAnnotation.annoate("classID", "classroom", "ClasssroomID", true);
 						int classID = rs.getInt("ClassroomID");
 						id = classID;
 					}
@@ -337,6 +338,9 @@ public class Classroom {
 	 * It finds all the empty classrooms and returns
 	 */
 	public static LinkedHashMap<Integer, Classroom> getAllEmptyClassroom(ClassroomLocation location, int timeSlotType, int expectedCapacity){
+		if(location == null || !checkTimeSlotType(timeSlotType) || expectedCapacity<=0)
+			return null;
+		
 		ArrayList<ClassroomName> names = new ArrayList<ClassroomName>(Arrays.asList(ClassroomName.values()));
 		LinkedHashMap<Integer, Classroom> classrooms = new LinkedHashMap<Integer, Classroom>();
 		Collections.shuffle(names);
@@ -368,7 +372,7 @@ public class Classroom {
 	 * Finds an open time slot of a specified type inside the specified classroom 
 	 */
 	public ArrayList<Timeslots> findOpenSlotsForClassroom(int timeSlotType){
-		if(timeSlotType < 1 || timeSlotType > 2)
+		if(!checkTimeSlotType(timeSlotType))
 			return null;
 		
 		System.out.println("Looking for open time slots in classroom:"+this.getClassroomName().toString()+" at location:"+this.getClassroomLocation().toString());
@@ -395,7 +399,7 @@ public class Classroom {
 					 * Add all the occupied time slots in the array list for checking for conflicts
 					 */
 					while(rs.next()){
-						@DBAnnotation(variable = "timeslotID",table = "timeslots", column="TimeSlotID", isSource = true)
+						DBAnnotation.annoate("timeslotID", "timeslots", "TimeSlotID", true);
 						int timeslotID = rs.getInt("TimeSlotID");
 						Timeslots t = new Timeslots(timeslotID);
 						//System.out.println("Slot:"+t.getTimeSlotID()+" start:"+t.getStartHour()+" end:"+t.getEndHour());
@@ -419,7 +423,7 @@ public class Classroom {
 					 *If no conflict is found, add it to empty timeslot list 
 					 */
 					while(rs.next()){
-						@DBAnnotation(variable = "timeslotID",table = "timeslots", column="TimeSlotID", isSource = true)
+						DBAnnotation.annoate("timeslotID", "timeslots", "TimeSlotID", true);
 						int timeslotID = rs.getInt("TimeSlotID");
 						
 						Timeslots t = new Timeslots(timeslotID);
@@ -467,6 +471,9 @@ public class Classroom {
 	 * checks if the specified combination of the classroom an time slot is empty
 	 */
 	public static boolean isEmpty(Classroom classroom, Timeslots t){
+		if(classroom == null || t== null)
+			return false;
+		
 		int classroomID = classroom.getClassroomID();
 		int timeslotID = t.getTimeSlotID();
 		boolean isEmpty= false;

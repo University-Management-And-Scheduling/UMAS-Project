@@ -1368,7 +1368,7 @@ public class AdminUI extends JPanel {
 				System.out.println("Initializing the wait list monitor - Admin UI");
 				initializeWaitListMonitor();
 				try {
-					Thread.sleep(5000);
+					Thread.sleep(10000);
 					System.out.println("Finished the wait list monitor - Admin UI");
 				} catch (InterruptedException e) {
 					// TODO Auto-generated catch block
