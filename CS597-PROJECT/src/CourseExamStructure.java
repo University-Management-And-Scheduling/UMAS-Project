@@ -485,22 +485,22 @@ public class CourseExamStructure {
 	
 	public static void main(String[] args){
 	
-		int offerID = 345678;
-		String examName = "Assgn1";
-		
-		int totalMarks = 10; 
-		CourseOffered offeredCourse = null;
-		try {
-			offeredCourse = new CourseOffered(offerID);
-		} catch (Course.CourseDoesNotExistException e) {
-			e.printStackTrace();
-		} catch (CourseOffered.CourseOfferingDoesNotExistException e) {
-			e.printStackTrace();
-		}
+//		int offerID = 345678;
+//		String examName = "Assgn1";
 //		
-		@SuppressWarnings("unused")
-		CourseExamStructure examStruct = new CourseExamStructure(offeredCourse,examName,totalMarks);
-//		
+//		int totalMarks = 10; 
+//		CourseOffered offeredCourse = null;
+//		try {
+//			offeredCourse = new CourseOffered(offerID);
+//		} catch (Course.CourseDoesNotExistException e) {
+//			e.printStackTrace();
+//		} catch (CourseOffered.CourseOfferingDoesNotExistException e) {
+//			e.printStackTrace();
+//		}
+////		
+//		@SuppressWarnings("unused")
+//		CourseExamStructure examStruct = new CourseExamStructure(offeredCourse,examName,totalMarks);
+////		
 		// To add a new exam
 //		boolean examAdded = examStruct.addNewExam();
 //		if(examAdded == true){
