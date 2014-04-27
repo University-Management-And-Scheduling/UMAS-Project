@@ -14,14 +14,6 @@ import java.util.ArrayList;
 
 public class Admin extends Employee {
 
-	public @interface DBAnnotation {
-		
-		String[] variable() default "";
-		String[] table() default "";
-		String[] column() default "";
-		boolean[] isSource() default false;
-	
-	}
 
 	/* this constructor calls the employee class constructor by UIN */
 	public Admin(int UIN) throws PersonDoesNotExistException {
@@ -80,7 +72,6 @@ public class Admin extends Employee {
 			try {
 				if (conn != null) {
 
-					@DBAnnotation(variable = "retreivedAdminUIN", table = "people", column = "UIN", isSource = true)
 					// Retrieve all the professors from one department
 					String adminSelect = "Select *" + " FROM university.people"
 							+ " WHERE PositionID=1";
@@ -88,7 +79,8 @@ public class Admin extends Employee {
 					ResultSet rs = statement.executeQuery();//execute the query
 
 					while (rs.next()) {
-
+						
+						DBAnnotation.annoate("retreivedAdminUIN","people","UIN",true);
 						int retreivedAdminUIN = rs.getInt("UIN");//get the UIN and store it in a variable
 						Admin admins;
 						try {
@@ -293,11 +285,6 @@ public class Admin extends Employee {
 
 	public static void main(String[] args) {
 
-		// getAllAdmin();
-
-		// Admin ad = new Admin(1);
-		//
-		// ad.updateAdminDept(1);
 
 	}
 

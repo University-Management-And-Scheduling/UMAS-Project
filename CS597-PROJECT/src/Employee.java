@@ -68,10 +68,17 @@ public class Employee extends People {
 				if (rs.first()) {
 					//if exists then initialize the variables
 					System.out.println(UIN + "already exists");
-
+					
+					DBAnnotation.annoate("retrievedEmployeeUIN", "employee", "UIN", true);
 					int retrievedEmployeeUIN = rs.getInt("UIN");//retrieve the UIN 
+					
+					DBAnnotation.annoate("retrievedEmployeeSalary", "employee", "Salary", true);
 					double retrievedEmployeeSalary = rs.getDouble("Salary");//retrieve the salary 
+					
+					DBAnnotation.annoate("retrievedOfficeAddress", "employee", "OfficeAddress", true);
 					String retrievedOfficeAddress = rs.getString("OfficeAddress");//retrieve the office address
+					
+					DBAnnotation.annoate("retrievedOfficeHours", "employee", "OfficeHours", true);
 					String retrievedOfficeHours = rs.getString("OfficeHours");//retrieve the office hours
 
 					//set the class variables to the UIN specific
@@ -155,9 +162,15 @@ public class Employee extends People {
 					stmt.setInt(1, UIN);//set the UIN
 					stmt.setDouble(2, salary);//set the salary
 					stmt.setString(3, Office_address);//set the office address
-					stmt.setString(4, office_hours);//set the office hours
+					stmt.setString(4, office_hours);//set the office hours					
 					System.out.println(stmt);
 					int i = stmt.executeUpdate();//execute query
+					
+					DBAnnotation.annoate("UIN", "employee", "UIN", false);
+					DBAnnotation.annoate("salary", "employee", "Salary", false);
+					DBAnnotation.annoate("office_address", "employee", "OfficeAddress", false);
+					DBAnnotation.annoate("office_hours", "employee", "OfficeHours", false);
+					
 					System.out.println(i);
 					System.out.println("Inserted");
 					isAdded = true;//set the return value to true
@@ -305,6 +318,11 @@ public class Employee extends People {
 					stmt.setInt(3, UIN);//set the UIN
 					System.out.println(stmt);
 					int i = stmt.executeUpdate();//execute the query
+					
+					DBAnnotation.annoate("officeAddress", "employee", "OfficeAddress", false);
+					DBAnnotation.annoate("officeHours", "employee", "OfficeHours", false);
+					DBAnnotation.annoate("UIN", "employee", "UIN", false);
+					
 					System.out.println(i);
 					System.out.println("Updated");
 
@@ -449,6 +467,10 @@ public class Employee extends People {
 						stmt.setInt(2, UIN);//for the UIN
 						System.out.println(stmt);
 						int i = stmt.executeUpdate();//execute the query
+						
+						DBAnnotation.annoate("newSalary", "employee", "Salary", false);
+						DBAnnotation.annoate("UIN", "employee", "UIN", false);
+						
 						System.out.println(i);
 						System.out.println("Updated");
 
@@ -514,7 +536,9 @@ public class Employee extends People {
 
 				if (rs.first()) {
 					//retrieve the salary
+					DBAnnotation.annoate("retreivedSalary", "employee", "Salary", true);
 					double retreivedSalary = rs.getDouble("Salary");
+					
 					return retreivedSalary;
 
 				}
@@ -635,10 +659,11 @@ public class Employee extends People {
 					if (ifExisting) {
 
 						SQLPeopleDelete = "Delete From employee where UIN=?;";
-						PreparedStatement stmt = conn
-								.prepareStatement(SQLPeopleDelete);
+						PreparedStatement stmt = conn.prepareStatement(SQLPeopleDelete);
 						stmt.setInt(1, UIN);//set the UIN
 						int rs1 = stmt.executeUpdate();//execute the query
+						DBAnnotation.annoate("UIN", "employee", "UIN", false);
+						
 						System.out.println(rs1);
 						System.out.println(UIN + " is deleted");
 						isDeleted = true;
@@ -767,6 +792,8 @@ public class Employee extends People {
 						PreparedStatement stmt = conn.prepareStatement(SQLPeopleDelete);
 						stmt.setInt(1, getUINtoDelete);//set the UIN
 						int rs1 = stmt.executeUpdate();//execute the query
+						DBAnnotation.annoate("getUINtoDelete", "employee", "UIN", false);
+						
 						System.out.println(rs1);
 						System.out.println(getUINtoDelete + " is deleted");
 						isDeleted = true;//set the return value to be true
@@ -827,6 +854,7 @@ public class Employee extends People {
 
 					if (rs.first()) {
 
+						DBAnnotation.annoate("peopleRetrievedUIN", "people", "UIN", true);
 						int peopleRetrievedUIN = rs.getInt("UIN");//retrieve the query
 
 						return peopleRetrievedUIN;//return the UIN
@@ -962,7 +990,9 @@ public class Employee extends People {
 
 					while (rs.next()) {
 
+						DBAnnotation.annoate("retreivedProfUserNames", "people", "Username", true);
 						String retreivedProfUserNames = rs.getString("Username");//retrieve the usernames
+						
 						Employee emps = new Employee(retreivedProfUserNames);//pass it to the emp constructor
 						getAllEmpDept.add(emps);//add the objects to the array
 						System.out.println(emps.getName());
@@ -1023,7 +1053,9 @@ public class Employee extends People {
 
 				if (rs.first()) {
 
+					DBAnnotation.annoate("peopleRetrievedPositionID", "people", "PositionID", true);
 					int peopleRetrievedPositionID = rs.getInt("PositionID");//get the position ID
+					
 					System.out.println("UIN:" + UIN + " Position ID:"+ peopleRetrievedPositionID);
 
 					if (peopleRetrievedPositionID <= 2 || peopleRetrievedPositionID == 5) 
@@ -1105,7 +1137,9 @@ public class Employee extends People {
 
 				if (rs.first()) {
 
+					DBAnnotation.annoate("peopleRetrievedPositionID", "people", "PositionID", true);
 					int peopleRetrievedPositionID = rs.getInt("PositionID");
+					
 					System.out.println("Username:" + userName + " Position ID:"+ peopleRetrievedPositionID);
 					/*
 					 * Checking here if the position ID id of a professor i.e 2,
@@ -1194,35 +1228,6 @@ public class Employee extends People {
 	 * local main class is used for testing functions and specific executions
 	 */
 	public static void main(String[] args) {
-
-		// try {
-		// giveBonus(354, 30.0);
-		// } catch (bonusNotValidException e) {
-		// // TODO Auto-generated catch block
-		// e.printStackTrace();
-		// }
-
-		// updateEmpDetails(354, "sim", "sim");
-
-		// deleteFromDatabaseByUserName("arihant");
-
-		// try {
-		// ArrayList<Employee>
-		// emp=Employee.getAllEmployeesByDepartment("Duis A LLP");
-		// } catch (Department.DepartmentDoesNotExistException e) {
-		// // TODO Auto-generated catch block
-		// e.printStackTrace();
-		// }
-
-//		boolean c = checkIfEmployee(451);
-//		System.out.println(c);
-//
-//		try {
-//			boolean check = updateEmpDetails(451, "ss", "ss");
-//		} catch (Student.AccessDeniedException e) {
-//			// TODO Auto-generated catch block
-//			e.printStackTrace();
-//		}
 
 	}
 }

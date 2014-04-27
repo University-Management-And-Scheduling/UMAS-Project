@@ -54,15 +54,34 @@ public class Job {
 
 				if (rs.first()) {
 
+					DBAnnotation.annoate("retreivedjobID", "jobpostings", "JobID", true);
 					int retreivedjobID = rs.getInt("JobID");//--------retrieve the jobID and store it in a local variable
+					
+					DBAnnotation.annoate("whoPostedUIN", "jobpostings", "PostedByUIN", true);
 					int whoPostedUIN = rs.getInt("PostedByUIN");//--------retrieve the posted by UIN and store it in a local variable
+					
+					DBAnnotation.annoate("jobInDept", "jobpostings", "JobInDepartment", true);
 					String jobInDept = rs.getString("JobInDepartment");//--------retrieve the job in dept and store it in a local variable
+					
+					DBAnnotation.annoate("minimumReqdGPA", "jobpostings", "ReqdMinimumGPA", true);
 					double minimumReqdGPA = rs.getDouble("ReqdMinimumGPA");//--------retrieve the reqd gpa and store it in a local variable
+					
+					DBAnnotation.annoate("minimumReqdWorkExp", "jobpostings", "ReqdMinimumWorkExperience", true);
 					double minimumReqdWorkExp = rs.getDouble("ReqdMinimumWorkExperience");//--------retrieve the work ex and store it in a local variable
+					
+					DBAnnotation.annoate("retreivedSkill1", "jobpostings", "ReqdSkillset1", true);
 					boolean retreivedSkill1 = rs.getBoolean("ReqdSkillset1");//--------retrieve the skill1 and store it in a local variable
+					
+					DBAnnotation.annoate("retreivedSkill2", "jobpostings", "ReqdSkillset2", true);
 					boolean retreivedSkill2 = rs.getBoolean("ReqdSkillset2");//--------retrieve the skill2 and store it in a local variable
+					
+					DBAnnotation.annoate("retreivedSkill3", "jobpostings", "ReqdSkillset3", true);
 					boolean retreivedSkill3 = rs.getBoolean("ReqdSkillset3");//--------retrieve the skill3 and store it in a local variable
+					
+					DBAnnotation.annoate("retreivedSkill4", "jobpostings", "ReqdSkillset4", true);
 					boolean retreivedSkill4 = rs.getBoolean("ReqdSkillset4");//--------retrieve the skill4 and store it in a local variable
+					
+					DBAnnotation.annoate("retreivedSkill5", "jobpostings", "ReqdSkillset5", true);
 					boolean retreivedSkill5 = rs.getBoolean("ReqdSkillset5");//--------retrieve the skill5 and store it in a local variable
 
 					/*initialize the retrieved variables as the class variables*/
@@ -154,6 +173,17 @@ public class Job {
 
 						System.out.println(stmtForSelect);
 						int i = stmtForSelect.executeUpdate();//execute the query
+																		
+						DBAnnotation.annoate("postedByUIN", "jobpostings", "PostedByUIN", false);												
+						DBAnnotation.annoate("jobInDepartment", "jobpostings", "JobInDepartment", false);												
+						DBAnnotation.annoate("reqdMinimumGPA", "jobpostings", "ReqdMinimumGPA", false);												
+						DBAnnotation.annoate("reqdMinimumWorkExperience", "jobpostings", "ReqdMinimumWorkExperience", false);						
+						DBAnnotation.annoate("skillset1", "jobpostings", "ReqdSkillset1", false);						
+						DBAnnotation.annoate("skillset2", "jobpostings", "ReqdSkillset2", false);						
+						DBAnnotation.annoate("skillset3", "jobpostings", "ReqdSkillset3", false);												
+						DBAnnotation.annoate("skillset4", "jobpostings", "ReqdSkillset4", false);						
+						DBAnnotation.annoate("skillset5", "jobpostings", "ReqdSkillset5", false);						
+						
 						System.out.println(i);
 
 						ResultSet rs = stmtForSelect.getGeneratedKeys();
@@ -245,6 +275,17 @@ public class Job {
 
 						System.out.println(stmtForSelect);
 						int i = stmtForSelect.executeUpdate();//execute the query
+																		
+						DBAnnotation.annoate("reqdMinimumGPA", "jobpostings", "ReqdMinimumGPA", false);												
+						DBAnnotation.annoate("reqdMinimumWorkExperience", "jobpostings", "ReqdMinimumWorkExperience", false);						
+						DBAnnotation.annoate("skillset1", "jobpostings", "ReqdSkillset1", false);						
+						DBAnnotation.annoate("skillset2", "jobpostings", "ReqdSkillset2", false);						
+						DBAnnotation.annoate("skillset3", "jobpostings", "ReqdSkillset3", false);												
+						DBAnnotation.annoate("skillset4", "jobpostings", "ReqdSkillset4", false);						
+						DBAnnotation.annoate("skillset5", "jobpostings", "ReqdSkillset5", false);	
+						DBAnnotation.annoate("postedByUIN", "jobpostings", "PostedByUIN", false);	
+						
+						
 						System.out.println(i);
 						ResultSet rs = stmtForSelect.getGeneratedKeys();
 						if (rs.first())
@@ -334,7 +375,9 @@ public class Job {
 
 				if (rs.first()) {
 
+					DBAnnotation.annoate("retreivedpositionID", "people", "PositionID", true);
 					int retreivedpositionID = rs.getInt("PositionID");
+					
 					if (retreivedpositionID <= 2 ||retreivedpositionID==5) {
 						//if positionID is more than 2 or less than 5 then its not an employee
 						check = true;
@@ -396,6 +439,10 @@ public class Job {
 
 					System.out.println(stmtForSelect);
 					int i = stmtForSelect.executeUpdate();//execute the query
+					
+					DBAnnotation.annoate("jobiD", "jobroster", "JobID", false);
+					DBAnnotation.annoate("UIN", "jobroster", "UIN", false);
+					
 					System.out.println(i);
 					System.out.println("Inserted");
 
@@ -493,7 +540,9 @@ public class Job {
 
 				while (rs.next()) {
 
-					int retreivedjobID = rs.getInt("JobID");//retreive the job ID
+					DBAnnotation.annoate("retreivedjobID", "jobpostings", "JobID", true);
+					int retreivedjobID = rs.getInt("JobID");//retrieve the job ID
+					
 					Job jobs = new Job(retreivedjobID);//send it to the constructor
 
 					getAllJobs.put(jobs.getJobID(), jobs);//put it into the linked hash map
