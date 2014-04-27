@@ -42,14 +42,31 @@ public class CourseOffered {
 					ResultSet rs = statement.executeQuery();
 					
 					if(rs.first()){
-						//course offering exists
-						Course course = new Course(rs.getInt("CourseID"));
+						/*
+						 * course offering exists
+						 */
+						DBAnnotation.annoate("courseID", "coursesoffered", "CourseID", true);
+						int courseID = rs.getInt("CourseID");
+						Course course = new Course(courseID);
 						CourseSchedule courseSchedule = new CourseSchedule(offerID);
 						ArrayList<File> files = File.getFiles(offerID);
-						Professor professor = new Professor(rs.getInt(6));
-						this.SemesterID = rs.getInt(3);
-						this.totalCapacity = rs.getInt(4);
-						this.currentlyFilled = rs.getInt(5);
+						
+						DBAnnotation.annoate("taughtBy", "coursesoffered", "TaughtBy", true);
+						int taughtBy = rs.getInt("TaughtBy");
+						Professor professor = new Professor(taughtBy);
+						
+						DBAnnotation.annoate("semID", "coursesoffered", "SemesterID", true);
+						int semID = rs.getInt("SemesterID");
+						this.SemesterID = semID;
+						
+						DBAnnotation.annoate("totalCapacity", "coursesoffered", "TotalCapacity", true);
+						int totalCapacity = rs.getInt("TotalCapacity");
+						this.totalCapacity = totalCapacity;
+						
+						DBAnnotation.annoate("seatsFilled", "coursesoffered", "SeatsFilled", true);
+						int seatsFilled = rs.getInt("SeatsFilled");
+						this.currentlyFilled = seatsFilled;
+						
 						this.professor = professor;
 						this.course = course;
 						this.courseSchedule = courseSchedule;
@@ -284,7 +301,9 @@ public class CourseOffered {
 					ResultSet rs = statement.executeQuery();
 					
 					while(rs.next()){
-						CourseOffered c = new CourseOffered(rs.getInt("OfferID"));
+						DBAnnotation.annoate("offerID", "coursesoffered", "OfferID", true);
+						int offerID = rs.getInt("OfferID");
+						CourseOffered c = new CourseOffered(offerID);
 						currentOffering.add(c);
 					}
 										
@@ -330,7 +349,9 @@ public class CourseOffered {
 					ResultSet rs = statement.executeQuery();
 					
 					while(rs.next()){
-						CourseOffered c = new CourseOffered(rs.getInt("OfferID"));
+						DBAnnotation.annoate("offerID", "coursesoffered", "OfferID", true);
+						int offerID = rs.getInt("OfferID");
+						CourseOffered c = new CourseOffered(offerID);
 						offerdCourses.put(c.getOfferID(), c);
 					}
 										
@@ -372,7 +393,9 @@ public class CourseOffered {
 					ResultSet rs = statement.executeQuery();
 					
 					while(rs.next()){
-						CourseOffered c = new CourseOffered(rs.getInt("OfferID"));
+						DBAnnotation.annoate("offerID", "coursesoffered", "OfferID", true);
+						int offerID = rs.getInt("OfferID");
+						CourseOffered c = new CourseOffered(offerID);
 						currentOffering.add(c);
 					}
 										
@@ -412,6 +435,7 @@ public class CourseOffered {
 		int profID = professor.getUIN();
 		int courseID = course.getCourseID();
 		int totalCap = capacity;
+		int minCap = 0;
 		boolean addFlag = false;
 		
 		//Check if the same professor is teaching the same course in the current semester
@@ -450,6 +474,17 @@ public class CourseOffered {
 						/*
 						 * Add the object data to the courseOffered table
 						 */
+						
+						/*
+						 * Annotating the insert statement here
+						 */
+						
+						DBAnnotation.annoate("courseID", "coursesoffered", "CourseID", false);
+						DBAnnotation.annoate("semesterID", "coursesoffered", "SemesterID", false);
+						DBAnnotation.annoate("totalCap", "coursesoffered", "TotalCapacity", false);
+						DBAnnotation.annoate("minCap", "coursesoffered", "SeatsFilled", false);
+						DBAnnotation.annoate("profID", "coursesoffered", "TaughtBy", false);
+						
 						String SQLInsert = "Insert into university.coursesoffered"
 								+ "(CourseID,SemesterID,TotalCapacity,SeatsFilled,TaughtBy)"
 								+ "Values(?,?,?,?,?);";
@@ -457,7 +492,7 @@ public class CourseOffered {
 						statement.setInt(1, courseID);
 						statement.setInt(2, semesterID);
 						statement.setInt(3, totalCap);
-						statement.setInt(4, 0);
+						statement.setInt(4, minCap);
 						statement.setInt(5, profID);
 						statement.executeUpdate();
 						ResultSet generatedSet = statement.getGeneratedKeys();
@@ -534,12 +569,17 @@ public class CourseOffered {
 			
 			try{
 				if(conn != null){
+					
+					DBAnnotation.annoate("profID", "coursesoffered", "TaughtBy", false);
+					DBAnnotation.annoate("offerID", "coursesoffered", "OfferID", false);
 					String SQLUpdate = "UPDATE university.coursesoffered "
 							+ "SET Taughtby= ? "
 							+ "WHERE offerID= ?";
 					PreparedStatement statement = conn.prepareStatement(SQLUpdate, ResultSet.CONCUR_UPDATABLE);
-					statement.setInt(1, professor.getUIN());
-					statement.setInt(2, this.getOfferID());
+					int profID = professor.getUIN();
+					int offerID = this.getOfferID();
+					statement.setInt(1, profID);
+					statement.setInt(2, offerID);
 					statement.executeUpdate();
 					Database.commitTransaction(conn);
 					isUpdated = true;
@@ -617,7 +657,8 @@ public class CourseOffered {
 					ResultSet rs = statement.executeQuery();
 					
 					while(rs.next()){
-						int offerID = rs.getInt(3);
+						DBAnnotation.annoate("offerID", "studentenrollment", "OfferID", true);
+						int offerID = rs.getInt("OfferID");
 						CourseOffered course = new CourseOffered(offerID);
 						studentCourses.add(course);
 					}
@@ -669,6 +710,7 @@ public class CourseOffered {
 					ResultSet rs = statement.executeQuery();
 					
 					while(rs.next()){
+						DBAnnotation.annoate("UIN", "studentenrollment", "UIN", true);
 						int UIN = rs.getInt("UIN");
 						Student s = new Student(UIN);
 						if(s!=null)
@@ -727,7 +769,9 @@ public class CourseOffered {
 					ResultSet rs = statement.executeQuery();
 					
 					while(rs.next()){
-						CourseOffered c = new CourseOffered(rs.getInt("OfferID"));
+						DBAnnotation.annoate("offerID", "coursesoffered", "OfferID", true);
+						int offerID = rs.getInt("OfferID");
+						CourseOffered c = new CourseOffered(offerID);
 						profCourses.add(c);
 					}
 					
@@ -782,7 +826,9 @@ public class CourseOffered {
 					ResultSet rs = statement.executeQuery();
 					
 					while(rs.next()){
-						CourseOffered c = new CourseOffered(rs.getInt("OfferID"));
+						DBAnnotation.annoate("offerID", "coursesoffered", "OfferID", true);
+						int offerID = rs.getInt("OfferID");
+						CourseOffered c = new CourseOffered(offerID);
 						taCourses.add(c);
 					}
 					
@@ -835,7 +881,8 @@ public class CourseOffered {
 					ResultSet rs = statement.executeQuery();
 					
 					while(rs.next()){
-						int offerID = rs.getInt(3);
+						DBAnnotation.annoate("offerID", "studentenrollment", "OfferID", true);
+						int offerID = rs.getInt("OfferID");
 						CourseOffered course = new CourseOffered(offerID);
 						studentCourses.add(course);
 					}
@@ -895,7 +942,9 @@ public class CourseOffered {
 					ResultSet rs = statement.executeQuery();
 					
 					if(rs.first()){
-						currentlyFilled = rs.getInt("SeatsFilled");
+						DBAnnotation.annoate("seatsFilled", "coursesoffered", "SeatsFilled", true);
+						int seatsFilled = rs.getInt("SeatsFilled");
+						currentlyFilled = seatsFilled;
 						currentlyFilled += 1;
 					}
 					
@@ -903,12 +952,16 @@ public class CourseOffered {
 						throw new CourseOfferingDoesNotExistException();
 					}
 					
+					DBAnnotation.annoate("currentlyFilled", "coursesoffered", "SeatsFilled", false);
+					DBAnnotation.annoate("offerID", "coursesoffered", "OfferID", false);
+					
 					String updateStatement = "UPDATE university.coursesoffered "
 							+ "SET SeatsFilled= ? "
 							+ "WHERE OfferID= ? ;";
 					statement = conn.prepareStatement(updateStatement, ResultSet.CONCUR_UPDATABLE);
 					statement.setInt(1, currentlyFilled);
-					statement.setInt(2, this.getOfferID());
+					int offerID = this.getOfferID();
+					statement.setInt(2, offerID);
 					statement.executeUpdate();
 					Database.commitTransaction(conn);
 					success = true;
@@ -951,6 +1004,7 @@ public class CourseOffered {
 					statement.setInt(1, offerID);
 					ResultSet rs = statement.executeQuery();
 					if(rs.first()){
+						DBAnnotation.annoate("currentlyFilled", "coursesoffered", "SeatsFilled", true);
 						int currentlyFilled = rs.getInt("SeatsFilled");
 						if(currentlyFilled<=0)
 							return false;
@@ -1085,6 +1139,7 @@ public class CourseOffered {
 					ResultSet rs = statement.executeQuery();
 					
 					if(rs.first()){
+						DBAnnotation.annoate("current", "semester", "SemesterID", true);
 						current = rs.getInt("SemesterID");
 					}							
 					
