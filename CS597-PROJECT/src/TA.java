@@ -16,7 +16,7 @@ import java.util.ArrayList;
  * 
  */
 
-/*************** ADMIN.JAVA CLASS WAS WRITTEN BY AKSHAY THIRKATEH ********************************/
+/*************** TA.JAVA CLASS WAS WRITTEN BY AKSHAY THIRKATEH ********************************/
 
 public class TA extends Student {
 	
