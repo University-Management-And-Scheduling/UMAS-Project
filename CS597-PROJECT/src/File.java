@@ -27,7 +27,7 @@ public class File {
 	}
 	
 	
-	
+	// Constructor
 	public File(int fileID, String fileName, String fileLocation, int offerID) {
 		super();
 		this.fileID = fileID;
@@ -36,6 +36,7 @@ public class File {
 		this.offerID = offerID;
 	}
 
+	// Constructor
 	public File(String fileName, String fileLocation, int offerID) {
 		
 		boolean isFilePresent = isFilePresent(fileName, fileLocation, offerID);
@@ -82,6 +83,7 @@ public class File {
 	public void setOfferID(int offerID) {
 		this.offerID = offerID;
 	}
+	
 	
 	// Add a new file to file table in the database
 	public static boolean addFileToDB(String fileName, String fileLocation, int offerID){
@@ -141,6 +143,7 @@ public class File {
 			
 	}
 	
+	// Checks whether the file is already present in the same file location and for the same course 
 	private static boolean isFilePresent(String fileName, String fileLocation, int offerID){
 		boolean isFilePresent = false;
 //		String newFileLocation = fileLocation.replace("/","//");
@@ -182,6 +185,7 @@ public class File {
 		return isFilePresent;
 	}
 	
+	// Deletes the file information from the file table 
 	public boolean deleteFileFromDB(){
 		boolean fileDeleted = false;
 		
@@ -225,6 +229,7 @@ public class File {
 		return fileDeleted;
 	}
 	
+	// This function modifes the file location of an existing file to the new location
 	public boolean modifyFileLocation(String newFileLocation){
 		boolean fileLocationModified = false;
 		
@@ -269,6 +274,7 @@ public class File {
 		return fileLocationModified;
 	}
 	
+	// This function retrives the file details from the File table
 	public static int getFileIDFromDB(String fileName,String fileLocation){
 		int fileID = 0;
 		
