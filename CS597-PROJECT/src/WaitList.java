@@ -91,6 +91,11 @@ public class WaitList {
 						statement.setInt(2, offerID);
 						statement.setInt(3, queuePos);
 						statement.executeUpdate();
+						
+						DBAnnotation.annoate("UIN", "waitlist", "UIN", false);
+						DBAnnotation.annoate("offerID", "waitlist", "OfferID", false);
+						DBAnnotation.annoate("queuePos", "waitlist", "QueuePos", false);	
+						
 						Database.commitTransaction(conn);
 						isAdded = true;
 					}
@@ -133,7 +138,8 @@ public class WaitList {
 					 * else zero (0) is returned as no student was found on the wait list
 					 */
 					if(rs.first()){
-						queuePos = rs.getInt(1);
+						DBAnnotation.annoate("queuePos", "waitlist", "QueuePos", true);
+						queuePos = rs.getInt("QueuePos");
 					}					
 				}
 			}
@@ -168,7 +174,8 @@ public class WaitList {
 					statement.setInt(1, OfferID);
 					ResultSet rs = statement.executeQuery();
 					if(rs.first()){
-						queuePos = rs.getInt(1);
+						DBAnnotation.annoate("queuePos", "waitlist", "QueuePos", true);
+						queuePos = rs.getInt("QueuePos");
 					}					
 				}
 			}
@@ -210,7 +217,9 @@ public class WaitList {
 					 * Add all student to array list
 					 */
 					while(rs.next()){
-						students.add(new Student(rs.getInt("StudentUIN")));
+						DBAnnotation.annoate("sUIN", "emailedwaitlist", "StudentUIN", true);
+						int sUIN = rs.getInt("StudentUIN");
+						students.add(new Student(sUIN));
 					}
 				}
 			}
@@ -258,7 +267,9 @@ public class WaitList {
 					 * add all retrieved students to wait list
 					 */
 					while(rs.next()){
-						students.add(new Student(rs.getInt("UIN")));
+						DBAnnotation.annoate("sUIN", "waitlist", "UIN", true);
+						int sUIN = rs.getInt("UIN");
+						students.add(new Student(sUIN));
 					}
 				}
 			}
@@ -296,7 +307,9 @@ public class WaitList {
 					statement.setInt(1, s.getUIN());
 					ResultSet rs = statement.executeQuery();
 					while(rs.next()){
-						waitListCourses.add(new CourseOffered(rs.getInt("OfferID")));
+						DBAnnotation.annoate("offerID", "waitlist", "OfferID", true);
+						int offerID = rs.getInt("OfferID");
+						waitListCourses.add(new CourseOffered(offerID));
 					}
 				}
 			}
@@ -390,6 +403,8 @@ public class WaitList {
 					statement.setInt(1, UIN);
 					statement.setInt(2, offerID);
 					statement.executeUpdate();
+					DBAnnotation.annoate("UIN", "waitlist", "UIN", false);
+					DBAnnotation.annoate("offerID", "waitlist", "OfferID", false);
 					isRemoved = true;
 					//Database.commitTransaction(conn);											
 				}
@@ -424,6 +439,8 @@ public class WaitList {
 					PreparedStatement statement = conn.prepareStatement(WaitListInsert, ResultSet.CONCUR_UPDATABLE, ResultSet.TYPE_FORWARD_ONLY);
 					statement.setInt(1, UIN);
 					statement.setInt(2, offerID);
+					DBAnnotation.annoate("UIN", "waitlist", "UIN", false);
+					DBAnnotation.annoate("offerID", "waitlist", "OfferID", false);
 					statement.executeUpdate();
 					isRemoved = true;
 					Database.commitTransaction(conn);											
@@ -457,6 +474,8 @@ public class WaitList {
 					PreparedStatement statement = conn.prepareStatement(WaitListInsert, ResultSet.CONCUR_UPDATABLE);
 					statement.setInt(1, UIN);
 					statement.setInt(2, offerID);
+					DBAnnotation.annoate("UIN", "emailedwaitlist", "UIN", false);
+					DBAnnotation.annoate("offerID", "emailedwaitlist", "OfferID", false);
 					statement.executeUpdate();
 					//Database.commitTransaction(conn);											
 				}
@@ -499,10 +518,16 @@ public class WaitList {
 								+ "(StudentUIN, OfferID, TimeEmailed) "
 								+ "Values(?,?,?)";
 						PreparedStatement statement = conn.prepareStatement(WaitListInsert, ResultSet.CONCUR_UPDATABLE);
-						statement.setInt(1, student.getUIN());
+						int studentUIN = student.getUIN();
+						statement.setInt(1, studentUIN);
 						statement.setInt(2, offerID);
-						statement.setTimestamp(3, new Timestamp(System.currentTimeMillis()));
+						long timeStamp = System.currentTimeMillis();
+						Timestamp t = new Timestamp(timeStamp);
+						statement.setTimestamp(3, t);
 						statement.executeUpdate();											
+						DBAnnotation.annoate("studentUIN", "emailedwaitlist", "StudentUIN", false);
+						DBAnnotation.annoate("offerID", "emailedwaitlist", "OfferID", false);
+						DBAnnotation.annoate("t", "emailedwaitlist", "TimeEmailed", false);
 					}
 				}
 				
@@ -552,7 +577,9 @@ public class WaitList {
 						ResultSet rs = statement.executeQuery();
 						if(rs.first()){
 							//return the student
-							student = new Student(rs.getInt("UIN"));
+							DBAnnotation.annoate("UIN", "waitlist", "UIN", true);
+							int UIN = rs.getInt("UIN");
+							student = new Student(UIN);
 						}
 																	
 					}
@@ -699,8 +726,6 @@ public class WaitList {
 	 * empty the wait and email lists for initialization of the new semester
 	 */
 	public static boolean emptyWaitAndEmailList(){
-		boolean isWaitListEmpty = false;
-		boolean isEmailListEmpty = false;
 		try{
 			Connection conn = Database.getConnection();
 			
@@ -786,13 +811,22 @@ public class WaitList {
 					ResultSet rs = statement.executeQuery();
 					
 					while(rs.next()){
+						DBAnnotation.annoate("t1", "emailedwaitlist", "TimeEmailed", true);
 						Timestamp t1 = rs.getTimestamp("TimeEmailed");;
+						
 						Timestamp t2 = new Timestamp(System.currentTimeMillis());
 						long hoursElapsed = findTimeDifference(t1, t2);
-						Student s = new Student(rs.getInt("StudentUIN"));
+						
+						DBAnnotation.annoate("studentUIN", "emailedwaitlist", "StudentUIN", true);
+						int studentUIN = rs.getInt("StudentUIN");
+						Student s = new Student(studentUIN);
+						
+						DBAnnotation.annoate("offerID", "emailedwaitlist", "OfferID", true);
 						int offerID = rs.getInt("offerID");
+						
+						
 						if(isStudentRegistered(s, offerID)){
-							removeFromEmailedList(s.getUIN(), rs.getInt("offerID"));
+							removeFromEmailedList(studentUIN, offerID);
 							Email email = Email.getInstance("umas.uic@gmail.com", "cs597project");
 							email.sendEmail(s.getUserName()+"@umas.edu", "Your registered for the course", "You registrated for course:"+offerID+" after waitlist");
 							//email new student for the same offer id

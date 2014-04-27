@@ -64,10 +64,19 @@ public class Timeslots {
 					 * TIme slot exists, initialize all the instance variables
 					 */
 					if(rs.first()){
+						DBAnnotation.annoate("startHour", "timeslots", "StartHour", true);
+						int startHour = rs.getInt("StartHour");
+						
+						DBAnnotation.annoate("endHour", "timeslots", "EndHour", true);
+						int endHour = rs.getInt("EndHour");
+						
+						DBAnnotation.annoate("timeSlotType", "timeslots", "TimeslotType", true);
+						int timeSlotType = rs.getInt("TimeslotType");
+						
 						this.timeSlotID = timeSlotID;
-						this.startHour = rs.getInt(2);
-						this.endHour = rs.getInt(3);
-						this.timeslotType = rs.getInt(4);
+						this.startHour = startHour;
+						this.endHour = endHour;
+						this.timeslotType = timeSlotType;
 					}
 					
 					else{
@@ -116,10 +125,22 @@ public class Timeslots {
 					 * if the time slot exists, initialize the instance variables
 					 */
 					if(rs.first()){
-						this.timeSlotID = rs.getInt(1);
-						this.startHour = rs.getInt(2);
-						this.endHour = rs.getInt(3);
-						this.timeslotType = rs.getInt(4);
+						DBAnnotation.annoate("startHour", "timeslots", "StartHour", true);
+						int timeslotID = rs.getInt("TimeslotID");
+						
+						DBAnnotation.annoate("startHour", "timeslots", "StartHour", true);
+						int sHour = rs.getInt("StartHour");
+						
+						DBAnnotation.annoate("endHour", "timeslots", "EndHour", true);
+						int eHour = rs.getInt("EndHour");
+						
+						DBAnnotation.annoate("timeSlotType", "timeslots", "TimeslotType", true);
+						int timeSlotType = rs.getInt("TimeslotType");
+						
+						this.timeSlotID = timeslotID;
+						this.startHour = sHour;
+						this.endHour = eHour;
+						this.timeslotType = timeSlotType;
 					}
 					
 					else{
@@ -180,9 +201,10 @@ public class Timeslots {
 					
 					else{
 						/*
-						 * the new time slot can be added as all the pre conditions are satisfied
+						 * the new time slot can be added as all the pre-conditions are satisfied
 						 */
 						System.out.println("Adding new timeslot:"+startHour+" to "+endHour);
+												
 						String addString = "INSERT INTO university.timeslots "
 								+ "(StartHour, EndHour, TimeslotType) "
 								+ "Values(?,?,?);";
@@ -191,6 +213,11 @@ public class Timeslots {
 						statement.setInt(2, endHour);
 						statement.setInt(3, type);
 						statement.executeUpdate();
+						
+						DBAnnotation.annoate("startHour", "timeslots", "StartHour", false);
+						DBAnnotation.annoate("endHour", "timeslots", "EndHour", false);
+						DBAnnotation.annoate("type", "timeslots", "TimeslotType", false);
+						
 						Database.commitTransaction(conn);
 						isAdded = true;
 					}
