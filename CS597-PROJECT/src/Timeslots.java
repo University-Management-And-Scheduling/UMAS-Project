@@ -104,7 +104,7 @@ public class Timeslots {
 			try{
 				if(conn != null){
 					
-					String findString = "Select TimeSlotID "
+					String findString = "Select *"
 							+ "FROM university.timeslots "
 							+ "WHERE starthour = ? and endhour = ?";
 					PreparedStatement statement = conn.prepareStatement(findString);
@@ -163,7 +163,7 @@ public class Timeslots {
 				if(conn != null){
 					
 					//query to retrieve all time slots and check if the time slot already exists
-					String findString = "Select TimeSlotID "
+					String findString = "Select * "
 							+ "FROM university.timeslots "
 							+ "WHERE starthour = ? and endhour = ?";
 					PreparedStatement statement = conn.prepareStatement(findString);
