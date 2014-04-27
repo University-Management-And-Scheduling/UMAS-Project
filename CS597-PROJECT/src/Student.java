@@ -42,8 +42,14 @@ public class Student extends People {
 				ResultSet rs = stmtForSelect.executeQuery();//execute the query
 
 				if (rs.first()) {
+					
+					DBAnnotation.annoate("retrievedStudentUIN", "student", "UIN", true);
 					int retrievedStudentUIN = rs.getInt("UIN");//retrieve the values
+					
+					DBAnnotation.annoate("retrievedStudentGPA", "student", "GPA", true);
 					double retrievedStudentGPA = rs.getDouble("GPA");//retrieve the values
+					
+					DBAnnotation.annoate("retrievedStudentLevel", "student", "Level", true);
 					int retrievedStudentLevel = rs.getInt("Level");//retrieve the values
 
 					//set the class variables to UIN specific 
@@ -163,6 +169,7 @@ public class Student extends People {
 	private static boolean addIntoStudentTable(int UIN, int level) throws levelNotExistException {
 
 		boolean isAdded = false;
+		float gpa=4;
 
 		if (level > 3 || level < 1) {
 			throw new levelNotExistException();//level not exists exception
@@ -189,10 +196,15 @@ public class Student extends People {
 					String SQLPeopleInsert = "Insert into student (UIN, GPA, Level) Values (?,?,?);";
 					stmt = conn.prepareStatement(SQLPeopleInsert);
 					stmt.setInt(1, UIN);//set the values
-					stmt.setFloat(2, (float) 4.0);//set the values
+					stmt.setFloat(2, gpa);//set the values
 					stmt.setInt(3, level);//set the values
 					System.out.println(stmt);
 					int i = stmt.executeUpdate();//execute the query
+					
+					DBAnnotation.annoate("UIN", "student", "UIN", false);
+					DBAnnotation.annoate("gpa", "student", "GPA", false);
+					DBAnnotation.annoate("level", "student", "Level", false);
+					
 					System.out.println(i);
 					System.out.println("Inserted");
 					isAdded = true;
@@ -251,8 +263,10 @@ public class Student extends People {
 				ResultSet rs = stmtForSelect.executeQuery();//execute the query
 
 				if (rs.first()) {
-
+					
+					DBAnnotation.annoate("peopleRetrievedPositionID", "people", "PositionID", true);
 					int peopleRetrievedPositionID = rs.getInt("PositionID");//retrieve the values
+					
 					System.out.println("UIN:" + UIN + " Position ID:"+ peopleRetrievedPositionID);
 
 					//check the position ID
@@ -328,6 +342,10 @@ public class Student extends People {
 					stmt.setInt(2, UIN);//set the values
 					System.out.println(stmt);
 					int i = stmt.executeUpdate();//execute the query
+					
+					DBAnnotation.annoate("newGPA", "student", "GPA", false);
+					DBAnnotation.annoate("UIN", "student", "UIN", false);
+					
 					System.out.println(i);
 					System.out.println("Updated");
 					updateGPA = true;
@@ -439,7 +457,10 @@ public class Student extends People {
 					ResultSet rs = statement.executeQuery();//execute the query
 
 					while (rs.next()) {
+						
+						DBAnnotation.annoate("retreivedStudentUserUIN", "people", "UIN", true);
 						int retreivedStudentUserUIN = rs.getInt("UIN");//retrieve the UIN
+						
 						Student stud = new Student(retreivedStudentUserUIN);
 						allStudents.add(stud);//add it to the arraylist
 						System.out.println(stud.getUserName());
@@ -491,7 +512,10 @@ public class Student extends People {
 					ResultSet rs = statement.executeQuery();
 
 					while (rs.next()) {
-						int offerID = rs.getInt(3);
+						
+						DBAnnotation.annoate("offerID", "studentenrollment", "OfferID", true);
+						int offerID = rs.getInt("OfferID");
+						
 						CourseOffered course = new CourseOffered(offerID);//set the object
 						studentCourses.put(course.getOfferID(), course);//add it to the hashmap
 					}
@@ -678,7 +702,9 @@ public class Student extends People {
 				while (rs.next()) {
 
 					//calculate the final GPA
+					DBAnnotation.annoate("retrievedStudentGradeLevel", "gradingsystem", "GradeLevel", true);
 					double retrievedStudentGradeLevel = rs.getDouble("GradeLevel");//get the grade
+					
 					double normalizedLevel = maxLevel- retrievedStudentGradeLevel + 1;
 					retrievedStudentGradeLevel = (normalizedLevel * 4.0) / 7.0;
 					finalGrade += retrievedStudentGradeLevel;
