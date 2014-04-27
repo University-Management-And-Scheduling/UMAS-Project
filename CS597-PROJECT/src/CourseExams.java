@@ -14,9 +14,10 @@ import java.util.Set;
 
 public class CourseExams {
 
-	int offerID;
-	String examName;
+	int offerID; // CourseOffered offerID
+	String examName; // Name of the exam
 	HashMap<Student,Double> examMarks = new HashMap<Student,Double>(); 
+	// <Student,MarksIn The Exam> 
 	
 	@Target({ElementType.LOCAL_VARIABLE})
 	@Retention(RetentionPolicy.RUNTIME)
@@ -27,6 +28,7 @@ public class CourseExams {
 	 boolean[] isSource () default false; 
 	}
 	
+	// Constructor
 	public CourseExams(int offerID, String examName, HashMap<Student,Double> examMarks) {
 		super();
 		this.offerID = offerID;
@@ -34,6 +36,7 @@ public class CourseExams {
 		this.examMarks = examMarks;
 	}
 
+	// Constructor
 	public CourseExams(int offerID) {
 		super();
 		this.offerID = offerID;
@@ -64,6 +67,11 @@ public class CourseExams {
 		this.examMarks = examMarks;
 	}
 
+	// This function creates a new table for each course offered in the semester.
+	// It internally calls the createCourseExamStructureTable of the 
+	// CourseExamStructure class to create a table that stores the Course Structure.
+	// We commit the create statements only when both the tables are created.
+	// Hence, the commit statement exists only in createCourseExamMarksTable function.
 	public static boolean createCourseExamMarksTable(String courseName, int offerID,int semID){
 		boolean tableAdded = false;
 //		Course course = offeredCourse.getCourse();
@@ -122,6 +130,9 @@ public class CourseExams {
 		return tableAdded;
 	}
 		
+	
+	// This function is called when a new exam is added in the CourseExamStructure table.
+	// This function adds a new column in the CourseExam table for the added exam.
 	public static boolean addNewExamColumn(CourseExamStructure courseExamStructure){
 		boolean examAdded = false;
 		
@@ -170,6 +181,7 @@ public class CourseExams {
 		return examAdded;
 	}
 	
+	// Checks whether the exam is already present. Returns true, if present, else, false.
 	private static boolean isExamPresent(String tableName, String examName){
 		boolean isExamPresent = false;
 		
@@ -208,6 +220,8 @@ public class CourseExams {
 		
 	}
 	
+	// This function is used to modify the column name to be consistent with the 
+	// exam name in the CourseExamStructure table.
 	public static boolean modifyExistingExamColumnName(CourseExamStructure courseExamStructure, String newExamName){
 		boolean modifiedColumn = false;
 		
@@ -262,6 +276,8 @@ public class CourseExams {
 		return modifiedColumn;
 	}	
 	
+	// This function is used to delete the exam column when that exam is
+	// deleted from the CourseExamStructure table.
 	public static boolean deleteExistingExamColumn(CourseExamStructure courseExamStructure){
 		boolean examDeleted = false;
 		
@@ -309,6 +325,7 @@ public class CourseExams {
 		return examDeleted;
 	}
 
+	// This function adds marks of the students in the respective exam columns
 	public boolean addStudentMarks(){
 		boolean studentsMarksAdded = false;
 		
@@ -386,6 +403,7 @@ public class CourseExams {
 		return studentsMarksAdded;
 	}
 	
+	// Checks whether a student is enrolled for the course
 	private boolean isStudentEnrolled(Student student, int offerID) {
 		boolean isStudentEnrolled = false;
 		
@@ -402,6 +420,7 @@ public class CourseExams {
 		return isStudentEnrolled;
 	}
 
+	// To retrive the total marks of each student in the course.
 	public  CourseExams getStudentMarks(){
 		int offerID = this.getOfferID();
 		HashMap<Student, Double> examMarks = new HashMap<Student,Double>();
@@ -475,6 +494,7 @@ public class CourseExams {
 		return this;
 	}
 
+	// To retrieve marks of one student for all the exams
 	public static HashMap<String,Double> getStudentMarks(CourseOffered offeredCourse, Student student){
 		HashMap<String,Double> studentExamAndMarks = new HashMap<String,Double>();
 		int offerID = offeredCourse.getOfferID();
@@ -531,6 +551,7 @@ public class CourseExams {
 		return studentExamAndMarks;
 	}
 	
+	// To retrieve marks of each student for the specified exam.
 	public static HashMap<Integer,Double> getStudents(CourseOffered offeredCourse, String examName){
 		HashMap<Integer,Double> studentsMarks = new HashMap<Integer,Double>();
 		
@@ -583,7 +604,7 @@ public class CourseExams {
 		return studentsMarks;
 	}
 	
-
+	// To modify the marks of a student for a particular exam.
  	public boolean modifyStudentMarks(){
 		boolean studentsMarksModified = false;
 		
@@ -661,7 +682,7 @@ public class CourseExams {
 		
 	}
 
- 	
+ 	// To view all the exams in a course
 	public ArrayList<String> viewAllExams(){
 		ArrayList<String> allExams = new ArrayList<String>() ;
 		
@@ -718,7 +739,6 @@ public class CourseExams {
 		return allExams;
 	}
 
-	
 	
 //	public static void main(String[] args){
 
