@@ -62,6 +62,9 @@ public class TaUI extends JPanel {
 		JPanel examPanel = new TAExamPanel(ta);
 		tabbedPane.addTab("Manage TA courses", examPanel);
 		
+		JPanel officePanel = new TAOfficePanel(ta);
+		tabbedPane.addTab("Manage office details", officePanel);
+		
 		JPanel logOut = new LogOutUI();
 		tabbedPane.addTab("Log out", logOut);
 	}

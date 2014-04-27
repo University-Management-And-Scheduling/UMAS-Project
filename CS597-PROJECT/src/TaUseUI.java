@@ -16,7 +16,7 @@ import javax.swing.JTextField;
 
 //written by Akshay 
 
-public class TaUseUI extends JFrame {
+public class TaUseUI extends JPanel {
 	LinkedHashMap<Integer,Job> retreiveJobs= new LinkedHashMap<Integer, Job>();	
 	
 	static TA ta;
@@ -57,15 +57,15 @@ public class TaUseUI extends JFrame {
 		
 		
 		
-		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		//setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setBounds(100, 100, 675, 473);
-		getContentPane().setLayout(new BorderLayout(0, 0));
+		setLayout(new BorderLayout(0, 0));
 		
 		JTabbedPane tabbedPane = new JTabbedPane(JTabbedPane.TOP);
-		getContentPane().add(tabbedPane, BorderLayout.CENTER);
+		add(tabbedPane, BorderLayout.CENTER);
 		
 		JPanel editOfficeDetails = new JPanel();
-		tabbedPane.addTab("New tab", null, editOfficeDetails, null);
+		tabbedPane.addTab("Office details", null, editOfficeDetails, null);
 		editOfficeDetails.setLayout(null);
 		
 		JLabel currentOfficeHoursLbl = new JLabel("Current Office Hours");

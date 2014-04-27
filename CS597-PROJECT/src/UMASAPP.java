@@ -6,6 +6,7 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 
 import java.awt.BorderLayout;
+import java.util.ArrayList;
 
 
 public class UMASAPP {
@@ -83,7 +84,7 @@ public class UMASAPP {
 				panel = DepartmentAdminUI.getInstance(admin);
 				frame.setBounds(50, 50, 1024, 600);
 				frame.add(panel);
-				frame.setTitle("UMAS "+d.getDepartmentName()+" Administrator: "+admin.getName());
+				frame.setTitle("UMAS "+d.getDepartmentName()+" Administrator: "+admin.getName()+"\t"+semester.toString());
 				frame.revalidate();
 				frame.repaint();
 				
@@ -108,7 +109,7 @@ public class UMASAPP {
 				panel = ProfessorMainUI.getInstance(prof);
 				frame.setBounds(50, 50, 1024, 600);
 				frame.add(panel);
-				frame.setTitle("UMAS "+d.getDepartmentName()+" Professor: "+prof.getName());
+				frame.setTitle("UMAS "+d.getDepartmentName()+" Professor: "+prof.getName()+"\t"+semester.toString());
 				frame.revalidate();
 				frame.repaint();
 				
@@ -125,6 +126,10 @@ public class UMASAPP {
 		}
 		
 		else if(positionID == 3){
+			ArrayList<Student> students = Student.getAllStudents();
+			for(Student s :students){
+				
+			}
 			JOptionPane.showMessageDialog(null, "Student logged in");
 			frame.remove(loginui);
 			frame.revalidate();
@@ -136,7 +141,7 @@ public class UMASAPP {
 				panel = StudentMainUI.getInstance(newStudent);
 				frame.setBounds(50, 50, 1024, 600);
 				frame.add(panel);
-				frame.setTitle("UMAS "+d.getDepartmentName()+" Student: "+newStudent.getName());
+				frame.setTitle("UMAS "+d.getDepartmentName()+" Student: "+newStudent.getName()+"\t"+semester.toString());
 				frame.revalidate();
 				frame.repaint();
 				
@@ -161,7 +166,7 @@ public class UMASAPP {
 				panel = TaUI.getInstance(ta);
 				frame.setBounds(50, 50, 1024, 600);
 				frame.add(panel);
-				frame.setTitle("UMAS "+d.getDepartmentName()+" Professor: "+ta.getName());
+				frame.setTitle("UMAS "+d.getDepartmentName()+" TA: "+ta.getName()+"\t"+semester.toString());
 				frame.revalidate();
 				frame.repaint();
 				
@@ -185,7 +190,7 @@ public class UMASAPP {
 				panel = AdminUI.getInstance(admin);
 				frame.setBounds(50, 50, 1024, 600);
 				frame.add(panel);
-				frame.setTitle("UMAS SUPER ADMIN :"+admin.getName()+" "+semester.toString());
+				frame.setTitle("UMAS SUPER ADMIN :"+admin.getName()+"\t"+semester.toString());
 				frame.revalidate();
 				frame.repaint();
 				

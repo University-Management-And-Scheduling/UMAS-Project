@@ -27,24 +27,6 @@ import java.awt.event.ActionEvent;
 import javax.swing.JList;
 import javax.swing.JTextPane;
 
-//import com.umas.backend.Admin;
-//import com.umas.backend.Classroom;
-//import com.umas.backend.ClassroomLocation;
-//import com.umas.backend.Course;
-//import com.umas.backend.Course.CourseDoesNotExistException;
-//import com.umas.backend.CourseOffered;
-//import com.umas.backend.CourseOffered.CourseOfferingDoesNotExistException;
-//import com.umas.backend.CourseSchedule;
-//import com.umas.backend.Department;
-//import com.umas.backend.People;
-//import com.umas.backend.Professor;
-//import com.umas.backend.Semester;
-//import com.umas.backend.Student;
-//import com.umas.backend.TA;
-//import com.umas.backend.Timeslots;
-//import com.umas.backend.WaitList;
-//import com.umas.backend.WaitListScan;
-
 import java.awt.Color;
 import java.awt.Font;
 
@@ -109,6 +91,9 @@ public class AdminUI extends JPanel {
 	private JTextField txtDepartmentnamenew;
 	private JComboBox<String> updateDeptCombo;
 	private JTextPane courseDetailsTextPane;
+	private JTextPane taCourseDetails;
+	private JTextPane taStudentDetails;
+	private GiveBonusUI giveBonusPanel;
 	
 	/**
 	 * Launch the application.
@@ -258,21 +243,76 @@ public class AdminUI extends JPanel {
 		addTeachingAssistant.setLayout(null);
 		
 		taComboBox = new JComboBox<Integer>();
+		taComboBox.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				if(taComboBox.getSelectedIndex()<0){
+					showMessage("Select a valid student", "Error");
+				}
+				
+				else{
+					int UIN = taComboBox.getItemAt(taComboBox.getSelectedIndex());
+					Student student;
+					try {
+						student = new Student(UIN);
+						String s = "";
+						s+="Student Name:"+student.getName();
+						s+="\nGPA:"+student.getGPA();
+						taStudentDetails.setText(s);
+						
+					} catch (Student.PersonDoesNotExistException e2) {
+						showMessage("Not a student", "Error");
+					}
+					
+				}
+				
+			}
+		});
 		DefaultComboBoxModel<Integer> allStudentsModel = new DefaultComboBoxModel<Integer>();
 		for(Student s:students){
 			allStudentsModel.addElement(s.getUIN());
 		}
+		for(Student s:tas){
+			allStudentsModel.addElement(s.getUIN());
+		}
 		taComboBox.setModel(allStudentsModel);
-		taComboBox.setBounds(29, 47, 111, 20);
+		taComboBox.setBounds(373, 47, 166, 20);
 		addTeachingAssistant.add(taComboBox);
 		
 		courseOfferIDComboBox = new JComboBox<Integer>();
+		courseOfferIDComboBox.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				if(courseOfferIDComboBox.getSelectedIndex()<0){
+					showMessage("Select a valid course", courseOfferIDComboBox.getSelectedIndex()+"");
+				}
+				
+				else{
+					int offerID = courseOfferIDComboBox.getItemAt(courseOfferIDComboBox.getSelectedIndex());
+					CourseOffered co;
+					try {
+						co = new CourseOffered(offerID);
+						String s = "";
+						s+="Course Name:"+co.getCourseName();
+						s+="\nDepartment:"+co.getDepartmentName();
+						s+="\nClassroom Location:"+co.getClassRoomLocation();
+						s+="\nClasstroom Name:"+co.getClassRoomName();
+						s+="\nTimings:"+co.getTiming();
+						s+="\nTaught by professor:"+co.getProfessorName();
+						taCourseDetails.setText(s);
+						
+					} catch (Course.CourseDoesNotExistException
+							| CourseOffered.CourseOfferingDoesNotExistException e1) {
+						showMessage("Select a valid course", courseOfferIDComboBox.getSelectedIndex()+" "+offerID);
+					}
+					
+				}
+			}
+		});
 		DefaultComboBoxModel<Integer> allIDsModel = new DefaultComboBoxModel<Integer>();
 		for(Integer i:coursesOffered.keySet()){
 			allIDsModel.addElement(i);
 		}
 		courseOfferIDComboBox.setModel(allIDsModel);
-		courseOfferIDComboBox.setBounds(29, 110, 111, 20);
+		courseOfferIDComboBox.setBounds(72, 47, 166, 20);
 		addTeachingAssistant.add(courseOfferIDComboBox);
 		
 		JButton btnAddTa = new JButton("Add TA");
@@ -282,7 +322,8 @@ public class AdminUI extends JPanel {
 					Student s = new Student((Integer) taComboBox.getSelectedItem());
 					TA.addTAtoTAtable(s.getUIN(),	(Integer) courseOfferIDComboBox.getSelectedItem());
 					showMessage("Added a TA successfully", "Success");
-					DepartmentAdminUI.initializeAllTabs();
+					//DepartmentAdminUI.initializeAllTabs();
+					initializeEveryThing();
 					
 				} catch (TA.AlreadyExistsInTAException e) {
 					showMessage("TA already exists", "Failure");
@@ -293,8 +334,28 @@ public class AdminUI extends JPanel {
 				}
 			}
 		});
-		btnAddTa.setBounds(29, 164, 111, 23);
+		btnAddTa.setBounds(257, 299, 111, 63);
 		addTeachingAssistant.add(btnAddTa);
+		
+		JLabel lblSelectCourseOffering = new JLabel("Select Course Offering");
+		lblSelectCourseOffering.setBounds(97, 22, 113, 14);
+		addTeachingAssistant.add(lblSelectCourseOffering);
+		
+		JLabel lblSelectStudent = new JLabel("Select student");
+		lblSelectStudent.setBounds(407, 22, 111, 14);
+		addTeachingAssistant.add(lblSelectStudent);
+		
+		taCourseDetails = new JTextPane();
+		taCourseDetails.setForeground(Color.WHITE);
+		taCourseDetails.setBackground(Color.BLACK);
+		taCourseDetails.setBounds(41, 104, 223, 165);
+		addTeachingAssistant.add(taCourseDetails);
+		
+		taStudentDetails = new JTextPane();
+		taStudentDetails.setBackground(Color.BLACK);
+		taStudentDetails.setForeground(Color.WHITE);
+		taStudentDetails.setBounds(356, 104, 212, 165);
+		addTeachingAssistant.add(taStudentDetails);
 		
 		JPanel addAdminPanel = new JPanel();
 		adminTabs.addTab("Add Admin", null, addAdminPanel, null);
@@ -652,7 +713,7 @@ public class AdminUI extends JPanel {
 		allProfessorCombo.setBounds(430, 56, 156, 20);
 		offerCourseTab.add(allProfessorCombo);
 		
-		classCapacity = new JComboBox<Integer>(new DefaultComboBoxModel<Integer>(new Integer[] {40,50,60}));
+		classCapacity = new JComboBox<Integer>(new DefaultComboBoxModel<Integer>(new Integer[] {5,8,10}));
 		classCapacity.setBounds(637, 56, 127, 20);
 		offerCourseTab.add(classCapacity);
 		
@@ -886,7 +947,14 @@ public class AdminUI extends JPanel {
 						boolean flag = checkStringForName(txtDepartmentnamenew.getText());
 						if(flag){
 							d.setDepartmentName(txtDepartmentnamenew.getText());
-							d.updateDepartment();
+							boolean isUpdated = d.updateDepartment();
+							if(isUpdated){
+								showMessage("Successfully updated department name", "Success");
+								initializeEveryThing();
+							}
+							else{
+								showMessage("Failed to update", "Failure");
+							}
 						}
 						
 						else{
@@ -896,12 +964,22 @@ public class AdminUI extends JPanel {
 					} catch (Department.DepartmentDoesNotExistException e) {
 						showMessage("Department not found", "Error");
 						e.printStackTrace();
+					} catch (Department.DepartmentAlreadyExistsException e) {
+						showMessage("Department name already exists", "Failure");
+						e.printStackTrace();
 					}
 				}
 				
 			}
 		});
 		updateDepartment.add(btnUpdateSelectedDepartment);
+		
+		giveBonusPanel = new GiveBonusUI();
+		managePeople.addTab("Manage Employee pay", null, giveBonusPanel, null);
+		
+		JPanel logOutPanel = new LogOutUI();
+		managePeople.addTab("Logout", null, logOutPanel, null);
+		logOutPanel.setLayout(null);
 		
 		JPanel goToNextSemester = new JPanel();
 		managePeople.addTab("Go to next Semester", null, goToNextSemester, null);
@@ -924,11 +1002,12 @@ public class AdminUI extends JPanel {
 		});
 		btnInitializeNextSemester.setBounds(195, 135, 442, 112);
 		goToNextSemester.add(btnInitializeNextSemester);
+				
 		
 		//initialize data across UI
 		initializeEveryThing();
-		Thread waitListScan = new Thread(new WaitListScan());
-		waitListScan.start();
+//		Thread waitListScan = new Thread(new WaitListScan());
+//		waitListScan.start();
 		
 		Thread waitListViewRefresh = new Thread(new MonitorWaitList());
 		waitListViewRefresh.start();
@@ -970,12 +1049,17 @@ public class AdminUI extends JPanel {
 		for(Student s:students){
 			allStudentsModel.addElement(s.getUIN());
 		}
+		
+		for(Student s:tas){
+			allStudentsModel.addElement(s.getUIN());
+		}
 		taComboBox.setModel(allStudentsModel);
 		
 		departmentSelectStudent.setModel(new DefaultComboBoxModel<String>(departmentNameArray));
 		departmentSelectProfessor.setModel(new DefaultComboBoxModel<String>(departmentNameArray));
 		updateDeptCombo.setModel(new DefaultComboBoxModel<String>(departmentNameArray));
 		adminDeptCombo.setModel(new DefaultComboBoxModel<String>(departmentNameArray));
+		
 	}
 	
 	public boolean checkStringForName(String s){
@@ -1122,7 +1206,7 @@ public class AdminUI extends JPanel {
 		departments = Department.getAllDepartments();
 		courses = Course.getAllCourses();
 		students = Student.getAllStudents();
-		
+		tas = TA.getAllTAs();
 		departmentNameArray = new String[departments.size()];
 		for(int i=0;i<departmentNameArray.length;i++){
 			departmentNameArray[i] = departments.get(i).getDepartmentName();
@@ -1281,9 +1365,11 @@ public class AdminUI extends JPanel {
 		@Override
 		public void run() {
 			while(true){
+				System.out.println("Initializing the wait list monitor - Admin UI");
 				initializeWaitListMonitor();
 				try {
 					Thread.sleep(5000);
+					System.out.println("Finished the wait list monitor - Admin UI");
 				} catch (InterruptedException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();

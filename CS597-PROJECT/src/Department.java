@@ -134,11 +134,7 @@ public class Department {
 					System.out.println("Error updating/adding");
 					System.out.println(e.getMessage());
 				}
-				
-				finally{
-					//Database.closeConnection(conn);
-				}
-				
+								
 			}
 			
 			finally{
@@ -271,13 +267,20 @@ public class Department {
 	 * Update the existing department using the object values to update the database
 	 * It will update the department with the values of the instance variables
 	 */
-	public boolean updateDepartment() throws DepartmentDoesNotExistException{
+	public boolean updateDepartment() throws DepartmentDoesNotExistException, DepartmentAlreadyExistsException{
 		
 		/*
 		 * Null checks
 		 */
 		if(this.getDepartmentName() == null || this.getDepartmentID() == 0)
 			throw new DepartmentDoesNotExistException("Un-initialized object");
+		
+		/*
+		 * Check if the department name is acceptable and does not conflict with other department names
+		 */
+		if(isNameExisting(this.departmentName)){
+			throw new DepartmentAlreadyExistsException();
+		}
 		
 		try{
 			Connection conn = Database.getConnection();
@@ -321,6 +324,50 @@ public class Department {
 		
 		finally{
 		}
+		return false;
+	}
+	
+	
+	public static boolean isNameExisting(String name){
+		try{
+			Connection conn = Database.getConnection();
+			
+			try{
+				if(conn != null){
+					/*
+					 * Try to retrieve the department
+					 */
+					String SQLSelect= "Select DepartmentName"
+							+ " FROM university.department"
+							+ " WHERE DepartmentName= ?";
+					PreparedStatement statement = conn.prepareStatement(SQLSelect);
+					statement.setString(1, name);
+					ResultSet rs =  statement.executeQuery();
+					
+					/*
+					 * If the department is found, return true
+					 */
+					if(rs.first()){
+						return true;
+					}
+					
+					else{
+						return false;
+					}
+				}
+			}
+			
+			catch(SQLException e){
+				System.out.println("Error updating/adding");
+				System.out.println(e.getMessage());
+				return false;
+			}
+							
+		}
+		
+		finally{
+		}
+		
 		return false;
 	}
 	

@@ -296,6 +296,11 @@ public class ManageDeptPeople extends JPanel {
 		for (Student s : students) {
 			allStudentsModel.addElement(s.getUIN());
 		}
+		
+		ArrayList<TA> tas = TA.getAllTAs();
+		for (Student s : tas) {
+			allStudentsModel.addElement(s.getUIN());
+		}
 		taComboBox.setModel(allStudentsModel);
 		
 		if(allStudentsModel.getSize()>0)

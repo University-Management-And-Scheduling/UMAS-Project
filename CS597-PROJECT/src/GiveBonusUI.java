@@ -18,7 +18,7 @@ import javax.swing.JComboBox;
 
 
 
-public class GiveBonusUI extends JFrame {
+public class GiveBonusUI extends JPanel {
 	
 	static Professor prof;
 	static Department dept;
@@ -54,20 +54,15 @@ public class GiveBonusUI extends JFrame {
 	 */
 	public GiveBonusUI() {
 		
-		
-		
-		
-		
-		
-		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		//setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setBounds(100, 100, 553, 391);
-		contentPane = new JPanel();
-		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
-		contentPane.setLayout(new BorderLayout(0, 0));
-		setContentPane(contentPane);
+		//contentPane = new JPanel();
+		setBorder(new EmptyBorder(5, 5, 5, 5));
+		setLayout(new BorderLayout(0, 0));
+		//setContentPane(contentPane);
 		
 		JPanel panel = new JPanel();
-		contentPane.add(panel, BorderLayout.CENTER);
+		add(panel, BorderLayout.CENTER);
 		panel.setLayout(null);
 		
 		JLabel lblPayDetails = new JLabel("Pay Details");
@@ -218,9 +213,8 @@ public class GiveBonusUI extends JFrame {
 						updatedPay.setText("");
 						currentPay.setText("");
 						enterBonus.setText("");
-						employeeComboBox.setSelectedIndex(0);
-						
-						
+						if(employeeComboBox.getModel().getSize()>0)
+							employeeComboBox.setSelectedIndex(0);						
 						
 					} catch (Professor.ProfessorDoesNotExistException e) {
 						// TODO Auto-generated catch block

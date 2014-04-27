@@ -653,7 +653,7 @@ public class Student extends People {
 	}
 
 	/*calculates the GPA from the grades it has for the passed UIN*/
-	private static void calculateGPA(int UIN) {
+	public static void calculateGPA(int UIN) {
 
 		ArrayList<String> getGrades = new ArrayList<String>();//get the grades
 		double finalGrade = 0.0;
