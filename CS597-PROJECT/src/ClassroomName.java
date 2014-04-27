@@ -1,9 +1,6 @@
 
+/****************@author Simant Purohit*********************************/
 
-/**
- * @author Simant
- *
- */
 public enum ClassroomName {
 	//List of classrooms at every location
 	CLASS1,

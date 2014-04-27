@@ -32,12 +32,11 @@ import java.awt.Color;
 import javax.swing.JLabel;
 
 
+/****************@author Simant Purohit*********************************/
 
 public class ProfessorCourseUI extends JPanel {
 
-	/**
-	 * 
-	 */
+	
 	private static final long serialVersionUID = 1L;
 	private static Professor professor;
 	final private JComboBox<Integer> courseOfferingCombo;
