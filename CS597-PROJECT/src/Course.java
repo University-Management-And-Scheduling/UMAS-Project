@@ -27,7 +27,7 @@ public class Course {
 	 */
 	
 	public Course(int cID) throws CourseDoesNotExistException {
-		
+					
 		System.out.println("Searching for course with ID:"+cID);
 		
 		try{
@@ -83,6 +83,9 @@ public class Course {
 	 * Constructor to initialize a course object using the course name
 	 */
 	public Course(String courseName) throws CourseDoesNotExistException{
+		if(courseName == null){
+			throw new CourseDoesNotExistException();
+		}
 		try{
 			Connection conn = Database.getConnection();
 			
@@ -227,20 +230,14 @@ public class Course {
 	}
 
 	/*
-	 * Update the course to the specified department and name
+	 * Update the course to the specified department
 	 */
 	public boolean updateCourse(String courseName, Department department){
 		boolean isUpdated = false;
-		/*
-		 * Null checks
-		 */
+		
 		if(department == null || courseName.length()<1 || courseName == null)
 			return isUpdated;
 		
-		/*
-		 * Checks if the course exists
-		 * Doesn't update if the target is not present
-		 */
 		if(isExists(courseName, department))
 			return isUpdated;
 		
@@ -249,9 +246,7 @@ public class Course {
 			
 			try{
 				if(conn != null){
-					/*
-					 * update the data in the course table
-					 */
+					//add the data to the course table
 					System.out.println("Updating course");
 					String SQLupdate= "UPDATE university.courses "
 							+ "SET CourseName= ?, DepartmentID= ? "
@@ -325,11 +320,8 @@ public class Course {
 	
 	@SuppressWarnings("unused")
 	private static void removeCourse(int courseID){
-		/*
-		 * check if the course to be removed exists
-		 * Remove the courses-offered related to this course
-		 */
-
+		//check if the course to be removed exists
+		//Remove the courses-offered related to this course
 		try{
 			Connection conn = Database.getConnection();
 			
@@ -373,7 +365,7 @@ public class Course {
 	}
 	
 	/*
-	 * Returns a Map of all the courses with their course id as keys for the map
+	 * Returns a Map of all the courses with their course ids as keys for the map
 	 */
 	public static LinkedHashMap<Integer,Course> getAllCourses(){
 		LinkedHashMap<Integer,Course> courses = new LinkedHashMap<Integer,Course>();
@@ -382,17 +374,12 @@ public class Course {
 			
 			try{
 				if(conn != null){
-					/*
-					 * Retrieve all the courses
-					 */
+					
 					String SQLSelect= "Select *"
 							+ " FROM university.courses";
 					PreparedStatement statement = conn.prepareStatement(SQLSelect);
 					ResultSet rs =  statement.executeQuery();
 					
-					/*
-					 * Add all the course and the ids to the hashmap
-					 */
 					while(rs.next()){
 						Course c = new Course(rs.getInt("CourseID"));
 						courses.put(c.getCourseID(), c);
@@ -428,9 +415,6 @@ public class Course {
 			
 			try{
 				if(conn != null){
-					/*
-					 * Retrieve all the courses
-					 */
 					String SQLSelect= "Select *"
 							+ " FROM university.coursesoffered natural join university.courseschedule"
 							+ " WHERE coursesoffered.CourseID= ?";
@@ -438,9 +422,6 @@ public class Course {
 					statement.setInt(1, this.courseID);
 					ResultSet rs =  statement.executeQuery();
 					
-					/*
-					 * Add all the retrieved courses to hashMap
-					 */
 					while(rs.next()){
 						System.out.println("Retreiving the Course");
 						int offerID = rs.getInt("OfferID");
@@ -480,9 +461,7 @@ public class Course {
 			
 			try{
 				if(conn != null){
-					/*
-					 * Select all the courses of the specified department
-					 */
+					
 					String SQLSelect= "Select *"
 							+ " FROM university.courses "
 							+ "WHERE DepartmentID= ?";
@@ -490,9 +469,6 @@ public class Course {
 					statement.setInt(1,deptID);
 					ResultSet rs =  statement.executeQuery();
 					
-					/*
-					 * Add all the retrieved courses to the ArrayList
-					 */
 					while(rs.next()){
 						Course c = new Course(rs.getInt("CourseID"));
 						deptCourses.add(c);

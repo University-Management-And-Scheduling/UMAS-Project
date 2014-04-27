@@ -7,7 +7,6 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.HashMap;
-
 import com.mysql.jdbc.Statement;
 
 
@@ -406,6 +405,10 @@ public class CourseOffered {
 	 * Throws a COurseOffering not schedulable exception is the course offering cannot be scheduled in any classroom
 	 */
 	public static boolean addCourseOfferingToDatabase(final Course course,  final Professor professor, final int capacity) throws CourseOfferingAlreadyExistsException, CourseOfferingNotSchedulable{
+		if(course == null || professor == null || capacity <=0)
+			return false;
+		
+		
 		int profID = professor.getUIN();
 		int courseID = course.getCourseID();
 		int totalCap = capacity;
@@ -521,6 +524,10 @@ public class CourseOffered {
 	 * Function to update the professor teaching the course currently
 	 */
 	public boolean updateCourseOffering(Professor professor) throws CourseOfferingDoesNotExistException{		
+		if(!checkIfCurrent()){
+			return false;
+		}
+		
 		boolean isUpdated = false;	
 		try{
 			Connection conn = Database.getConnection();
@@ -869,10 +876,16 @@ public class CourseOffered {
 		if(!checkIfCurrent()){
 			throw new CourseOfferingNotCurrentException("This course offering is not current");
 		}
+		
 		try{
 			Connection conn = Database.getConnection();
 			
 			try{
+				
+				if(isCourseFull()){
+					return false;
+				}
+				
 				if(conn != null){
 					String courseOfferSelect = "Select *"
 							+ " FROM university.coursesoffered"
@@ -904,15 +917,17 @@ public class CourseOffered {
 				
 			}
 			
-			catch(Exception e){
+			catch(SQLException e){
 				System.out.println("Error in adding one seat");
 				System.out.println(e.getMessage());
 				e.printStackTrace();	
+			} catch (CourseOfferingDoesNotExistException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
 			}
 			
 			
 		}
-		
 		
 		
 		finally{
@@ -937,6 +952,8 @@ public class CourseOffered {
 					ResultSet rs = statement.executeQuery();
 					if(rs.first()){
 						int currentlyFilled = rs.getInt("SeatsFilled");
+						if(currentlyFilled<=0)
+							return false;
 						currentlyFilled -= 1;
 						rs.updateInt(5, currentlyFilled);
 						Database.commitTransaction(conn);

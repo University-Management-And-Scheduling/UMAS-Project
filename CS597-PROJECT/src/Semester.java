@@ -60,6 +60,9 @@ public class Semester {
 		this.isCurrent = isCurrent;
 	}
 	
+	/*
+	 * Initializes the Semester object to the current semester values
+	 */
 	public Semester(){
 		try{
 			Connection conn = Database.getConnection();
@@ -97,6 +100,13 @@ public class Semester {
 		}
 	}
 
+	/*
+	 * Starts the process for initializing the next semester
+	 * This function calculates the next semester values
+	 * Empties the wait and the email lists
+	 * Deletes the previous semester course schedule as the new semester is being started
+	 * Commits the whole transaction
+	 */
 	public boolean goToNextSemester(){
 		calculateNextSemester();
 		System.out.println(this.SemesterName+" "+this.SemesterYear);
@@ -109,6 +119,9 @@ public class Semester {
 		
 	}
 	
+	/*
+	 * Calculates the new semester values
+	 */
 	private void calculateNextSemester(){
 		if(this.getSemesterName().equals("SPRING")){
 			this.setSemesterName("SUMMER");
@@ -132,6 +145,10 @@ public class Semester {
 		
 	}
 	
+	/*
+	 * Inserts the new semester values in the database
+	 * Marks this new semester as current
+	 */
 	public void commitNextSemester(){
 		try{
 			Connection conn = Database.getConnection();
@@ -164,6 +181,9 @@ public class Semester {
 		}
 	}
 	
+	/*
+	 * Makes all the previous semesters non current after the new semester is added
+	 */
 	public void updateIsCurrent(){
 		try{
 			Connection conn = Database.getConnection();
@@ -192,6 +212,10 @@ public class Semester {
 		}		
 	}
 	
+	/*
+	 * (non-Javadoc)
+	 * @see java.lang.Object#toString()
+	 */
 	public String toString(){
 		long timeStamp = this.getSemesterYear().getTime();
 		Calendar c = Calendar.getInstance();
@@ -200,11 +224,4 @@ public class Semester {
 		return this.getSemesterName()+" "+year;
 	}
 	
-	public static void main(String[] args){
-		Semester s = new Semester();
-		s.goToNextSemester();
-	}
-	
-	
-
 }

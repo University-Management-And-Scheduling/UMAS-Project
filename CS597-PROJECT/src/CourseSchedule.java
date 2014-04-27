@@ -152,9 +152,9 @@ public class CourseSchedule {
 	 * Throws a course offering not current exception if the courseOffered passed is not a currently offered course
 	 * 
 	 */
-	public static void updateCourseSchedule(CourseOffered courseoffered, Classroom classroom, Timeslots timeslots) throws CourseOffered.CourseOfferingNotCurrentException{
+	public static boolean updateCourseSchedule(CourseOffered courseoffered, Classroom classroom, Timeslots timeslots) throws CourseOffered.CourseOfferingNotCurrentException{
 		if(courseoffered == null || classroom == null || timeslots == null){
-			return;
+			return false;
 		}
 				
 		//Check if the course offering is already scheduled
@@ -175,6 +175,7 @@ public class CourseSchedule {
 						statement.setInt(2, classroom.getClassroomID());
 						statement.executeUpdate();
 						Database.commitTransaction(conn);
+						return true;
 					}
 				}
 				
@@ -182,6 +183,7 @@ public class CourseSchedule {
 					System.out.println("Error updating schedule");
 					System.out.println(e.getMessage());
 					//e.printStackTrace();
+					return false;
 				}
 				
 			}
@@ -191,7 +193,7 @@ public class CourseSchedule {
 			
 		}
 		
-		//If none of the above steps throw an error schedule the course
+		return false;
 	}
 	
 	/*

@@ -3,8 +3,8 @@
 public enum ClassroomLocation {
 	//List of all locations
 	LOCATION1,
-	LOCATION2;
-//	LOCATION3,
+	LOCATION2,
+	LOCATION3;
 //	LOCATION4,
 //	LOCATION5,
 //	LOCATION6

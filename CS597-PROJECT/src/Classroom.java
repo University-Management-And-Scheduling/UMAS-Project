@@ -125,7 +125,8 @@ public class Classroom {
 	 * Add a new classroom to the classroom list
 	 * Not used currently in the main code
 	 */
-	public static void addNewClassroom(ClassroomName classroomName, ClassroomLocation classroomLocation, int capacity){
+	public static boolean addNewClassroom(ClassroomName classroomName, ClassroomLocation classroomLocation, int capacity){
+		boolean isAdded = false;
 		try{
 			Connection conn = Database.getConnection();
 			String name = classroomName.toString();
@@ -143,6 +144,7 @@ public class Classroom {
 					
 					if(rs.first()){
 						System.out.println("Class room already exists");
+						isAdded = false;
 					}
 					
 					else{
@@ -155,6 +157,7 @@ public class Classroom {
 						statement.setInt(3, capacity);
 						statement.executeUpdate();
 						Database.commitTransaction(conn);
+						isAdded = true;
 					}
 				}
 			}
@@ -169,6 +172,7 @@ public class Classroom {
 		
 		finally{
 		}
+		return isAdded;
 	}
 	
 	/*
@@ -214,7 +218,10 @@ public class Classroom {
 	 * Returns a classroom object with at least one empty time slot for scheduling a course
 	 */
 	public static Classroom getEmptyClassroom(ClassroomLocation location, int timeSlotType, int expectedCapacity){
-		//System.out.println("xxxxxxxxxxxxxxxxINSIDE getEmptyCLassroom FUNCTIONxxxxxxxxxxxxxx");
+
+		if(!checkTimeSlotType(timeSlotType))
+			return null;
+		
 		ArrayList<ClassroomName> names = new ArrayList<ClassroomName>(Arrays.asList(ClassroomName.values()));
 		/*
 		 * Shuffle all the classrooms names for randomness in scheduling
@@ -543,6 +550,11 @@ public class Classroom {
 	@Override
 	public int hashCode() {
 		return (this.getClassroomID()*31);
+	}
+	
+	public static void main(String[] args){
+		Classroom result = new Classroom(1);
+		Classroom result2 = new Classroom(300);
 	}
 	
 	

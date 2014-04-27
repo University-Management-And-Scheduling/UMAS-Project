@@ -271,7 +271,7 @@ public class Department {
 	 * Update the existing department using the object values to update the database
 	 * It will update the department with the values of the instance variables
 	 */
-	public void updateDepartment() throws DepartmentDoesNotExistException{
+	public boolean updateDepartment() throws DepartmentDoesNotExistException{
 		
 		/*
 		 * Null checks
@@ -305,6 +305,7 @@ public class Department {
 						rs.updateString(2, this.getDepartmentName());
 						rs.updateRow();	
 						Database.commitTransaction(conn);
+						return true;
 					}
 					
 				}
@@ -313,12 +314,14 @@ public class Department {
 			catch(SQLException e){
 				System.out.println("Error updating");
 				System.out.println(e.getMessage());
+				return false;
 			}
 						
 		}
 		
 		finally{
 		}
+		return false;
 	}
 	
 	@Override
