@@ -25,7 +25,6 @@ public class Student extends People {
 	 * */
 	public Student(int UIN) throws PersonDoesNotExistException {
 		super(UIN);
-		calculateGPA(UIN);
 
 		try {
 			Connection conn = Database.getConnection();//get the connection
@@ -654,7 +653,7 @@ public class Student extends People {
 	}
 
 	/*calculates the GPA from the grades it has for the passed UIN*/
-	private void calculateGPA(int UIN) {
+	private static void calculateGPA(int UIN) {
 
 		ArrayList<String> getGrades = new ArrayList<String>();//get the grades
 		double finalGrade = 0.0;
