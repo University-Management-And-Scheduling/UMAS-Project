@@ -85,9 +85,11 @@ public class CourseExamStructure {
 					 
 						PreparedStatement statement = conn.prepareStatement(SQLExamStructureSelect);
 	//					statement.setString(1, tableName);
+						DBAnnotation.annoate("examName", tableName, "ExamName", false);
 						statement.setString(1, examName);
 						ResultSet rs = statement.executeQuery();
 						while(rs.next()){
+							DBAnnotation.annoate("examTotal", tableName, "TotalMarks", true);
 							this.examTotal = rs.getInt("TotalMarks");
 						}
 					}	

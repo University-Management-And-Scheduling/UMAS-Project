@@ -363,7 +363,7 @@ public class CourseExams {
 							PreparedStatement statement = conn.prepareStatement(SQLExamUpdate);
 //							statement.setString(1, tableName);
 //							statement.setString(2, examName);
-							DBAnnotation.annoate("marks","tableName","ExamName",false);
+							DBAnnotation.annoate("marks","tableName",examName,false);
 							statement.setDouble(1, marks);
 							DBAnnotation.annoate("UIN","tableName","StudentUIN",false);
 							statement.setInt(2, UIN);
@@ -497,7 +497,7 @@ public class CourseExams {
 		} else {
 			for(String oneExam: allExams){
 				
-		
+				
 				String SQLExamSelect = "SELECT %s FROM %s WHERE StudentUIN = ?;";
 				SQLExamSelect = String.format(SQLExamSelect, oneExam, tableName);
 
