@@ -1,8 +1,8 @@
 
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
+//import java.lang.annotation.ElementType;
+//import java.lang.annotation.Retention;
+//import java.lang.annotation.RetentionPolicy;
+//import java.lang.annotation.Target;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -20,14 +20,14 @@ public class StudentEnrollment {
 	String grade; //Student Grade = 'A', 'B','C', 'D' and 'F'
 	
 	
-	@Target({ElementType.LOCAL_VARIABLE})
-	@Retention(RetentionPolicy.RUNTIME)
-	public @interface DBAnnotation {
-	 String[] variable () default "";
-	 String[] table () default "";
-	 String[] column () default "";
-	 boolean[] isSource () default false; 
-	}
+//	@Target({ElementType.LOCAL_VARIABLE})
+//	@Retention(RetentionPolicy.RUNTIME)
+//	public @interface DBAnnotation {
+//	 String[] variable () default "";
+//	 String[] table () default "";
+//	 String[] column () default "";
+//	 boolean[] isSource () default false; 
+//	}
 	
 
 	public int getEnrollmentID() {
@@ -93,13 +93,13 @@ public class StudentEnrollment {
 		int UIN = student.getUIN();
 		HashMap<CourseOffered, String> courseGrade = new HashMap<CourseOffered, String>();
 		
-		@DBAnnotation (
-				variable = {"UIN"},  
-				table = "studentenrollment", 
-				column = {"UIN"}, 
-				isSource = true)
+//		@DBAnnotation (
+//				variable = {"UIN"},  
+//				table = "studentenrollment", 
+//				column = {"UIN"}, 
+//				isSource = true)
 		
-		String SQLGradeSelect = "Select offerID, grade FROM studentenrollment WHERE UIN = ?;";
+		String SQLGradeSelect = "Select OfferID, Grade FROM studentenrollment WHERE UIN = ?;";
 		try{
 			Connection conn = Database.getConnection();
 			
@@ -108,13 +108,16 @@ public class StudentEnrollment {
 				if(conn != null){
 					
 					PreparedStatement statement = conn.prepareStatement(SQLGradeSelect);
+					DBAnnotation.annoate("UIN", "studentenrollment", "UIN", false);
 					statement.setInt(1, UIN);
 					ResultSet rs = statement.executeQuery();
 				
 					while(rs.next()){
 						//Retrieve by column name
-				        int offerID = rs.getInt("offerID");
-				        String grade = rs.getString("grade");
+						DBAnnotation.annoate("offerID", "studentenrollment", "OfferID", true);
+				        int offerID = rs.getInt("OfferID");
+				        DBAnnotation.annoate("grade", "studentenrollment", "Grade", true);
+				        String grade = rs.getString("Grade");
 				        CourseOffered studentCourse = null;
 				 		
 				 		try {
@@ -151,13 +154,13 @@ public class StudentEnrollment {
 		
 		int UIN = student.getUIN();
 		
-		@DBAnnotation (
-				variable = {"UIN"},  
-				table = "studentenrollment", 
-				column = {"UIN"}, 
-				isSource = true)
+//		@DBAnnotation (
+//				variable = {"UIN"},  
+//				table = "studentenrollment", 
+//				column = {"UIN"}, 
+//				isSource = true)
 		
-		String SQLGradeSelect = "Select offerID FROM studentenrollment WHERE UIN = ?;";
+		String SQLGradeSelect = "Select OfferID FROM studentenrollment WHERE UIN = ?;";
 		try{
 			Connection conn = Database.getConnection();
 			
@@ -166,11 +169,13 @@ public class StudentEnrollment {
 				if(conn != null){
 					
 					PreparedStatement statement = conn.prepareStatement(SQLGradeSelect);
+					DBAnnotation.annoate("UIN", "studentenrollment", "UIN", false);
 					statement.setInt(1, UIN);
 					ResultSet rs = statement.executeQuery();
 				
 					while(rs.next()){
 						//Retrieve by column name
+						DBAnnotation.annoate("offerID", "studentenrollment", "OfferID", true);
 				        int offerID = rs.getInt("OfferID");
 				        CourseOffered studentCourse = null;
 				 		
@@ -202,11 +207,11 @@ public class StudentEnrollment {
 		
 		int offerID = courseOffered.getOfferID();
 		
-		@DBAnnotation (
-				variable = {"offerID"},  
-				table = "studentenrollment", 
-				column = {"OfferID"}, 
-				isSource = true)
+//		@DBAnnotation (
+//				variable = {"offerID"},  
+//				table = "studentenrollment", 
+//				column = {"OfferID"}, 
+//				isSource = true)
 		
 		String SQLGradeSelect = "Select UIN FROM studentenrollment WHERE OfferID = ?;";
 		try{
@@ -217,11 +222,13 @@ public class StudentEnrollment {
 				if(conn != null){
 					
 					PreparedStatement statement = conn.prepareStatement(SQLGradeSelect);
+					DBAnnotation.annoate("offerID", "studentenrollment", "OfferID", false);
 					statement.setInt(1, offerID);
 					ResultSet rs = statement.executeQuery();
 				
 					while(rs.next()){
 						//Retrieve by column name
+						DBAnnotation.annoate("UIN", "studentenrollment", "UIN", true);
 				        int UIN = rs.getInt("UIN");
 				        Student student = new Student(UIN);
 						enrolledStudents.add(student);
@@ -243,11 +250,11 @@ public class StudentEnrollment {
 		
 		int UIN = student.getUIN();
 		
-		@DBAnnotation (
-				variable = {"UIN"},  
-				table = "studentenrollment", 
-				column = {"UIN"}, 
-				isSource = true)
+//		@DBAnnotation (
+//				variable = {"UIN"},  
+//				table = "studentenrollment", 
+//				column = {"UIN"}, 
+//				isSource = true)
 		
 		String SQLGradeSelect = "SELECT studentenrollment.OfferID " +  
 								"FROM university.studentenrollment JOIN coursesoffered JOIN semester " +
@@ -263,11 +270,13 @@ public class StudentEnrollment {
 				if(conn != null){
 					
 					PreparedStatement statement = conn.prepareStatement(SQLGradeSelect);
+					DBAnnotation.annoate("UIN", "studentenrollment", "UIN", false);
 					statement.setInt(1, UIN);
 					ResultSet rs = statement.executeQuery();
 				
 					while(rs.next()){
 						//Retrieve by column name
+						DBAnnotation.annoate("offerID", "studentenrollment", "OfferID", true);
 				        int offerID = rs.getInt("OfferID");
 				        CourseOffered studentCourse = null;
 				 		
@@ -333,11 +342,11 @@ public class StudentEnrollment {
 				String tableName = courseName + Integer.toString(offerID) + Integer.toString(semID); 
 			
 				
-				@DBAnnotation (
-						variable = {"UIN","offerID"},  
-						table = "studentenrollment", 
-						column = {"UIN","OfferID"}, 
-						isSource = false)
+//				@DBAnnotation (
+//						variable = {"UIN","offerID"},  
+//						table = "studentenrollment", 
+//						column = {"UIN","OfferID"}, 
+//						isSource = false)
 				
 				String SQLCourseExamsInsert = "INSERT INTO %s (StudentUIN,StudentEnrollmentID) VALUES(?,?) ;";
 				SQLCourseExamsInsert = String.format(SQLCourseExamsInsert, tableName);
@@ -352,9 +361,13 @@ public class StudentEnrollment {
 						 
 							String key[] = { "EnrollmentID" };
 							PreparedStatement statement = conn.prepareStatement(SQLStudentEnrollInsert,key);
+							DBAnnotation.annoate("UIN", "studentenrollment", "UIN", false);
 							statement.setInt(1, UIN);
+							DBAnnotation.annoate("offerID", "studentenrollment", "OfferID", false);
 							statement.setInt(2, offerID);
+							DBAnnotation.annoate("grade", "studentenrollment", "Grade", false);
 							statement.setString(3, grade);
+							
 							statement.executeUpdate();
 							
 							ResultSet rs = statement.getGeneratedKeys();
@@ -362,12 +375,15 @@ public class StudentEnrollment {
 							// To get the database auto-generated EnrollmentID of
 							// the student enrollment just inserted
 							if (rs.next()) {
+								DBAnnotation.annoate("generatedEnrollmentID", "studentenrollment", "EnrollmentID", true);
 								generatedEnrollmentID= rs.getInt(1);
 							}
 							
 							statement = conn.prepareStatement(SQLCourseExamsInsert);
 							// statement.setString(1, tableName);
+							DBAnnotation.annoate("UIN", "studentenrollment", "UIN", false);
 							statement.setInt(1, UIN);
+							DBAnnotation.annoate("generatedEnrollmentID", "studentenrollment", "EnrollmentID", false);
 							statement.setInt(2, generatedEnrollmentID);
 							statement.executeUpdate();
 							
@@ -446,11 +462,11 @@ public class StudentEnrollment {
 			int enrollmentID = this.getStudentEnrollmentID();	
 			// Step 2: If student is enrolled currently, update their grade.
 			
-			@DBAnnotation (
-					variable = {"grade","enrollmentID"},  
-					table = "studentenrollment", 
-					column = {"Grade","EnrollmentID"}, 
-					isSource = false)
+//			@DBAnnotation (
+//					variable = {"grade","enrollmentID"},  
+//					table = "studentenrollment", 
+//					column = {"Grade","EnrollmentID"}, 
+//					isSource = false)
 			String SQLStudentEnrollInsert = "UPDATE `studentenrollment` SET `Grade`=? WHERE `EnrollmentID`=?;";
 			
 			try {
@@ -459,7 +475,9 @@ public class StudentEnrollment {
 					if (conn != null) {
 					 
 						PreparedStatement statement = conn.prepareStatement(SQLStudentEnrollInsert);
+						DBAnnotation.annoate("grade", "studentenrollment", "Grade", false);
 						statement.setString(1, grade);
+						DBAnnotation.annoate("enrollmentID", "studentenrollment", "EnrollmentID", false);
 						statement.setInt(2, enrollmentID);
 						statement.executeUpdate();
 						Database.commitTransaction(conn);
@@ -485,11 +503,11 @@ public class StudentEnrollment {
 		int UIN = this.getUIN();
 		int offerID = this.getOfferID();
 		
-		@DBAnnotation (
-				variable = {"UIN","offerID","enrollmentID"},  
-				table = "studentenrollment", 
-				column = {"UIN","OfferID","EnrollmentID"}, 
-				isSource = true)
+//		@DBAnnotation (
+//				variable = {"UIN","offerID","enrollmentID"},  
+//				table = "studentenrollment", 
+//				column = {"UIN","OfferID","EnrollmentID"}, 
+//				isSource = true)
 		
 		String SQLStudentEnrollSelect = "Select EnrollmentID FROM studentenrollment WHERE UIN = ? AND OfferID = ?;";
 		
@@ -501,12 +519,15 @@ public class StudentEnrollment {
 				if(conn != null){
 					
 					PreparedStatement statement = conn.prepareStatement(SQLStudentEnrollSelect);
+					DBAnnotation.annoate("UIN", "studentenrollment", "UIN", false);
 					statement.setInt(1, UIN);
+					DBAnnotation.annoate("offerID", "studentenrollment", "OfferID", false);
 					statement.setInt(2, offerID);
 					
 					ResultSet rs = statement.executeQuery();
 				
 					while(rs.next()){
+						DBAnnotation.annoate("enrollmentID", "studentenrollment", "EnrollmentID", true);
 				        enrollmentID = rs.getInt("EnrollmentID");
 					}      
 					this.setEnrollmentID(enrollmentID);
@@ -557,11 +578,11 @@ public class StudentEnrollment {
 			String tableName = courseName + Integer.toString(offerID) + Integer.toString(semID); 
 		
 			
-			@DBAnnotation (
-					variable = {"EnrollmentID","UIN"},  
-					table = {"studentenrollment","tableName"}, 
-					column = {"UIN","OfferID","All"}, 
-					isSource = true)
+//			@DBAnnotation (
+//					variable = {"EnrollmentID","UIN"},  
+//					table = {"studentenrollment","tableName"}, 
+//					column = {"UIN","OfferID","All"}, 
+//					isSource = true)
 			
 			String SQLCourseExamsDelete = "DELETE FROM %s WHERE `StudentUIN`=?;";
 			SQLCourseExamsDelete = String.format(SQLCourseExamsDelete, tableName);
@@ -574,10 +595,12 @@ public class StudentEnrollment {
 					 
 						PreparedStatement statement = conn.prepareStatement(SQLCourseExamsDelete);
 						//statement.setString(1, tableName);
+						DBAnnotation.annoate("UIN", "studentenrollment", "UIN", false);
 						statement.setInt(1, UIN);
 						statement.executeUpdate();
 						
 						statement = conn.prepareStatement(SQLStudentEnrollDelete);
+						DBAnnotation.annoate("enrollmentID", "studentenrollment", "EnrollmentID", false);
 						statement.setInt(1, enrollmentID);
 						statement.executeUpdate();
 						boolean removed = this.removeOneSeatFromCourseOffered(offeredCourse);
@@ -606,11 +629,11 @@ public class StudentEnrollment {
 	private boolean isStudentEnrolled(int UIN,int offerID){
 		boolean isStudentEnrolled = false;
 		
-		@DBAnnotation (
-				variable = {"UIN","offerID"},  
-				table = "studentenrollment", 
-				column = {"UIN","OfferID"}, 
-				isSource = true)
+//		@DBAnnotation (
+//				variable = {"UIN","offerID"},  
+//				table = "studentenrollment", 
+//				column = {"UIN","OfferID"}, 
+//				isSource = true)
 		
 		String SQLStudentEnrollSelect = "Select UIN FROM studentenrollment WHERE UIN = ? AND OfferID = ?;";
 		
@@ -622,13 +645,16 @@ public class StudentEnrollment {
 				if(conn != null){
 					
 					PreparedStatement statement = conn.prepareStatement(SQLStudentEnrollSelect);
+					DBAnnotation.annoate("UIN", "studentenrollment", "UIN", false);
 					statement.setInt(1, UIN);
+					DBAnnotation.annoate("offerID", "studentenrollment", "OfferID", false);
 					statement.setInt(2, offerID);
 					
 					ResultSet rs = statement.executeQuery();
 				
 					while(rs.next()){
 						//Retrieve by column name
+						DBAnnotation.annoate("UIN", "studentenrollment", "UIN", true);
 				        int tableUIN = rs.getInt("UIN");
 				         
 				        if (UIN == tableUIN){
@@ -656,11 +682,11 @@ public class StudentEnrollment {
 		
 		int offerID = this.getOfferID();
 		
-		@DBAnnotation (
-				variable = {"offerID"},  
-				table = "coursesoffered", 
-				column = {"OfferID"}, 
-				isSource = true)
+//		@DBAnnotation (
+//				variable = {"offerID"},  
+//				table = "coursesoffered", 
+//				column = {"OfferID"}, 
+//				isSource = true)
 		
 		String SQLStudentEnrollSelect = "Select OfferID FROM coursesoffered " +
 										"WHERE SeatsFilled < TotalCapacity " +
@@ -674,12 +700,14 @@ public class StudentEnrollment {
 				if(conn != null){
 					
 					PreparedStatement statement = conn.prepareStatement(SQLStudentEnrollSelect);
+					DBAnnotation.annoate("offerID", "studentenrollment", "OfferID", false);
 					statement.setInt(1, offerID);
 					
 					ResultSet rs = statement.executeQuery();
 				
 					while(rs.next()){
 						//Retrieve by column name
+						DBAnnotation.annoate("tableOfferID", "studentenrollment", "OfferID", true);
 				        int tableOfferID = rs.getInt("OfferID");
 				         
 				        if (offerID == tableOfferID){
@@ -712,16 +740,19 @@ public class StudentEnrollment {
 			try{
 				if(conn != null){
 					int currentlyFilled = -1;
-					@DBAnnotation (
-							variable = {"offerID"},  
-							table = "coursesoffered", 
-							column = {"OfferID"}, 
-							isSource = true)
+//					@DBAnnotation (
+//							variable = {"offerID"},  
+//							table = "coursesoffered", 
+//							column = {"OfferID"}, 
+//							isSource = true)
 					String SQLcoursesOfferedSelect = "Select * FROM coursesoffered WHERE OfferID= ?;";
 					PreparedStatement statement = conn.prepareStatement(SQLcoursesOfferedSelect);
+					DBAnnotation.annoate("offerID", "coursesoffered", "OfferID", false);
 					statement.setInt(1, offerID);
+					
 					ResultSet rs = statement.executeQuery();
 					if(rs.next()){
+						DBAnnotation.annoate("offerID", "coursesoffered", "OfferID", true);
 						currentlyFilled = rs.getInt("SeatsFilled");
 						currentlyFilled -= 1;
 //						rs.updateInt(5, currentlyFilled);
@@ -737,7 +768,10 @@ public class StudentEnrollment {
 							+ "SET SeatsFilled= ? "
 							+ "WHERE OfferID= ? ;";
 					statement = conn.prepareStatement(updateStatement, ResultSet.CONCUR_UPDATABLE);
+					
+					DBAnnotation.annoate("currentlyFilled", "coursesoffered", "CurrentlyFilled", false);
 					statement.setInt(1, currentlyFilled);
+					DBAnnotation.annoate("offerID", "coursesoffered", "OfferID", false);
 					statement.setInt(2, this.getOfferID());
 					statement.executeUpdate();
 					Database.commitTransaction(conn);
