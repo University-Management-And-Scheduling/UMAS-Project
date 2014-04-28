@@ -111,7 +111,7 @@ public class CourseExams {
 					statement.executeUpdate();
 					boolean isCourseAdded = CourseExamStructure.createCourseExamStructureTable(courseName, offerID,semID);
 					if(isCourseAdded == true){
-						Database.commitTransaction(conn);
+						//Database.commitTransaction(conn);
 						tableAdded = true;
 						System.out.println("After exam create");
 					} else {
