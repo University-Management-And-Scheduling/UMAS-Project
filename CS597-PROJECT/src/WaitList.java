@@ -85,7 +85,7 @@ public class WaitList {
 						 * Insert the student in the waitlist
 						 */
 						System.out.println("Inserting student in wait list");
-						String WaitListInsert = "INSERT INTO university.waitlist "
+						String WaitListInsert = "INSERT INTO waitlist "
 								+ "(UIN, OfferID, QueuePos) "
 								+ "Values(?,?,?)";
 						PreparedStatement statement = conn.prepareStatement(WaitListInsert, ResultSet.CONCUR_UPDATABLE);
@@ -130,7 +130,7 @@ public class WaitList {
 					 * Retrieve the max queue number for the offer id
 					 */
 					String SemesterSelect = "Select max(QueuePos) as QueuePos"
-							+ " FROM university.waitlist"
+							+ " FROM waitlist"
 							+ " WHERE offerID= ?";
 					PreparedStatement statement = conn.prepareStatement(SemesterSelect);
 					statement.setInt(1, OfferID);
@@ -170,7 +170,7 @@ public class WaitList {
 			try{
 				if(conn != null){
 					String SemesterSelect = "Select min(QueuePos) as QueuePos"
-							+ " FROM university.waitlist"
+							+ " FROM waitlist"
 							+ " WHERE offerID= ?";
 					PreparedStatement statement = conn.prepareStatement(SemesterSelect);
 					statement.setInt(1, OfferID);
@@ -209,7 +209,7 @@ public class WaitList {
 					 * Get all the emailed students for the offer id
 					 */
 					String SemesterSelect = "Select StudentUIN"
-							+ " FROM university.emailedwaitlist"
+							+ " FROM emailedwaitlist"
 							+ " WHERE offerID= ?";
 					PreparedStatement statement = conn.prepareStatement(SemesterSelect);
 					statement.setInt(1, offerID);
@@ -259,7 +259,7 @@ public class WaitList {
 					 * Select all wait list students for the offer id
 					 */
 					String SemesterSelect = "Select *"
-							+ " FROM university.waitlist"
+							+ " FROM waitlist"
 							+ " WHERE offerID= ?"
 							+ " ORDER BY QueuePos";
 					PreparedStatement statement = conn.prepareStatement(SemesterSelect);
@@ -302,7 +302,7 @@ public class WaitList {
 			try{
 				if(conn != null){
 					String SQLSelect = "Select *"
-							+ " FROM university.waitlist"
+							+ " FROM waitlist"
 							+ " WHERE UIN= ?"
 							+ " ORDER BY QueuePos";
 					PreparedStatement statement = conn.prepareStatement(SQLSelect);
@@ -402,7 +402,7 @@ public class WaitList {
 			try{
 				if(conn != null){
 					System.out.println("Deleting student from wait list");
-					String WaitListInsert = "DELETE FROM university.waitlist "
+					String WaitListInsert = "DELETE FROM waitlist "
 							+ "WHERE UIN= ? and OfferID= ?";
 					PreparedStatement statement = conn.prepareStatement(WaitListInsert, ResultSet.CONCUR_UPDATABLE, ResultSet.TYPE_FORWARD_ONLY);
 					statement.setInt(1, UIN);
@@ -439,7 +439,7 @@ public class WaitList {
 			try{
 				if(conn != null){
 					System.out.println("Deleting student from wait list");
-					String WaitListInsert = "DELETE FROM university.waitlist "
+					String WaitListInsert = "DELETE FROM waitlist "
 							+ "WHERE UIN= ? and OfferID= ?";
 					PreparedStatement statement = conn.prepareStatement(WaitListInsert, ResultSet.CONCUR_UPDATABLE, ResultSet.TYPE_FORWARD_ONLY);
 					statement.setInt(1, UIN);
@@ -474,7 +474,7 @@ public class WaitList {
 			try{
 				if(conn != null){
 					System.out.println("Deleting student from email wait list");
-					String WaitListInsert = "DELETE FROM university.emailedwaitlist "
+					String WaitListInsert = "DELETE FROM emailedwaitlist "
 							+ "WHERE StudentUIN= ? and OfferID= ?";
 					PreparedStatement statement = conn.prepareStatement(WaitListInsert, ResultSet.CONCUR_UPDATABLE);
 					statement.setInt(1, UIN);
@@ -519,7 +519,7 @@ public class WaitList {
 				try{
 					if(conn != null){
 						System.out.println("Inserting student in wait list");
-						String WaitListInsert = "INSERT INTO university.emailedwaitlist "
+						String WaitListInsert = "INSERT INTO emailedwaitlist "
 								+ "(StudentUIN, OfferID, TimeEmailed) "
 								+ "Values(?,?,?)";
 						PreparedStatement statement = conn.prepareStatement(WaitListInsert, ResultSet.CONCUR_UPDATABLE);
@@ -574,7 +574,7 @@ public class WaitList {
 				try{
 					if(conn != null){
 						String SemesterSelect = "Select UIN"
-								+ " FROM university.waitlist"
+								+ " FROM waitlist"
 								+ " WHERE offerID= ? and QueuePos= ?";
 						PreparedStatement statement = conn.prepareStatement(SemesterSelect);
 						statement.setInt(1, offerID);
@@ -619,7 +619,7 @@ public class WaitList {
 			try{
 				if(conn != null){
 					String SemesterSelect = "Select *"
-							+ " FROM university.studentenrollment"
+							+ " FROM studentenrollment"
 							+ " WHERE offerID= ? and UIN= ?";
 					PreparedStatement statement = conn.prepareStatement(SemesterSelect);
 					statement.setInt(1, offerID);
@@ -659,7 +659,7 @@ public class WaitList {
 			try{
 				if(conn != null){
 					String SemesterSelect = "Select *"
-							+ " FROM university.waitlist"
+							+ " FROM waitlist"
 							+ " WHERE offerID= ? and UIN= ?";
 					PreparedStatement statement = conn.prepareStatement(SemesterSelect);
 					statement.setInt(1, offerID);
@@ -699,7 +699,7 @@ public class WaitList {
 			try{
 				if(conn != null){
 					String SemesterSelect = "Select *"
-							+ " FROM university.waitlist"
+							+ " FROM waitlist"
 							+ " WHERE offerID= ?";
 					PreparedStatement statement = conn.prepareStatement(SemesterSelect);
 					statement.setInt(1, offerID);
@@ -771,7 +771,7 @@ public class WaitList {
 			try{
 				if(conn != null){
 					String SemesterSelect = "Select *"
-							+ " FROM university.emailedwaitlist"
+							+ " FROM emailedwaitlist"
 							+ " WHERE offerID= ? and StudentUIN= ?";
 					PreparedStatement statement = conn.prepareStatement(SemesterSelect);
 					statement.setInt(1, offerID);
@@ -811,7 +811,7 @@ public class WaitList {
 			try{
 				if(conn != null){
 					String waitListSelect = "Select *"
-							+ " FROM university.emailedwaitlist";
+							+ " FROM emailedwaitlist";
 					PreparedStatement statement = conn.prepareStatement(waitListSelect);
 					ResultSet rs = statement.executeQuery();
 					

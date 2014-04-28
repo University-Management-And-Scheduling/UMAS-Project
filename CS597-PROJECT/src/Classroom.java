@@ -65,7 +65,7 @@ public class Classroom {
 					 * Try to retrieve the classroom from the database
 					 */
 					String ClassroomSelect = "Select *"
-							+ " FROM university.classroom"
+							+ " FROM classroom"
 							+ " WHERE classroomID= ?";
 					PreparedStatement statement = conn.prepareStatement(ClassroomSelect);
 					statement.setInt(1, classroomID);
@@ -132,7 +132,7 @@ public class Classroom {
 			try{
 				if(conn != null){
 					String classroomSelect = "Select ClassroomName"
-							+ " FROM university.classroom"
+							+ " FROM classroom"
 							+ " WHERE ClassroomName= ? AND ClassroomLocation= ?";
 					PreparedStatement statement = conn.prepareStatement(classroomSelect);
 					statement.setString(1, name);
@@ -145,7 +145,7 @@ public class Classroom {
 					}
 					
 					else{
-						String classroomInsert = "Insert into university.classroom"
+						String classroomInsert = "Insert into classroom"
 								+ " (ClassroomName, ClassroomLocation, ClassroomCapacity)"
 								+ " Values(?,?,?)";
 						statement = conn.prepareStatement(classroomInsert);
@@ -292,7 +292,7 @@ public class Classroom {
 					 * try to look for the classroom and location combination
 					 */
 					String ClassroomSelect = "Select ClassroomID"
-							+ " FROM university.classroom"
+							+ " FROM classroom"
 							+ " WHERE classroomName= ? and classroomLocation= ?";
 					PreparedStatement statement = conn.prepareStatement(ClassroomSelect);
 					statement.setString(1, classroomName);
@@ -408,7 +408,7 @@ public class Classroom {
 					/*
 					 * Retrieves the occupied time slots from the database table
 					 */
-					String ClassroomSelect = "SELECT TimeslotID FROM university.courseschedule natural join university.timeslots "
+					String ClassroomSelect = "SELECT TimeslotID FROM courseschedule natural join timeslots "
 							+ "where ClassroomID = ? and TimeslotType = ?";
 					PreparedStatement statement = conn.prepareStatement(ClassroomSelect);
 					statement.setInt(1, classroomID);
@@ -431,7 +431,7 @@ public class Classroom {
 					 * Get all the time slots from the database
 					 */
 					String timeSlotSelect = "SELECT TimeslotID "
-							+ "From university.timeslots "
+							+ "From timeslots "
 							+ "where TimeslotType = ?";
 					statement = conn.prepareStatement(timeSlotSelect);
 					statement.setInt(1, timeSlotType);
@@ -507,7 +507,7 @@ public class Classroom {
 					 * Try to find if some course is scheduled in the specified combination of classroom and time slot
 					 */
 					String ClassroomSelect = "Select *"
-							+ " FROM university.courseschedule"
+							+ " FROM courseschedule"
 							+ " WHERE classroomID= ? and TimeSlotID= ?";
 					PreparedStatement statement = conn.prepareStatement(ClassroomSelect);
 					statement.setInt(1, classroomID);

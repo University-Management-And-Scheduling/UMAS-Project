@@ -37,7 +37,7 @@ public class CourseOffered {
 					
 					//Retrieve the current semester ID
 					String SemesterSelect = "Select *"
-							+ " FROM university.coursesoffered"
+							+ " FROM coursesoffered"
 							+ " WHERE OfferID= ?";
 					PreparedStatement statement = conn.prepareStatement(SemesterSelect);
 					statement.setInt(1, offerID);
@@ -296,7 +296,7 @@ public class CourseOffered {
 					
 					//Retrieve the current semester ID
 					String SQLSelect = "Select *"
-							+ " FROM university.coursesoffered"
+							+ " FROM coursesoffered"
 							+ " WHERE SemesterID= ?";
 					PreparedStatement statement = conn.prepareStatement(SQLSelect);
 					statement.setInt(1, currentSemID);
@@ -344,7 +344,7 @@ public class CourseOffered {
 					
 					//Retrieve the current semester ID
 					String SemesterSelect = "Select *"
-							+ " FROM university.coursesoffered"
+							+ " FROM coursesoffered"
 							+ " WHERE SemesterID= ?";
 					PreparedStatement statement = conn.prepareStatement(SemesterSelect);
 					statement.setInt(1, currentSemID);
@@ -390,7 +390,7 @@ public class CourseOffered {
 					
 					//Retrieve the current semester ID
 					String SemesterSelect = "Select *"
-							+ " FROM university.coursesoffered";
+							+ " FROM coursesoffered";
 					PreparedStatement statement = conn.prepareStatement(SemesterSelect);
 					ResultSet rs = statement.executeQuery();
 					
@@ -451,7 +451,7 @@ public class CourseOffered {
 					
 					int semesterID = getCurrentSemesterID();
 					String SQLSelect= "Select OfferID"
-							+ " FROM university.coursesoffered"
+							+ " FROM coursesoffered"
 							+ " WHERE courseID= ? and TaughtBy= ? and SemesterID= ?";
 					PreparedStatement statement = conn.prepareStatement(SQLSelect);
 					statement.setInt(1, courseID);
@@ -487,7 +487,7 @@ public class CourseOffered {
 						DBAnnotation.annoate("minCap", "coursesoffered", "SeatsFilled", false);
 						DBAnnotation.annoate("profID", "coursesoffered", "TaughtBy", false);
 						
-						String SQLInsert = "Insert into university.coursesoffered"
+						String SQLInsert = "Insert into coursesoffered"
 								+ "(CourseID,SemesterID,TotalCapacity,SeatsFilled,TaughtBy)"
 								+ "Values(?,?,?,?,?);";
 						statement = conn.prepareStatement(SQLInsert, Statement.RETURN_GENERATED_KEYS);
@@ -574,7 +574,7 @@ public class CourseOffered {
 					
 					DBAnnotation.annoate("profID", "coursesoffered", "TaughtBy", false);
 					DBAnnotation.annoate("offerID", "coursesoffered", "OfferID", false);
-					String SQLUpdate = "UPDATE university.coursesoffered "
+					String SQLUpdate = "UPDATE coursesoffered "
 							+ "SET Taughtby= ? "
 							+ "WHERE offerID= ?";
 					PreparedStatement statement = conn.prepareStatement(SQLUpdate, ResultSet.CONCUR_UPDATABLE);
@@ -652,7 +652,7 @@ public class CourseOffered {
 					
 					//Retrieve the current semester ID
 					String SQLSelect = "Select *"
-							+ " FROM university.studentenrollment"
+							+ " FROM studentenrollment"
 							+ " WHERE UIN= ?";
 					PreparedStatement statement = conn.prepareStatement(SQLSelect);
 					statement.setInt(1, student.getUIN());
@@ -705,7 +705,7 @@ public class CourseOffered {
 					
 					//Retrieve the current semester ID
 					String studentSelect = "Select *"
-							+ " FROM university.studentenrollment"
+							+ " FROM studentenrollment"
 							+ " WHERE OfferID=?";
 					PreparedStatement statement = conn.prepareStatement(studentSelect);
 					statement.setInt(1, courseOffered.getOfferID());
@@ -763,7 +763,7 @@ public class CourseOffered {
 					
 					//Retrieve the current semester ID
 					String SQLSelect = "Select *"
-							+ " FROM university.coursesoffered"
+							+ " FROM coursesoffered"
 							+ " WHERE TaughtBy=? and SemesterID= ?";
 					PreparedStatement statement = conn.prepareStatement(SQLSelect);
 					statement.setInt(1, professorID);
@@ -820,7 +820,7 @@ public class CourseOffered {
 					
 					//Retrieve the current semester ID
 					String SemesterSelect = "Select *"
-							+ " FROM university.coursesoffered as c join university.teachingassistant as t"
+							+ " FROM coursesoffered as c join teachingassistant as t"
 							+ " WHERE c.SemesterID= ? and t.OfferID = c.OfferID and TaUIN= ?";
 					PreparedStatement statement = conn.prepareStatement(SemesterSelect);
 					statement.setInt(1, currentSemesterID);
@@ -876,7 +876,7 @@ public class CourseOffered {
 					
 					//Retrieve the current semester ID
 					String SemesterSelect = "Select *"
-							+ " FROM university.studentenrollment"
+							+ " FROM studentenrollment"
 							+ " WHERE UIN= ?";
 					PreparedStatement statement = conn.prepareStatement(SemesterSelect);
 					statement.setInt(1, ta.getUIN());
@@ -937,7 +937,7 @@ public class CourseOffered {
 				
 				if(conn != null){
 					String courseOfferSelect = "Select *"
-							+ " FROM university.coursesoffered"
+							+ " FROM coursesoffered"
 							+ " WHERE OfferID= ?";
 					PreparedStatement statement = conn.prepareStatement(courseOfferSelect, ResultSet.CONCUR_UPDATABLE);
 					statement.setInt(1, this.getOfferID());
@@ -957,7 +957,7 @@ public class CourseOffered {
 					DBAnnotation.annoate("currentlyFilled", "coursesoffered", "SeatsFilled", false);
 					DBAnnotation.annoate("offerID", "coursesoffered", "OfferID", false);
 					
-					String updateStatement = "UPDATE university.coursesoffered "
+					String updateStatement = "UPDATE coursesoffered "
 							+ "SET SeatsFilled= ? "
 							+ "WHERE OfferID= ? ;";
 					statement = conn.prepareStatement(updateStatement, ResultSet.CONCUR_UPDATABLE);
@@ -1053,7 +1053,7 @@ public class CourseOffered {
 					
 					//Retrieve the current semester ID
 					String scheduleSelect = "Select *"
-							+ " FROM university.courseschedule"
+							+ " FROM courseschedule"
 							+ " WHERE OfferID= ?";
 					PreparedStatement statement = conn.prepareStatement(scheduleSelect);
 					statement.setInt(1, this.getOfferID());
@@ -1094,7 +1094,7 @@ public class CourseOffered {
 					
 					//Retrieve the current semester ID
 					String scheduleSelect = "Select *"
-							+ " FROM university.coursesoffered"
+							+ " FROM coursesoffered"
 							+ " WHERE OfferID= ?";
 					PreparedStatement statement = conn.prepareStatement(scheduleSelect);
 					statement.setInt(1, offerID);
@@ -1134,7 +1134,7 @@ public class CourseOffered {
 					
 					//Retrieve the current semester ID
 					String semSelect = "Select *"
-							+ " FROM university.semester"
+							+ " FROM semester"
 							+ " WHERE isCurrent= ?";
 					PreparedStatement statement = conn.prepareStatement(semSelect);
 					statement.setInt(1, 1);

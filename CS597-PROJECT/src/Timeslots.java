@@ -56,7 +56,7 @@ public class Timeslots {
 					 * query to retrieve all time slots and check if the time slot already exists
 					 */
 					String findString = "Select * "
-							+ "FROM university.timeslots "
+							+ "FROM timeslots "
 							+ "WHERE TimeSlotID= ?";
 					PreparedStatement statement = conn.prepareStatement(findString);
 					statement.setInt(1, timeSlotID);
@@ -116,7 +116,7 @@ public class Timeslots {
 				if(conn != null){
 					
 					String findString = "Select *"
-							+ "FROM university.timeslots "
+							+ "FROM timeslots "
 							+ "WHERE starthour = ? and endhour = ?";
 					PreparedStatement statement = conn.prepareStatement(findString);
 					statement.setInt(1, startHour);
@@ -187,7 +187,7 @@ public class Timeslots {
 					
 					//query to retrieve all time slots and check if the time slot already exists
 					String findString = "Select * "
-							+ "FROM university.timeslots "
+							+ "FROM timeslots "
 							+ "WHERE starthour = ? and endhour = ?";
 					PreparedStatement statement = conn.prepareStatement(findString);
 					statement.setInt(1, startHour);
@@ -207,7 +207,7 @@ public class Timeslots {
 						 */
 						System.out.println("Adding new timeslot:"+startHour+" to "+endHour);
 												
-						String addString = "INSERT INTO university.timeslots "
+						String addString = "INSERT INTO timeslots "
 								+ "(StartHour, EndHour, TimeslotType) "
 								+ "Values(?,?,?);";
 						statement = conn.prepareStatement(addString);

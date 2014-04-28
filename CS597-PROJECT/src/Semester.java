@@ -74,7 +74,7 @@ public class Semester {
 					
 					//Retrieve the current semester ID
 					String semSelect = "Select *"
-							+ " FROM university.semester"
+							+ " FROM semester"
 							+ " WHERE isCurrent= ?";
 					PreparedStatement statement = conn.prepareStatement(semSelect);
 					statement.setInt(1, 1);
@@ -176,7 +176,7 @@ public class Semester {
 					Timestamp t = this.getSemesterYear();
 					
 					//Retrieve the current semester ID
-					String semAdd = "Insert into university.semester"
+					String semAdd = "Insert into semester"
 							+ " (SemesterName, SemesterYear, isCurrent)"
 							+ " Values(?,?,?)";
 					PreparedStatement statement = conn.prepareStatement(semAdd);
@@ -211,7 +211,7 @@ public class Semester {
 			try{
 				if(conn != null){
 					
-					String semAdd = "UPDATE university.semester"
+					String semAdd = "UPDATE semester"
 							+ " SET IsCurrent= ?";
 					PreparedStatement statement = conn.prepareStatement(semAdd);
 					statement.setInt(1, 0);

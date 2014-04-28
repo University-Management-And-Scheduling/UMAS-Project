@@ -106,7 +106,7 @@ public class CourseSchedule {
 					
 					//Retrieve the current semester ID
 					String scheduleSelect = "Select *"
-							+ " FROM university.courseschedule"
+							+ " FROM courseschedule"
 							+ " WHERE offerID= ?";
 					PreparedStatement statement = conn.prepareStatement(scheduleSelect);
 					statement.setInt(1, offerID);
@@ -181,7 +181,7 @@ public class CourseSchedule {
 						DBAnnotation.annoate("offerID", "courseschedule", "OfferID", false);						
 						int offerID = courseoffered.getOfferID();
 						
-						String scheduleInsert = "UPDATE university.courseschedule "
+						String scheduleInsert = "UPDATE courseschedule "
 								+ "SET TimeSlotID= ? , ClassroomID=? "
 								+ "WHERE OfferID= ?";
 						PreparedStatement statement = conn.prepareStatement(scheduleInsert, ResultSet.CONCUR_UPDATABLE);
@@ -235,7 +235,7 @@ public class CourseSchedule {
 				if(conn != null){
 					
 					String SQLSelect= "Select *"
-							+ " FROM university.courseschedule natural join university.coursesoffered "
+							+ " FROM courseschedule natural join coursesoffered "
 							+ "ORDER BY TotalCapacity";
 					PreparedStatement statement = conn.prepareStatement(SQLSelect);
 					ResultSet rs =  statement.executeQuery();
@@ -279,7 +279,7 @@ public class CourseSchedule {
 				if(conn != null){
 					
 					String SQLSelect= "Select *"
-							+ " FROM university.courseschedule natural join university.coursesoffered "
+							+ " FROM courseschedule natural join coursesoffered "
 							+ "ORDER BY TotalCapacity";
 					PreparedStatement statement = conn.prepareStatement(SQLSelect);
 					ResultSet rs =  statement.executeQuery();
@@ -436,7 +436,7 @@ public class CourseSchedule {
 					
 					//Retrieve the current semester ID
 					String SQLSelect = "Select *"
-							+ " FROM university.courseschedule"
+							+ " FROM courseschedule"
 							+ " WHERE offerID= ?";
 					PreparedStatement statement = conn.prepareStatement(SQLSelect);
 					statement.setInt(1, offerID);
@@ -490,7 +490,7 @@ public class CourseSchedule {
 					DBAnnotation.annoate("timeID", "courseschedule", "TimeslotID", false);
 					int timeID = timeslotID;
 					
-					String scheduleInsert = "Insert into university.courseschedule"
+					String scheduleInsert = "Insert into courseschedule"
 							+ " (OfferID, TimeSlotID, ClassroomID)"
 							+ " Values(?,?,?)";
 					PreparedStatement statement = conn.prepareStatement(scheduleInsert);
@@ -585,7 +585,7 @@ public class CourseSchedule {
 					
 					//Retrieve the current semester ID
 					String courseScheduleDelete = "Delete"
-							+ " FROM university.courseschedule";
+							+ " FROM courseschedule";
 					PreparedStatement statement = conn.prepareStatement(courseScheduleDelete, ResultSet.CONCUR_UPDATABLE);
 				    int isDeleted= statement.executeUpdate();
 				    System.out.println("Deletd:"+isDeleted);
@@ -640,7 +640,7 @@ public class CourseSchedule {
 					 */
 					DBAnnotation.annoate("offerID", "courseschedule", "OfferID", false);
 					String courseScheduleDelete = "Delete"
-							+ " FROM university.courseschedule "
+							+ " FROM courseschedule "
 							+ "WHERE OfferID = ?";
 					PreparedStatement statement = conn.prepareStatement(courseScheduleDelete, ResultSet.CONCUR_UPDATABLE);
 					statement.setInt(1, offerID);

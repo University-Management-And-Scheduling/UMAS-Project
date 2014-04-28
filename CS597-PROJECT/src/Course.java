@@ -38,7 +38,7 @@ public class Course {
 			try{
 				if(conn != null){
 					String SQLSelect= "Select CourseID, CourseName, DepartmentID"
-							+ " FROM university.courses"
+							+ " FROM courses"
 							+ " WHERE CourseID= ?";
 					PreparedStatement statement = conn.prepareStatement(SQLSelect);
 					statement.setInt(1, cID);
@@ -99,7 +99,7 @@ public class Course {
 			try{
 				if(conn != null){
 					String SQLSelect= "Select CourseID, CourseName, DepartmentID"
-							+ " FROM university.courses"
+							+ " FROM courses"
 							+ " WHERE CourseName= ?";
 					PreparedStatement statement = conn.prepareStatement(SQLSelect);
 					statement.setString(1, courseName);
@@ -221,7 +221,7 @@ public class Course {
 					DBAnnotation.annoate("deptID", "courses", "DepartmentID", false);
 					
 					int deptID = department.getDepartmentID();
-					String SQLInsert= "Insert into university.courses (CourseName, DepartmentID) Values (?,?);";
+					String SQLInsert= "Insert into courses (CourseName, DepartmentID) Values (?,?);";
 					PreparedStatement statement;
 					statement = conn.prepareStatement(SQLInsert);
 					statement.setString(1, courseName);
@@ -278,7 +278,7 @@ public class Course {
 					int deptID = department.getDepartmentID();
 					int courseID = this.getCourseID();
 					System.out.println("Updating course");
-					String SQLupdate= "UPDATE university.courses "
+					String SQLupdate= "UPDATE courses "
 							+ "SET CourseName= ?, DepartmentID= ? "
 							+ "WHERE CourseID= ?";
 					PreparedStatement statement;
@@ -322,7 +322,7 @@ public class Course {
 				if(conn != null){
 					
 					String SQLSelect= "Select CourseID, CourseName, DepartmentID"
-							+ " FROM university.courses"
+							+ " FROM courses"
 							+ " WHERE CourseName= ? and DepartmentID=?";
 					PreparedStatement statement = conn.prepareStatement(SQLSelect);
 					statement.setString(1, courseName);
@@ -359,7 +359,7 @@ public class Course {
 				if(conn != null){
 					
 					String SQLSelect= "Select CourseID, CourseName, DepartmentID"
-							+ " FROM university.courses"
+							+ " FROM courses"
 							+ " WHERE CourseID= ?";
 					PreparedStatement statement = conn.prepareStatement(SQLSelect,ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONCUR_UPDATABLE);
 					statement.setInt(1, courseID);
@@ -406,7 +406,7 @@ public class Course {
 				if(conn != null){
 					
 					String SQLSelect= "Select *"
-							+ " FROM university.courses";
+							+ " FROM courses";
 					PreparedStatement statement = conn.prepareStatement(SQLSelect);
 					ResultSet rs =  statement.executeQuery();
 					
@@ -451,14 +451,14 @@ public class Course {
 			try{
 				if(conn != null){
 					String SQLSelect= "Select *"
-							+ " FROM university.coursesoffered natural join university.courseschedule"
+							+ " FROM coursesoffered natural join courseschedule"
 							+ " WHERE coursesoffered.CourseID= ?";
 					PreparedStatement statement = conn.prepareStatement(SQLSelect);
 					statement.setInt(1, this.courseID);
 					ResultSet rs =  statement.executeQuery();
 					
 					while(rs.next()){
-						DBAnnotation.annoate("offerID", "university.coursesoffered", "OfferID", true);
+						DBAnnotation.annoate("offerID", "coursesoffered", "OfferID", true);
 						int offerID = rs.getInt("OfferID");
 						CourseOffered co = new CourseOffered(offerID);
 						courseOfferings.put(offerID, co);						
@@ -498,7 +498,7 @@ public class Course {
 				if(conn != null){
 					
 					String SQLSelect= "Select *"
-							+ " FROM university.courses "
+							+ " FROM courses "
 							+ "WHERE DepartmentID= ?";
 					PreparedStatement statement = conn.prepareStatement(SQLSelect);
 					statement.setInt(1,deptID);

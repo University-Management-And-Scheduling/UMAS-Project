@@ -44,7 +44,7 @@ public class Department {
 					 * Try to look for the department in the department table
 					 */
 					String SQLSelect= "Select DepartmentID, DepartmentName"
-							+ " FROM university.department"
+							+ " FROM department"
 							+ " WHERE DepartmentID= ?";
 					PreparedStatement statement = conn.prepareStatement(SQLSelect);
 					statement.setInt(1, departmentID);
@@ -106,7 +106,7 @@ public class Department {
 						 * Try to retrieve the department
 						 */
 						String SQLSelect= "Select DepartmentID, DepartmentName"
-								+ " FROM university.department"
+								+ " FROM department"
 								+ " WHERE DepartmentName= ?";
 						PreparedStatement statement = conn.prepareStatement(SQLSelect);
 						statement.setString(1, departmentName);
@@ -166,7 +166,7 @@ public class Department {
 					 */
 					
 					String SQLSelect= "Select DepartmentName"
-							+ " FROM university.department"
+							+ " FROM department"
 							+ " WHERE DepartmentName= ?";
 					PreparedStatement statement = conn.prepareStatement(SQLSelect);
 					statement.setString(1, departmentName);
@@ -185,7 +185,7 @@ public class Department {
 						 * Add the object data to the department table
 						 */
 						DBAnnotation.annoate("departmentName", "department", "DepartmentName", false);
-						String SQLInsert= "Insert into university.department (DepartmentName) Values (?);";
+						String SQLInsert= "Insert into department (DepartmentName) Values (?);";
 						statement.close();
 						statement = conn.prepareStatement(SQLInsert);
 						statement.setString(1, departmentName);
@@ -223,7 +223,7 @@ public class Department {
 			try{
 				if(conn != null){
 					String SQLSelect= "Select DepartmentID, DepartmentName"
-							+ " FROM university.department"
+							+ " FROM department"
 							+ " WHERE DepartmentName= ?";
 					PreparedStatement statement = conn.prepareStatement(SQLSelect, ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONCUR_UPDATABLE);
 					statement.setString(1, departmentName);
@@ -236,7 +236,7 @@ public class Department {
 						/*Remove all the courses related to this department*/
 						int departmentID = rs.getInt(1);
 						String courseSelect= "Select CourseID, CourseName, DepartmentID"
-								+ " FROM university.courses"
+								+ " FROM courses"
 								+ " WHERE DepartmentID= ?";
 						PreparedStatement statementForCourse = conn.prepareStatement(courseSelect, ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONCUR_UPDATABLE);
 						statementForCourse.setInt(1, departmentID);
@@ -302,7 +302,7 @@ public class Department {
 					 * Retrieve the department row
 					 */
 					String SQLSelect= "Select DepartmentID, DepartmentName"
-							+ " FROM university.department"
+							+ " FROM department"
 							+ " WHERE DepartmentID= ?";
 					PreparedStatement statement = conn.prepareStatement(SQLSelect, ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONCUR_UPDATABLE);
 					statement.setInt(1, this.getDepartmentID());
@@ -356,7 +356,7 @@ public class Department {
 					 * Try to retrieve the department
 					 */
 					String SQLSelect= "Select DepartmentName"
-							+ " FROM university.department"
+							+ " FROM department"
 							+ " WHERE DepartmentName= ?";
 					PreparedStatement statement = conn.prepareStatement(SQLSelect);
 					statement.setString(1, name);
@@ -412,7 +412,7 @@ public class Department {
 					 * retrieve all the departments
 					 */
 					String SQLSelect= "Select *"
-							+ " FROM university.department";
+							+ " FROM department";
 					PreparedStatement statement = conn.prepareStatement(SQLSelect);
 					ResultSet rs =  statement.executeQuery();
 					/*
@@ -519,7 +519,7 @@ public class Department {
 					 * Retrieve all courses by filtering using the department id
 					 */
 					String SQLSelect= "Select CourseID"
-							+ " FROM university.department natural join university.courses"
+							+ " FROM department natural join courses"
 							+ " WHERE DepartmentID= ?";
 					PreparedStatement statement = conn.prepareStatement(SQLSelect);
 					statement.setInt(1, this.getDepartmentID());
@@ -572,7 +572,7 @@ public class Department {
 					 * Filter all the course offerings using the specified department
 					 */
 					String SQLSelect= "Select CourseID, OfferID"
-							+ " FROM university.coursesoffered natural join university.courses"
+							+ " FROM coursesoffered natural join courses"
 							+ " WHERE DepartmentID= ? and SemesterID = ?";
 					PreparedStatement statement = conn.prepareStatement(SQLSelect);
 					statement.setInt(1, this.getDepartmentID());
