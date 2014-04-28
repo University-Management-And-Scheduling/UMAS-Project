@@ -73,7 +73,7 @@ public class Admin extends Employee {
 				if (conn != null) {
 
 					// Retrieve all the professors from one department
-					String adminSelect = "Select *" + " FROM university.people"
+					String adminSelect = "Select *" + " FROM people"
 							+ " WHERE PositionID=1";
 					PreparedStatement statement = conn.prepareStatement(adminSelect);
 					ResultSet rs = statement.executeQuery();//execute the query

@@ -472,13 +472,13 @@ public class JobApplication {
 				if (conn != null) {
 					// set the limit to 10 student retrievals
 					SQLPeopleSelect = "Select applicationdetails.ApplicantUIN "
-							+ "From university.applicationdetails inner join university.student on "
+							+ "From applicationdetails inner join student on "
 							+ "student.UIN=applicationdetails.ApplicantUIN where student.GPA>=? and "
 							+ "applicationdetails.WorkExperience>=? and applicationdetails.SkillSet1=? and "
 							+ "applicationdetails.SkillSet2=? and applicationdetails.SkillSet3=? and "
 							+ "applicationdetails.SkillSet4=? and applicationdetails.SkillSet5=? "
 							+ "and applicationdetails.ApplicantUIN not in "
-							+ "(select UIN from university.employee where employee.UIN=applicationdetails.ApplicantUIN)"
+							+ "(select UIN from employee where employee.UIN=applicationdetails.ApplicantUIN)"
 							+ "ORDER BY "
 							+ "applicationdetails.Scaledscore DESC LIMIT 10;";
 				}
@@ -557,15 +557,15 @@ public class JobApplication {
 
 					// set the limit to 10
 					SQLPeopleSelect = "Select applicationdetails.ApplicantUIN "
-							+ "From university.applicationdetails inner join university.student on "
+							+ "From applicationdetails inner join student on "
 							+ "student.UIN=applicationdetails.ApplicantUIN where student.GPA>=? and "
 							+ "applicationdetails.WorkExperience>=? and applicationdetails.SkillSet1=? and "
 							+ "applicationdetails.SkillSet2=? and applicationdetails.SkillSet3=? and "
 							+ "applicationdetails.SkillSet4=? and applicationdetails.SkillSet5=? "
 							+ "and applicationdetails.ApplicantUIN not in "
-							+ "(select UIN from university.employee where employee.UIN=applicationdetails.ApplicantUIN)"
+							+ "(select UIN from employee where employee.UIN=applicationdetails.ApplicantUIN)"
 							+ " and applicationdetails.ApplicantUIN not in "
-							+ "(select UIN from university.jobroster where applicationdetails.ApplicantUIN=jobroster.UIN and JobID=?)"
+							+ "(select UIN from jobroster where applicationdetails.ApplicantUIN=jobroster.UIN and JobID=?)"
 							+ "ORDER BY "
 							+ "applicationdetails.Scaledscore DESC LIMIT 10;";
 				}
@@ -660,7 +660,7 @@ public class JobApplication {
 					//update query to update the values of the job application
 
 					System.out.println("Updating the application details in the database");
-					String SQLupdateAppdetails = "UPDATE university.applicationdetails SET WorkExperience=?, Skillset1=?, Skillset2=?, Skillset3=?, Skillset4=?, Skillset5=?, Scaledscore=? where ApplicantUIN=?;";
+					String SQLupdateAppdetails = "UPDATE applicationdetails SET WorkExperience=?, Skillset1=?, Skillset2=?, Skillset3=?, Skillset4=?, Skillset5=?, Scaledscore=? where ApplicantUIN=?;";
 					stmt = conn.prepareStatement(SQLupdateAppdetails);
 					
 					//set the values

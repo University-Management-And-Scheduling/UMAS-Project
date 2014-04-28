@@ -33,7 +33,7 @@ public class Student extends People {
 
 				if (conn != null) {
 
-					SQLStudentGPASelect = "Select * From university.student where UIN=?;";//write query
+					SQLStudentGPASelect = "Select * From student where UIN=?;";//write query
 				}
 
 				PreparedStatement stmtForSelect = conn.prepareStatement(SQLStudentGPASelect);
@@ -452,7 +452,7 @@ public class Student extends People {
 
 					// Retrieve all the professors from one department
 					String ProfessorSelect = "Select *"
-							+ " FROM university.people" + " WHERE PositionID=3";
+							+ " FROM people" + " WHERE PositionID=3";
 					PreparedStatement statement = conn.prepareStatement(ProfessorSelect);
 					ResultSet rs = statement.executeQuery();//execute the query
 
@@ -508,7 +508,7 @@ public class Student extends People {
 
 					// Retrieve the current semester ID
 					String SemesterSelect = "Select *"
-							+ " FROM university.studentenrollment"
+							+ " FROM studentenrollment"
 							+ " WHERE UIN= ?";
 					PreparedStatement statement = conn.prepareStatement(SemesterSelect);
 					statement.setInt(1, this.getUIN());//set the UIN
@@ -698,7 +698,7 @@ public class Student extends People {
 
 				if (conn != null) {
 
-					SQLStudentGPASelect = "Select * From university.studentenrollment natural join university.gradingsystem where UIN=?;";
+					SQLStudentGPASelect = "Select * From studentenrollment natural join gradingsystem where UIN=?;";
 				}
 
 				PreparedStatement stmtForSelect = conn.prepareStatement(SQLStudentGPASelect);

@@ -981,7 +981,7 @@ public class Employee extends People {
 
 
 					String getDeptID = "Select Username"
-							+ " FROM university.employee natural join university.people natural join university.department"
+							+ " FROM employee natural join people natural join department"
 							+ " WHERE DepartmentName= ?";
 
 					PreparedStatement statement = conn.prepareStatement(getDeptID);
