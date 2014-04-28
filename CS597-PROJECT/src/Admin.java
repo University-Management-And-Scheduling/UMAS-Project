@@ -86,7 +86,12 @@ public class Admin extends Employee {
 						try {
 							admins = new Admin(retreivedAdminUIN);//put the retrieved UIN and put it in the admin object
 							getAllAdmin.add(admins);//add it to the arraylist
-							System.out.println(admins.getUserName());
+							
+							DBAnnotation.annoate("adminUserName", "People", "Username", true);
+							String adminUserName=admins.getUserName();	
+							
+							System.out.println(adminUserName);
+							
 						} 
 						//catch the person does not exist exception
 						catch (PersonDoesNotExistException e) {

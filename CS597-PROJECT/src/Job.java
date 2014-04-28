@@ -544,8 +544,11 @@ public class Job {
 					int retreivedjobID = rs.getInt("JobID");//retrieve the job ID
 					
 					Job jobs = new Job(retreivedjobID);//send it to the constructor
+					
+					DBAnnotation.annoate("getJobIDs", "jobpostings", "JobID", true);
+					int getJobIDs=jobs.getJobID();
 
-					getAllJobs.put(jobs.getJobID(), jobs);//put it into the linked hash map
+					getAllJobs.put(getJobIDs, jobs);//put it into the linked hash map
 
 				}
 

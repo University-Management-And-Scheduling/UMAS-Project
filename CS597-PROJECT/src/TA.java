@@ -563,7 +563,11 @@ public class TA extends Student {
 						try {
 							teachingAssistant = new TA(retreivedTAUIN);
 							getAllTAs.add(teachingAssistant);//add the retreived TA objects to the arraylist
-							System.out.println(teachingAssistant.getUserName());
+							
+							DBAnnotation.annoate("getTaUserName", "people", "Username", true);
+							String getTaUserName=teachingAssistant.getUserName();
+							System.out.println(getTaUserName);
+							
 						} catch (PersonDoesNotExistException e) {
 							// TODO Auto-generated catch block
 							e.printStackTrace();

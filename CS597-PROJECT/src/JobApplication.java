@@ -413,7 +413,10 @@ public class JobApplication {
 		Student getStudentGPA;
 		try {
 			getStudentGPA = new Student(UIN);
+			
+			DBAnnotation.annoate("retreivedGPA", "student", "GPA", true);
 			retreivedGPA = getStudentGPA.getGPA();
+			
 		} catch (People.PersonDoesNotExistException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -503,8 +506,12 @@ public class JobApplication {
 					counter++;
 
 					Student chosenStudents = new Student(selectedUIN);//pass the UIN to the student constructor to get the details in the object
-					selectedStudents.put(chosenStudents.getUIN(),chosenStudents);//add it to the linkedhashmap
-					System.out.println(chosenStudents.getUIN());
+					
+					DBAnnotation.annoate("chosenUINs", "student", "UIN", true);
+					int chosenUINs=chosenStudents.getUIN();
+					
+					selectedStudents.put(chosenUINs,chosenStudents);//add it to the linkedhashmap
+					System.out.println(chosenUINs);
 
 				}
 
@@ -587,8 +594,12 @@ public class JobApplication {
 					
 					counter++;
 					Student chosenStudents = new Student(selectedUIN);//pass it to the constructor to get the object details
-					selectedStudents.put(chosenStudents.getUIN(),chosenStudents);//add it to the hashmap
-					System.out.println(chosenStudents.getUIN());
+					
+					DBAnnotation.annoate("chosenUINs", "student", "UIN", true);
+					int chosenUINs=chosenStudents.getUIN();
+					
+					selectedStudents.put(chosenUINs,chosenStudents);//add it to the hashmap
+					System.out.println(chosenUINs);
 
 				}
 

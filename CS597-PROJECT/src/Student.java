@@ -463,7 +463,10 @@ public class Student extends People {
 						
 						Student stud = new Student(retreivedStudentUserUIN);
 						allStudents.add(stud);//add it to the arraylist
-						System.out.println(stud.getUserName());
+						
+						DBAnnotation.annoate("getStudentUserName", "people", "Username", true);
+						String getStudentUserName=stud.getUserName();
+						System.out.println(getStudentUserName);
 					}
 
 				}
@@ -517,7 +520,11 @@ public class Student extends People {
 						int offerID = rs.getInt("OfferID");
 						
 						CourseOffered course = new CourseOffered(offerID);//set the object
-						studentCourses.put(course.getOfferID(), course);//add it to the hashmap
+						
+						DBAnnotation.annoate("getOfferID", "coursesoffered", "OfferID", true);
+						int getOfferID=course.getOfferID();
+						
+						studentCourses.put(getOfferID, course);//add it to the hashmap
 					}
 
 				}

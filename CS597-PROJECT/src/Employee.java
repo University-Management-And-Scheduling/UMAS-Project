@@ -995,7 +995,11 @@ public class Employee extends People {
 						
 						Employee emps = new Employee(retreivedProfUserNames);//pass it to the emp constructor
 						getAllEmpDept.add(emps);//add the objects to the array
-						System.out.println(emps.getName());
+						
+						DBAnnotation.annoate("empUserName", "people", "Name", true);
+						String empUserName=emps.getName();
+						
+						System.out.println(empUserName);
 
 					}
 				}
