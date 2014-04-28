@@ -168,8 +168,13 @@ public class manageDeptCourses extends JTabbedPane {
 					String professorName = co.getProfessor().getUserName();
 					updateOfferProfessorCombo.setSelectedIndex(getProfessorIndex(professorName));
 					
-				} catch (Professor.ProfessorDoesNotExistException
-						| Course.CourseDoesNotExistException | CourseOffered.CourseOfferingDoesNotExistException e) {
+				} catch (Professor.ProfessorDoesNotExistException e) {
+					System.out.println("Failed to initialize list");
+					e.printStackTrace();
+				} catch (Course.CourseDoesNotExistException e) {
+					System.out.println("Failed to initialize list");
+					e.printStackTrace();
+				} catch (CourseOffered.CourseOfferingDoesNotExistException e) {
 					System.out.println("Failed to initialize list");
 					e.printStackTrace();
 				}
@@ -203,8 +208,10 @@ public class manageDeptCourses extends JTabbedPane {
 					else
 						showMessage("Update was unsuccessfull", "Failure");
 					
-				} catch (Course.CourseDoesNotExistException
-						| CourseOffered.CourseOfferingDoesNotExistException e) {
+				} catch (Course.CourseDoesNotExistException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				} catch (CourseOffered.CourseOfferingDoesNotExistException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}

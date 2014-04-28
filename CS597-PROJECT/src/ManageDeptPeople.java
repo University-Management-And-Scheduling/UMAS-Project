@@ -188,8 +188,10 @@ public class ManageDeptPeople extends JPanel {
 					String details = "Course Name: "+c.getCourseName();
 					details += "\nProfessor: "+c.getProfessorName();
 					txtrCourseDetails.setText(details);
-				} catch (Course.CourseDoesNotExistException
-						| CourseOffered.CourseOfferingDoesNotExistException e1) {
+				} catch (Course.CourseDoesNotExistException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				} catch (CourseOffered.CourseOfferingDoesNotExistException e1) {
 					// TODO Auto-generated catch block
 					e1.printStackTrace();
 				}

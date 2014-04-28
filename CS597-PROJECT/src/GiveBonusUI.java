@@ -102,7 +102,15 @@ public class GiveBonusUI extends JPanel {
 						JOptionPane.showMessageDialog(null, "Salary Not Updated ", "Update", JOptionPane.INFORMATION_MESSAGE);
 					}
 					
-				} catch (NumberFormatException | Employee.bonusNotValidException | Student.AccessDeniedException e1) {
+				} catch (NumberFormatException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
+				catch (Employee.bonusNotValidException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
+				catch (Student.AccessDeniedException e1) {
 					// TODO Auto-generated catch block
 					e1.printStackTrace();
 				}
@@ -256,7 +264,10 @@ public class GiveBonusUI extends JPanel {
 					initializeSalary(prof2);
 					updatedPay.setText("");
 					enterBonus.setText("");
-				} catch (Student.AccessDeniedException | People.PersonDoesNotExistException e) {
+				} catch (Student.AccessDeniedException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				} catch (People.PersonDoesNotExistException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
