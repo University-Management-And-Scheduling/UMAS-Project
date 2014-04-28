@@ -128,8 +128,10 @@ public class StudentUI extends JPanel {
 								btnAddToWait.setEnabled(true);
 							}
 							
-						} catch (Course.CourseDoesNotExistException
-								| CourseOffered.CourseOfferingDoesNotExistException e) {
+						} catch (Course.CourseDoesNotExistException e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+						} catch (CourseOffered.CourseOfferingDoesNotExistException e) {
 							// TODO Auto-generated catch block
 							e.printStackTrace();
 						}
@@ -183,8 +185,10 @@ public class StudentUI extends JPanel {
 								btnAddToWait.setEnabled(true);
 							}
 							
-						} catch (Course.CourseDoesNotExistException
-								| CourseOffered.CourseOfferingDoesNotExistException ex) {
+						} catch (Course.CourseDoesNotExistException ex) {
+							// TODO Auto-generated catch block
+							ex.printStackTrace();
+						} catch (CourseOffered.CourseOfferingDoesNotExistException ex) {
 							// TODO Auto-generated catch block
 							ex.printStackTrace();
 						}
@@ -225,8 +229,11 @@ public class StudentUI extends JPanel {
 							btnAddToWait.setEnabled(true);
 						}
 						
-					} catch (Course.CourseDoesNotExistException
-							| CourseOffered.CourseOfferingDoesNotExistException ex) {
+					} catch (Course.CourseDoesNotExistException ex) {
+						// TODO Auto-generated catch block
+						ex.printStackTrace();
+					} catch (CourseOffered.CourseOfferingDoesNotExistException ex) {
+						// TODO Auto-generated catch block
 						ex.printStackTrace();
 					}
 				}
@@ -276,8 +283,10 @@ public class StudentUI extends JPanel {
 					StudentUI.student = new Student(student.getUIN());
 					initializeAllComboBoxesInRegistrationTab();
 					emptyTabs();
-				} catch (Course.CourseDoesNotExistException
-						| CourseOffered.CourseOfferingDoesNotExistException e1) {
+				} catch (Course.CourseDoesNotExistException e1) {
+					showMessage("Failed to add to wait list", "Failure");
+					e1.printStackTrace();
+				} catch (CourseOffered.CourseOfferingDoesNotExistException e1) {
 					showMessage("Failed to add to wait list", "Failure");
 					e1.printStackTrace();
 				} catch (People.PersonDoesNotExistException e1) {
@@ -398,8 +407,10 @@ public class StudentUI extends JPanel {
 					btnAddToWait.setEnabled(true);
 				}
 				
-			} catch (Course.CourseDoesNotExistException
-					| CourseOffered.CourseOfferingDoesNotExistException e) {
+			} catch (Course.CourseDoesNotExistException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (CourseOffered.CourseOfferingDoesNotExistException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
@@ -434,8 +445,11 @@ public class StudentUI extends JPanel {
 			}
 			
 			txtrCourseDetails.setText(details);
-		} catch (Course.CourseDoesNotExistException
-				| CourseOffered.CourseOfferingDoesNotExistException e) {
+		} catch (Course.CourseDoesNotExistException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			txtrCourseDetails.setText(details);
+		}catch (CourseOffered.CourseOfferingDoesNotExistException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 			txtrCourseDetails.setText(details);
@@ -463,8 +477,10 @@ public class StudentUI extends JPanel {
 				
 			}
 			
-		} catch (Course.CourseDoesNotExistException
-				| CourseOffered.CourseOfferingDoesNotExistException e) {
+		} catch (Course.CourseDoesNotExistException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (CourseOffered.CourseOfferingDoesNotExistException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
