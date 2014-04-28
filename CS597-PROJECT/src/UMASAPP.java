@@ -61,8 +61,8 @@ public class UMASAPP {
 		Thread taListMonitor = new Thread(new TAListScanner());
 		taListMonitor.start();
 		
-//		Thread waitListMonitor = new Thread(new WaitListScan());
-//		waitListMonitor.start();
+		Thread waitListMonitor = new Thread(new WaitListScan());
+		waitListMonitor.start();
 	}
 	
 	public static void initializeLoggedInUser(String username, boolean isLoggedIn){

@@ -1008,8 +1008,6 @@ public class AdminUI extends JPanel {
 		
 		//initialize data across UI
 		initializeEveryThing();
-//		Thread waitListScan = new Thread(new WaitListScan());
-//		waitListScan.start();
 		
 		Thread waitListViewRefresh = new Thread(new MonitorWaitList());
 		waitListViewRefresh.start();
