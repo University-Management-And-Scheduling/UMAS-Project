@@ -1,7 +1,11 @@
-
-
-
 import java.util.ArrayList;
+
+/**
+ * @author Akshay
+ * 
+ */
+
+/*************** TALISTSCANNER.JAVA CLASS WAS WRITTEN BY AKSHAY THIRKATEH ********************************/
 
 public class TAListScanner  implements Runnable{
 

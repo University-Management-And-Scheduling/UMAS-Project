@@ -14,7 +14,12 @@ import javax.swing.JTabbedPane;
 import javax.swing.JTextField;
 
 
-//written by Akshay 
+/**
+ * @author Akshay
+ * 
+ */
+
+/*************** TAUSEUI.JAVA CLASS WAS WRITTEN BY AKSHAY THIRKATEH ********************************/
 
 public class TaUseUI extends JPanel {
 	LinkedHashMap<Integer,Job> retreiveJobs= new LinkedHashMap<Integer, Job>();	

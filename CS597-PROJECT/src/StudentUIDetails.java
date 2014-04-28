@@ -22,7 +22,12 @@ import javax.swing.JCheckBox;
 
 import java.awt.Color;
 
+/**
+ * @author Akshay
+ * 
+ */
 
+/*************** STUDENTUIDETAILS.JAVA CLASS WAS WRITTEN BY AKSHAY THIRKATEH ********************************/
 
 public class StudentUIDetails extends JPanel {
 	

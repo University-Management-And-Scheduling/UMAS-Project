@@ -17,7 +17,12 @@ import java.util.ArrayList;
 import javax.swing.JComboBox;
 
 
+/**
+ * @author Akshay
+ * 
+ */
 
+/*************** GIVEBONUSUI.JAVA CLASS WAS WRITTEN BY AKSHAY THIRKATEH ********************************/
 
 public class GiveBonusUI extends JPanel {
 	

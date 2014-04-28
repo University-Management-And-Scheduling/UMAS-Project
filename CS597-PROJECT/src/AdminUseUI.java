@@ -16,7 +16,12 @@ import javax.swing.border.EmptyBorder;
 
 import java.awt.Color;
 
+/**
+ * @author Akshay
+ * 
+ */
 
+/*************** ADMINUSEUI.JAVA CLASS WAS WRITTEN BY AKSHAY THIRKATEH ********************************/
 
 public class AdminUseUI extends JPanel {
 	

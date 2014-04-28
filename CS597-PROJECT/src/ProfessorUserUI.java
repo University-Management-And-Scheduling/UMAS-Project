@@ -26,7 +26,12 @@ import javax.swing.BoxLayout;
 import java.awt.Font;
 import java.awt.Color;
 
+/**
+ * @author Akshay
+ * 
+ */
 
+/*************** PROFESSORUSERUI.JAVA CLASS WAS WRITTEN BY AKSHAY THIRKATEH ********************************/
 
 public class ProfessorUserUI extends JPanel {
 
