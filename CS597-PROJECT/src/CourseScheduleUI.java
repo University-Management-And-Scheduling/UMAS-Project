@@ -601,7 +601,7 @@ public class CourseScheduleUI extends JPanel {
 	
 	private void showMessage(String message, String title)
     {
-        JOptionPane.showMessageDialog(null, message, title, JOptionPane.ERROR_MESSAGE);
+        JOptionPane.showMessageDialog(null, message, title, JOptionPane.INFORMATION_MESSAGE);
     }
 	
 	private void setSelectionForCurrentSchedule(int index){
