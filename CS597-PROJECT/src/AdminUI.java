@@ -301,8 +301,9 @@ public class AdminUI extends JPanel {
 						s+="\nTaught by professor:"+co.getProfessorName();
 						taCourseDetails.setText(s);
 						
-					} catch (Course.CourseDoesNotExistException
-							| CourseOffered.CourseOfferingDoesNotExistException e1) {
+					} catch (Course.CourseDoesNotExistException e1) {
+						showMessage("Select a valid course", courseOfferIDComboBox.getSelectedIndex()+" "+offerID);
+					} catch (CourseOffered.CourseOfferingDoesNotExistException e1) {
 						showMessage("Select a valid course", courseOfferIDComboBox.getSelectedIndex()+" "+offerID);
 					}
 					
@@ -848,8 +849,10 @@ public class AdminUI extends JPanel {
 					s+="\nTimings:"+co.getTiming();
 					courseDetailsTextPane.setText(s);
 					
-				} catch (Course.CourseDoesNotExistException
-						| CourseOffered.CourseOfferingDoesNotExistException e) {
+				} catch (Course.CourseDoesNotExistException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				} catch (CourseOffered.CourseOfferingDoesNotExistException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
@@ -1167,11 +1170,15 @@ public class AdminUI extends JPanel {
 				classRoomNameList[i] = co.getClassRoomName();
 				classTimingList[i] = co.getTiming();
 				
-			} catch (Course.CourseDoesNotExistException
-					| CourseOffered.CourseOfferingDoesNotExistException e) {
+			} catch (Course.CourseDoesNotExistException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (CourseOffered.CourseOfferingDoesNotExistException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
+			
+			
 		}
 		//Setting the Jlists
 		this.courseNameList.setListData(courseNameList);
@@ -1289,11 +1296,14 @@ public class AdminUI extends JPanel {
 				s+="\nTimings:"+co.getTiming();
 				courseDetailsTextPane.setText(s);
 				
-			} catch (Course.CourseDoesNotExistException
-					| CourseOffered.CourseOfferingDoesNotExistException e) {
+			} catch (Course.CourseDoesNotExistException	e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (CourseOffered.CourseOfferingDoesNotExistException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
+			
 		}
 		
 		
