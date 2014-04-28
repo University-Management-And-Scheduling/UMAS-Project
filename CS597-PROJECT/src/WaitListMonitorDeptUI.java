@@ -61,7 +61,8 @@ public class WaitListMonitorDeptUI extends JPanel {
 				}
 				
 				String s = waitListStudentsJList.getSelectedValue();
-				s = s.substring(0, s.indexOf("-"));
+				System.out.println(s);
+				s = s.substring(0, s.indexOf('-'));
 				int uin = Integer.parseInt(s);
 				
 				try {
@@ -93,7 +94,7 @@ public class WaitListMonitorDeptUI extends JPanel {
 				}
 				
 				String s = emailedStudentsJList.getSelectedValue();
-				s = s.substring(0, s.indexOf("-"));
+				s = s.substring(0, s.indexOf('-'));
 				int uin = Integer.parseInt(s);
 				
 				try {
@@ -118,14 +119,14 @@ public class WaitListMonitorDeptUI extends JPanel {
 				
 				DefaultListModel<String> waitList = new DefaultListModel<String>();
 				for(Student s:WaitList.getStudentsOnWaitList(offerID)){
-					waitList.addElement(s.getName());
+					waitList.addElement(s.getUIN()+"- "+s.getName());
 				}
 				
 				waitListStudentsJList.setModel(waitList);
 				
 				DefaultListModel<String> emailedList = new DefaultListModel<String>();
 				for(Student s:WaitList.getStudentsOnEmailList(offerID)){
-					emailedList.addElement(s.getName());
+					emailedList.addElement(s.getUIN()+"- "+s.getName());
 				}
 				
 				emailedStudentsJList.setModel(emailedList);
@@ -175,7 +176,7 @@ public class WaitListMonitorDeptUI extends JPanel {
 		add(textPane_2);
 		
 		JLabel lblSelectCourseOffering = new JLabel("Select course offering");
-		lblSelectCourseOffering.setBounds(327, 34, 115, 14);
+		lblSelectCourseOffering.setBounds(327, 34, 130, 14);
 		add(lblSelectCourseOffering);
 		initializeWaitListMonitor();
 		Thread refreshWaitList = new Thread(new MonitorWaitList());
@@ -218,14 +219,14 @@ public class WaitListMonitorDeptUI extends JPanel {
 			
 			DefaultListModel<String> waitList = new DefaultListModel<String>();
 			for(Student s:WaitList.getStudentsOnWaitList(offerID)){
-				waitList.addElement(s.getName());
+				waitList.addElement(s.getUIN()+"- "+s.getName());
 			}
 			
 			waitListStudentsJList.setModel(waitList);
 			
 			DefaultListModel<String> emailedList = new DefaultListModel<String>();
 			for(Student s:WaitList.getStudentsOnEmailList(offerID)){
-				emailedList.addElement(s.getName());
+				emailedList.addElement(s.getUIN()+"- "+s.getName());
 			}
 			
 			emailedStudentsJList.setModel(emailedList);

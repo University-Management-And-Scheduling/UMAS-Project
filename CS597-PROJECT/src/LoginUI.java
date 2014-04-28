@@ -63,6 +63,7 @@ public class LoginUI extends JPanel {
 					isLoginSuccessfull = true;
 					loginuserName = textField.getText();
 					textField.setText("");
+					passwordField.setText("");
 					JOptionPane.showMessageDialog(null, "Login Successful", "Login Message", JOptionPane.INFORMATION_MESSAGE);
 					UMASAPP.initializeLoggedInUser(loginuserName, isLoginSuccessfull);
 				} else {
