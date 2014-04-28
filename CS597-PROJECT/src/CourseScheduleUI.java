@@ -348,7 +348,7 @@ public class CourseScheduleUI extends JPanel {
 				}
 				
 				else{
-					//show message
+					showMessage("Please select a course first", "Error");
 				}
 				
 			}
@@ -404,8 +404,19 @@ public class CourseScheduleUI extends JPanel {
 					}
 				}
 				
-				else{
-					//show message with an error
+				else if (selectedCourseOfferIndex<0){
+					showMessage("Please selesct a course first", "Error");
+					return;
+				}
+				
+				else if(classRoomSelectedIndex < 0){
+					showMessage("Select a classroom first", "Error");
+					return;
+				}
+				
+				else if(timeSlotSelectedIndex < 0){
+					showMessage("Select a time slot first", "Error");
+					return;
 				}
 				
 				
@@ -570,8 +581,11 @@ public class CourseScheduleUI extends JPanel {
 		}
 		
 		classRoomCombo.setModel(new DefaultComboBoxModel<String>(classRoomStrings));
-		classRoomCombo.setSelectedIndex(0);
-		timingAvailableCombo.setSelectedIndex(0);
+		if(classRoomCombo.getModel().getSize()>0)
+			classRoomCombo.setSelectedIndex(0);
+		
+		if(timingAvailableCombo.getModel().getSize()>0)
+			timingAvailableCombo.setSelectedIndex(0);
 		
 	}
 	

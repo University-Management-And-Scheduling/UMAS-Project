@@ -298,7 +298,8 @@ public class manageDeptCourses extends JTabbedPane {
 			model.addElement(c.getCourseName());
 		}
 		allCoursesCombo.setModel(model);
-		allCoursesCombo.setSelectedIndex(0);
+		if(model.getSize()>0)
+			allCoursesCombo.setSelectedIndex(0);
 	}
 	
 	private void initializeCourseOfferingUpdateTab(){

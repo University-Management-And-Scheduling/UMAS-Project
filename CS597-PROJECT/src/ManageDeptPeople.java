@@ -222,6 +222,16 @@ public class ManageDeptPeople extends JPanel {
 		JButton btnAddTa = new JButton("Add TA");
 		btnAddTa.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
+				if(taComboBox.getSelectedIndex()<0){
+					showMessage("Please select a student first", "Error");
+					return;
+				}
+				
+				if(courseOfferIDComboBox.getSelectedIndex()<0){
+					showMessage("Select a course first", "Error");
+					return;
+				}
+				
 				try {
 					Student s = new Student((Integer) taComboBox.getSelectedItem());
 					

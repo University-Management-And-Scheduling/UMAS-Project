@@ -521,12 +521,16 @@ public class CourseOffered {
 						/*
 						 * Checks if the file was created and adds it to the database
 						 */
+						
+												
 						if(fileFlag){
 							String currentPath = System.getProperty("user.dir");
 							String fileDir = currentPath+"/Files/"+course.getCourseName()+"-"+generatedID;
 							String fileName = course.getCourseName()+generatedID+"-details.txt";
 							fileFlag = File.addFileToDB(fileName, fileDir, generatedID);
 						}
+						
+						
 						
 						/*
 						 * If the scheduling, file creation, exam table creation and the file addition to database is successful

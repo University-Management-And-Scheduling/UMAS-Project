@@ -346,6 +346,15 @@ public class AdminUI extends JPanel {
 		btnAddTa.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 				try {
+					if(taComboBox.getSelectedIndex()<0){
+						showMessage("Select a TA first", "Error");
+						return;
+					}
+					
+					if(courseOfferIDComboBox.getSelectedIndex()<0){
+						showMessage("Select a course first", "Error");
+						return;
+					}
 					Student s = new Student((Integer) taComboBox.getSelectedItem());
 					
 					DBAnnotation.annoate("UIN", "student", "UIN", true);
@@ -426,7 +435,9 @@ public class AdminUI extends JPanel {
 				boolean flag = addAdmin();
 				if(flag){
 					showMessage("Added a adming successfully", "Success");
+					Database.commitTransaction(Database.getConnection());
 					initializeEveryThing();
+					
 				}
 				
 				else{
@@ -649,6 +660,7 @@ public class AdminUI extends JPanel {
 					showMessage("No course offering selected", "Error");
 					return;
 				}
+				
 				int OfferID = (Integer)courseScheduledCombo.getSelectedItem();
 				CourseOffered c = coursesOffered.get(OfferID);
 				Classroom newClassroom = null;
@@ -656,6 +668,16 @@ public class AdminUI extends JPanel {
 				int count = 0;
 				int classRoomSelectedIndex = classRoomCombo.getSelectedIndex();
 				int timeSlotSelectedIndex = timingAvailableCombo.getSelectedIndex();
+				
+				if(classRoomSelectedIndex < 0){
+					showMessage("Select a classroom first", "Error");
+					return;
+				}
+				
+				else if(timeSlotSelectedIndex < 0){
+					showMessage("Select a time slot first", "Error");
+					return;
+				}
 				
 				for(Classroom classroom:classroomAndTimeslots.keySet()){
 					newClassroom = classroom;
@@ -1405,8 +1427,12 @@ public class AdminUI extends JPanel {
 		}
 		
 		classRoomCombo.setModel(new DefaultComboBoxModel<String>(classRoomStrings));
-//		classRoomCombo.setSelectedIndex(0);
-//		timingAvailableCombo.setSelectedIndex(0);
+		
+		if(classRoomCombo.getModel().getSize()>0)
+			classRoomCombo.setSelectedIndex(0);
+		
+		if(timingAvailableCombo.getModel().getSize()>0)
+			timingAvailableCombo.setSelectedIndex(0);
 		
 	}
 	

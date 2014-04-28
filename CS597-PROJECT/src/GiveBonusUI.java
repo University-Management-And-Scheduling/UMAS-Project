@@ -18,13 +18,14 @@ import javax.swing.JComboBox;
 
 
 
+
 public class GiveBonusUI extends JPanel {
 	
-	static Professor prof;
+	static Employee prof;
 	static Department dept;
-	static Professor prof2;
+	static Employee prof2;
 	ArrayList<Department> getAllDepts;
-	ArrayList<Professor> getAllEmpNames;
+	ArrayList<Employee> getAllEmpNames;
 
 	private JPanel contentPane;
 	private JTextField enterBonus;
@@ -103,11 +104,11 @@ public class GiveBonusUI extends JPanel {
 					}
 					
 				} catch (NumberFormatException e1) {
-					// TODO Auto-generated catch block
+					JOptionPane.showMessageDialog(null, "Not a number ", "Update", JOptionPane.INFORMATION_MESSAGE);
 					e1.printStackTrace();
 				}
 				catch (Employee.bonusNotValidException e1) {
-					// TODO Auto-generated catch block
+					JOptionPane.showMessageDialog(null, "Bonus not valid ", "Update", JOptionPane.INFORMATION_MESSAGE);
 					e1.printStackTrace();
 				}
 				catch (Student.AccessDeniedException e1) {
@@ -260,13 +261,10 @@ public class GiveBonusUI extends JPanel {
 				System.out.println(prof.getUserName());
 				System.out.println(prof.getUIN());
 				try {
-					prof2=new Professor(prof.getUIN());
+					prof2=new Employee(prof.getUIN());
 					initializeSalary(prof2);
 					updatedPay.setText("");
 					enterBonus.setText("");
-				} catch (Student.AccessDeniedException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
 				} catch (People.PersonDoesNotExistException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
@@ -306,18 +304,23 @@ public class GiveBonusUI extends JPanel {
 	
 	public void getAllEmployeesInADept(String deptNames) throws Professor.ProfessorDoesNotExistException{
 		
-		getAllEmpNames=Professor.getAllProfInADept(deptNames);
-		DefaultComboBoxModel<String> model=new DefaultComboBoxModel<String>();
-		
-		for(Professor p: getAllEmpNames){
+		try {
+			getAllEmpNames=Employee.getAllEmployeesByDepartment(deptNames);
+			DefaultComboBoxModel<String> model=new DefaultComboBoxModel<String>();
 			
-			model.addElement(p.getUserName());
+			for(Employee p: getAllEmpNames){
+				
+				model.addElement(p.getUserName());
+			}
+			
+			employeeComboBox.setModel(model);
+		} catch (Department.DepartmentDoesNotExistException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
-		
-		employeeComboBox.setModel(model);
 	}
 	
-	public void initializeSalary(Professor p){
+	public void initializeSalary(Employee p){
 		
 		double check=p.getSalary();
 		System.out.println(check);
