@@ -94,6 +94,16 @@ public class OfferCoursesUI extends JPanel {
 		JButton btnNewButton_1 = new JButton("Offer this course");
 		btnNewButton_1.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
+				if(allCoursesCombo.getSelectedIndex()<0){
+					showMessage("Select a course first", "Error");
+					return;
+				}
+				
+				if(allProfessorCombo.getSelectedIndex()<0){
+					showMessage("Select a professor first", "Error");
+					return;
+				}
+				
 				try {
 					Course course = new Course((String)allCoursesCombo.getSelectedItem());
 					Professor professor = new Professor((String)allProfessorCombo.getSelectedItem());

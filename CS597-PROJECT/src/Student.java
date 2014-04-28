@@ -617,6 +617,7 @@ public class Student extends People {
 				System.out.println("Error adding/updating to database");
 				e.printStackTrace();
 				System.out.println(e);
+				throw new NullPointerException();
 			}
 
 		}
@@ -625,6 +626,7 @@ public class Student extends People {
 			System.out.println("Connection failed");
 			e.printStackTrace();
 			System.out.println(e);
+			throw new NullPointerException();
 
 		}
 		

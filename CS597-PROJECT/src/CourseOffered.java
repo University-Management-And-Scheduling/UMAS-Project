@@ -1179,6 +1179,16 @@ public class CourseOffered {
 	 */
 	public boolean isCourseRegistrableBy(Student student){
 		
+		if(WaitList.isStudentEmailed(student, offerID)){
+			return true;
+		}
+		
+		int availableSeats = this.getTotalCapacity() - this.getCurrentlyFilled();
+		if((availableSeats - WaitList.getStudentsOnEmailList(offerID).size()) <= 0){
+			System.out.println("----------------------------------Difference is:"+(this.getCurrentlyFilled() - WaitList.getStudentsOnEmailList(offerID).size()));
+			return false;
+		}
+		
 		//check if the student is already registered
 		if(WaitList.isStudentRegistered(student, offerID)){
 			return false;
@@ -1194,10 +1204,6 @@ public class CourseOffered {
 			e.printStackTrace();
 		}
 		
-		
-		if(WaitList.isStudentEmailed(student, offerID)){
-			return true;
-		}
 		
 		//check if the student is on the waitList
 		if(WaitList.isStudentOnWaitList(student, offerID)){

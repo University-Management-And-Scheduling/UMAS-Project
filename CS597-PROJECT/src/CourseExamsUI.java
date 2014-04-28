@@ -321,7 +321,7 @@ public class CourseExamsUI extends JPanel {
 				
 				if(percentages!=null){					
 					CourseCurve curve = CourseCurve.calculateAbsoluteCurve(CourseExamsUI.courseOffered.getOfferID(), percentArray);
-					HashMap<Student, String> curvedMarks = curve.getCourseCurve();
+					final HashMap<Student, String> curvedMarks = curve.getCourseCurve();
 					gradeDisplayPanel.removeAll();
 					gradeDisplayPanel.revalidate();
 					gradeDisplayPanel.repaint();
@@ -332,6 +332,16 @@ public class CourseExamsUI extends JPanel {
 						gradeDisplayPanel.add(newPanel);
 					}
 					
+					JButton postbutton = new JButton("Post grades");
+					postbutton.addActionListener(new ActionListener() {
+						
+						@Override
+						public void actionPerformed(ActionEvent e) {
+							StudentEnrollment.updateAllStudentGrade(curvedMarks, CourseExamsUI.courseOffered);						
+						}
+					});
+					
+					gradeDisplayPanel.add(postbutton);
 					gradeDisplayPanel.revalidate();
 					gradeDisplayPanel.repaint();
 				}
@@ -356,7 +366,7 @@ public class CourseExamsUI extends JPanel {
 				
 				if(percentages!=null){					
 					CourseCurve curve = CourseCurve.calculateMaxGapCurve(CourseExamsUI.courseOffered.getOfferID(), percentArray);
-					HashMap<Student, String> curvedMarks = curve.getCourseCurve();
+					final HashMap<Student, String> curvedMarks = curve.getCourseCurve();
 					gradeDisplayPanel.removeAll();
 					gradeDisplayPanel.revalidate();
 					gradeDisplayPanel.repaint();
@@ -366,6 +376,17 @@ public class CourseExamsUI extends JPanel {
 						JPanel newPanel = makeGradePanel(s.getUIN(), grade);
 						gradeDisplayPanel.add(newPanel);
 					}
+					
+					JButton postbutton = new JButton("Post grades");
+					postbutton.addActionListener(new ActionListener() {
+						
+						@Override
+						public void actionPerformed(ActionEvent e) {
+							StudentEnrollment.updateAllStudentGrade(curvedMarks, CourseExamsUI.courseOffered);						
+						}
+					});
+					
+					gradeDisplayPanel.add(postbutton);
 					
 					gradeDisplayPanel.revalidate();
 					gradeDisplayPanel.repaint();
@@ -433,10 +454,16 @@ public class CourseExamsUI extends JPanel {
 		CourseExams exam = new CourseExams(offerID);
 		ArrayList<String> allExams = exam.viewAllExams();
 		allExamsPanel.removeAll();
+		allExamsPanel.revalidate();
+		allExamsPanel.repaint();
 		for(String oneExamName: allExams){
 			CourseExamStructure oneExam = new CourseExamStructure(courseOffered,oneExamName);
 			allExamsPanel.add(new SingleExamPanel(oneExam,isTA));
 		}
+		
+		allExamsPanel.revalidate();
+		allExamsPanel.repaint();
+		
 		ArrayList<Student> allStudents = StudentEnrollment.getStudentsInCourse(courseOffered);
 		
 		

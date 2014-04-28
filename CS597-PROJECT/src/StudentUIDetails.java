@@ -8,6 +8,7 @@ import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JOptionPane;
+import javax.swing.JPasswordField;
 import javax.swing.JTabbedPane;
 import javax.swing.JLabel;
 import javax.swing.JTextField;
@@ -39,8 +40,8 @@ public class StudentUIDetails extends JPanel {
 	private JLabel presentName;
 	private JTextField newUserName;
 	private JLabel presentUserName;
-	private JTextField currentPasswordTxt;
-	private JTextField newPasswordTxt;
+	private JPasswordField currentPasswordTxt;
+	private JPasswordField newPasswordTxt;
 	private JButton checkButton;
 	JComboBox<Double> workEx;
 	private JCheckBox skill1;
@@ -219,8 +220,9 @@ public class StudentUIDetails extends JPanel {
 		btnUpdateName.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 				
-				boolean check=student.updateStudentName(newName.getText());
+				
 				try {
+					boolean check=student.updateStudentName(newName.getText());
 					student= new Student(UIN);
 					if(check){
 						JOptionPane.showMessageDialog(null, "Name Updated ", "Update", JOptionPane.INFORMATION_MESSAGE);
@@ -230,6 +232,12 @@ public class StudentUIDetails extends JPanel {
 					
 				} catch (People.PersonDoesNotExistException e) {
 					JOptionPane.showMessageDialog(null, "Person does not exist in the database");
+					e.printStackTrace();
+					return;
+				}
+				
+				catch (NullPointerException e) {
+					JOptionPane.showMessageDialog(null, "Enter details");
 					e.printStackTrace();
 					return;
 				}
@@ -273,8 +281,9 @@ public class StudentUIDetails extends JPanel {
 			
 			public void actionPerformed(ActionEvent arg0) {
 				
-				boolean check=student.updateStudentUserName(newUserName.getText());
+				
 				try {
+					boolean check=student.updateStudentUserName(newUserName.getText());
 					student= new Student(UIN);
 					if(check){	
 						JOptionPane.showMessageDialog(null, "User Name Updated ", "Update", JOptionPane.INFORMATION_MESSAGE);
@@ -283,6 +292,12 @@ public class StudentUIDetails extends JPanel {
 					}
 				} catch (People.PersonDoesNotExistException e) {
 					JOptionPane.showMessageDialog(null, "Person does not exist in the database");
+					e.printStackTrace();
+					return;
+				}
+				
+				catch (NullPointerException e) {
+					JOptionPane.showMessageDialog(null, "Enter details");
 					e.printStackTrace();
 					return;
 				}
@@ -304,12 +319,12 @@ public class StudentUIDetails extends JPanel {
 		lblEnterCurrentPassword.setBounds(24, 47, 132, 14);
 		changePasswordPanel.add(lblEnterCurrentPassword);
 		
-		currentPasswordTxt = new JTextField();
+		currentPasswordTxt = new JPasswordField();
 		currentPasswordTxt.setBounds(180, 47, 115, 20);
 		changePasswordPanel.add(currentPasswordTxt);
 		currentPasswordTxt.setColumns(10);
 		
-		newPasswordTxt = new JTextField();
+		newPasswordTxt = new JPasswordField();
 		newPasswordTxt.setBounds(180, 92, 115, 20);
 		changePasswordPanel.add(newPasswordTxt);
 		newPasswordTxt.setColumns(10);
@@ -325,6 +340,16 @@ public class StudentUIDetails extends JPanel {
 		changePassword.setFont(new Font("Tahoma", Font.BOLD, 11));
 		changePassword.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
+				
+				if(newPasswordTxt==null){
+					JOptionPane.showMessageDialog(null, "Enter password", "Error", JOptionPane.INFORMATION_MESSAGE);
+					return;
+				}
+				
+				if(newPasswordTxt.getText().length()==0){
+					JOptionPane.showMessageDialog(null, "Enter password", "Error", JOptionPane.INFORMATION_MESSAGE);
+					return;
+				}
 				
 				boolean ifChanged=Login.changePassword(student.getUserName(),newPasswordTxt.getText());
 				if(ifChanged){
@@ -358,6 +383,16 @@ public class StudentUIDetails extends JPanel {
 		checkButton.addActionListener(new ActionListener() {
 			
 			public void actionPerformed(ActionEvent e) {
+				
+				if(currentPasswordTxt==null){
+					JOptionPane.showMessageDialog(null, "Enter password", "Error", JOptionPane.INFORMATION_MESSAGE);
+					return;
+				}
+				
+				if(currentPasswordTxt.getText().length()==0){
+					JOptionPane.showMessageDialog(null, "Enter password", "Error", JOptionPane.INFORMATION_MESSAGE);
+					return;
+				}
 				
 				Login loginDetails=new Login(student.getUserName(), currentPasswordTxt.getText().toCharArray());
 				boolean check=loginDetails.authenticate();
@@ -442,6 +477,10 @@ public class StudentUIDetails extends JPanel {
 			public void actionPerformed(ActionEvent e) {
 				
 				boolean check;
+				if(workEx.getSelectedIndex()<0){
+					JOptionPane.showMessageDialog(null, "Add Details first", "Error", JOptionPane.INFORMATION_MESSAGE);
+					return;
+				}
 				try {
 					check = JobApplication.addApplicationDetails(student.getUIN(), (Double) workEx.getSelectedItem(), 
 													skill1.isSelected(), skill2.isSelected(), skill3.isSelected(), skill4.isSelected(), skill5.isSelected());

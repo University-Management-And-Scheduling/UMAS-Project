@@ -22,6 +22,7 @@ import javax.swing.JLabel;
 import javax.swing.JCheckBox;
 import javax.swing.BoxLayout;
 
+
 import java.awt.Font;
 import java.awt.Color;
 
@@ -151,7 +152,7 @@ public class ProfessorUserUI extends JPanel {
 		profUserName.setColumns(10);
 		
 		DBAnnotation.annoate("profUserNameGet", "people", "UserName", true);
-		String profUserNameGet = prof.getName();
+		String profUserNameGet = prof.getUserName();
 		profUserName.setText(profUserNameGet);
 		
 		profDept = new JTextField();
@@ -768,22 +769,7 @@ public class ProfessorUserUI extends JPanel {
 	
 	}
 
-	
-	
-	
-	
-//	public JPanel getRetrievedStudentsPanel(LinkedHashMap<Integer, Student> getStudents){
-//		JPanel panel = new JPanel();
-//		panel.setLayout(new GridLayout(10, 1, 0, 3));
-//		
-//		for(Integer i: getStudents.keySet()){
-//			Student s= getStudents.get(i);
-//			panel.add(makePanel(s));
-//		}
-//		
-//		return panel;
-//	}
-//	
+
 	
 	public JFrame getRetrievedStudentsPanel(LinkedHashMap<Integer, Student> getStudents, int jodID){
 		JFrame jFramePop = new JFrame();
@@ -854,14 +840,31 @@ public class ProfessorUserUI extends JPanel {
 
 	public void initializeViewDetails(Professor prof){
 		
-		profName.setText(prof.getName());
-		profUIn.setText(""+prof.getUIN());
-		profUserName.setText(prof.getUserName());
-		profDept.setText(dept.getDepartmentName());
-		presentName.setText(prof.getName());
-		currentUserName.setText(prof.getUserName());
-		currentOfficeHours.setText(prof.getOfficeHours());
-		CurrentOfficeAddress.setText(prof.getOfficeAddress());
+		try {
+			ProfessorUserUI.prof=new Professor(ProfessorUserUI.prof.getUIN());
+			profName.setText(prof.getName());
+			profUIn.setText(""+prof.getUIN());
+			profUserName.setText(prof.getUserName());
+			profDept.setText(dept.getDepartmentName());
+			presentName.setText(prof.getName());
+			currentUserName.setText(prof.getUserName());
+			currentOfficeHours.setText(prof.getOfficeHours());
+			CurrentOfficeAddress.setText(prof.getOfficeAddress());
+			officeAddress.setText(prof.getOfficeAddress());
+			officeHours.setText(prof.getOfficeHours());
+			
+			revalidate();
+			repaint();
+			
+		} catch (Student.AccessDeniedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (People.PersonDoesNotExistException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		
 		
 		
 
