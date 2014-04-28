@@ -878,14 +878,14 @@ public class AdminUI extends JPanel {
 				
 				DefaultListModel<String> waitList = new DefaultListModel<String>();
 				for(Student s:WaitList.getStudentsOnWaitList(offerID)){
-					waitList.addElement(s.getName());
+					waitList.addElement(s.getUIN()+"- "+s.getName());
 				}
 				
 				waitListStudentsJList.setModel(waitList);
 				
 				DefaultListModel<String> emailedList = new DefaultListModel<String>();
 				for(Student s:WaitList.getStudentsOnEmailList(offerID)){
-					emailedList.addElement(s.getName());
+					emailedList.addElement(s.getUIN()+"- "+s.getName());
 				}
 				
 				emailedStudentsJList.setModel(emailedList);

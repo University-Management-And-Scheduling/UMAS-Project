@@ -13,6 +13,8 @@ import javax.swing.JList;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextPane;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
 
 
 
@@ -25,6 +27,8 @@ public class WaitListMonitorDeptUI extends JPanel {
 	private JList<String> emailedStudentsJList;
 	private JComboBox<Integer> courseOfferSelectForWaitListCombo;
 	private JTextPane courseOfferDetailsText;
+	private JTextPane textPane_1;
+	private JTextPane textPane_2;
 	
 	private static Admin admin;
 	private static Department adminDepartment;
@@ -48,6 +52,30 @@ public class WaitListMonitorDeptUI extends JPanel {
 		
 		waitListStudents = new JScrollPane();
 		waitListStudentsJList  = new JList<String>();
+		waitListStudentsJList.addListSelectionListener(new ListSelectionListener() {
+			
+			@Override
+			public void valueChanged(ListSelectionEvent arg0) {
+				if(waitListStudentsJList.getSelectedIndex()<0){
+					return;
+				}
+				
+				String s = waitListStudentsJList.getSelectedValue();
+				s = s.substring(0, s.indexOf("-"));
+				int uin = Integer.parseInt(s);
+				
+				try {
+					Student stud = new Student(uin);
+					textPane_1.setText("Student name: "+stud.getName()+"\nGPA: "+stud.getGPA());
+				} catch (People.PersonDoesNotExistException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+				
+				
+			}
+		});
+		
 		waitListStudents.getViewport().setView(waitListStudentsJList);
 		setLayout(null);
 		setBounds(10, 10, 800, 600);
@@ -56,6 +84,28 @@ public class WaitListMonitorDeptUI extends JPanel {
 		
 		emailedStudents = new JScrollPane();
 		emailedStudentsJList = new JList<String>();
+		emailedStudentsJList.addListSelectionListener(new ListSelectionListener() {
+			
+			@Override
+			public void valueChanged(ListSelectionEvent arg0) {
+				if(emailedStudentsJList.getSelectedIndex()<0){
+					return;
+				}
+				
+				String s = emailedStudentsJList.getSelectedValue();
+				s = s.substring(0, s.indexOf("-"));
+				int uin = Integer.parseInt(s);
+				
+				try {
+					Student stud = new Student(uin);
+					textPane_2.setText("Student name: "+stud.getName()+"\nGPA: "+stud.getGPA());
+				} catch (People.PersonDoesNotExistException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+				
+			}
+		});
 		emailedStudentsJList.setSelectedIndex(0);
 		emailedStudents.getViewport().setView(emailedStudentsJList);
 		emailedStudents.setBounds(570, 59, 181, 217);
@@ -116,11 +166,11 @@ public class WaitListMonitorDeptUI extends JPanel {
 		courseOfferDetailsText.setBounds(261, 99, 250, 177);
 		add(courseOfferDetailsText);
 		
-		JTextPane textPane_1 = new JTextPane();
+		textPane_1 = new JTextPane();
 		textPane_1.setBounds(10, 313, 181, 131);
 		add(textPane_1);
 		
-		JTextPane textPane_2 = new JTextPane();
+		textPane_2 = new JTextPane();
 		textPane_2.setBounds(570, 313, 181, 131);
 		add(textPane_2);
 		
@@ -146,14 +196,14 @@ public class WaitListMonitorDeptUI extends JPanel {
 			
 			DefaultListModel<String> waitList = new DefaultListModel<String>();
 			for(Student s:WaitList.getStudentsOnWaitList(offerID)){
-				waitList.addElement(s.getName());
+				waitList.addElement(s.getUIN()+"- "+s.getName());
 			}
 			
 			waitListStudentsJList.setModel(waitList);
 			
 			DefaultListModel<String> emailedList = new DefaultListModel<String>();
 			for(Student s:WaitList.getStudentsOnEmailList(offerID)){
-				emailedList.addElement(s.getName());
+				emailedList.addElement(s.getUIN()+"- "+s.getName());
 			}
 			
 			emailedStudentsJList.setModel(emailedList);
