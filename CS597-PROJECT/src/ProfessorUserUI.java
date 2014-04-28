@@ -612,9 +612,13 @@ public class ProfessorUserUI extends JPanel {
 			
 					
 					
-				} catch (NumberFormatException | Job.NoPermissionException e) {
+				} catch (NumberFormatException  e) {
 					
-
+					JOptionPane.showMessageDialog(null, "Error in adding", "Job not Posted", JOptionPane.INFORMATION_MESSAGE);
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				} catch (Job.NoPermissionException e) {
+					
 					JOptionPane.showMessageDialog(null, "Error in adding", "Job not Posted", JOptionPane.INFORMATION_MESSAGE);
 					// TODO Auto-generated catch block
 					e.printStackTrace();

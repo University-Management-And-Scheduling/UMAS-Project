@@ -94,8 +94,10 @@ public class ProfessorCourseUI extends JPanel {
 				try {
 					CourseOffered co = new CourseOffered(offerID);
 					initializeCurrentFilesList(co);
-				} catch (Course.CourseDoesNotExistException
-						| CourseOffered.CourseOfferingDoesNotExistException e) {
+				} catch (Course.CourseDoesNotExistException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				} catch (CourseOffered.CourseOfferingDoesNotExistException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
@@ -158,8 +160,13 @@ public class ProfessorCourseUI extends JPanel {
 						
 						initializeCurrentFilesList(new CourseOffered(offerID));
 						
-					} catch (Course.CourseDoesNotExistException
-							| CourseOffered.CourseOfferingDoesNotExistException | IOException e1) {
+					} catch (IOException e1) {
+						e1.printStackTrace();
+						System.out.println(e1.getMessage());
+					} catch (Course.CourseDoesNotExistException e1) {
+						e1.printStackTrace();
+						System.out.println(e1.getMessage());
+					} catch (CourseOffered.CourseOfferingDoesNotExistException e1) {
 						e1.printStackTrace();
 						System.out.println(e1.getMessage());
 					}
@@ -200,8 +207,10 @@ public class ProfessorCourseUI extends JPanel {
 					initializeCoursesAndFiles();
 					courseOfferingCombo.setSelectedIndex(index);
 					
-				} catch (Course.CourseDoesNotExistException
-						| CourseOffered.CourseOfferingDoesNotExistException e1) {
+				} catch (Course.CourseDoesNotExistException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				} catch (CourseOffered.CourseOfferingDoesNotExistException e1) {
 					// TODO Auto-generated catch block
 					e1.printStackTrace();
 				}
