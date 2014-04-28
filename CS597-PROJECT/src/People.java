@@ -1029,7 +1029,7 @@ public class People {
 			try {
 				if (conn != null) {
 					//select the username if it exists in the table
-					SQLPeopleSelect = "Select UIN, Name, Username, DepartmentID, PositionID From People where Username=?;";
+					SQLPeopleSelect = "Select UIN, Name, Username, DepartmentID, PositionID From People where UIN=?;";
 					PreparedStatement stmt = conn.prepareStatement(SQLPeopleSelect);
 					stmt.setInt(1, UIN);
 					ResultSet rs = stmt.executeQuery();//execute the query

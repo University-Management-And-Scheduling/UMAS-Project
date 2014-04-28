@@ -315,7 +315,7 @@ public class Professor extends Employee {
 
 					// Retrieve all the professors from one department
 					String ProfessorSelect = "Select *"
-							+ " FROM university.people"
+							+ " FROM people"
 							+ " WHERE DepartmentID= ? and PositionID=2";
 					PreparedStatement statement = conn.prepareStatement(ProfessorSelect);
 					statement.setInt(1, departmentID);//set the dept ID
@@ -377,7 +377,7 @@ public class Professor extends Employee {
 
 					try {
 						String getDeptID = "Select DepartmentID"
-								+ " FROM university.department"
+								+ " FROM department"
 								+ " WHERE DepartmentName= ?";
 
 						PreparedStatement statement = conn.prepareStatement(getDeptID);
@@ -413,7 +413,7 @@ public class Professor extends Employee {
 
 					// Retrieve all the professors from one department
 					String SemesterSelect = "Select *"
-							+ " FROM university.people"
+							+ " FROM people"
 							+ " WHERE DepartmentID= ? and PositionID=2";
 					PreparedStatement statement1 = conn
 							.prepareStatement(SemesterSelect);
@@ -464,7 +464,7 @@ public class Professor extends Employee {
 
 					// Retrieve all the professors from one department
 					String ProfessorSelect = "Select *"
-							+ " FROM university.people" + " WHERE PositionID=2";
+							+ " FROM people" + " WHERE PositionID=2";
 					PreparedStatement statement = conn.prepareStatement(ProfessorSelect);
 					ResultSet rs = statement.executeQuery();//execute the query
 

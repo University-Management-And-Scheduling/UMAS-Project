@@ -32,7 +32,7 @@ public class TA extends Student {
 			
 				if(conn != null){
 					
-					SQLStudentTASelect = "Select * From university.teachingassistant where TaUIN=?;";//write the query
+					SQLStudentTASelect = "Select * From teachingassistant where TaUIN=?;";//write the query
 				}
 				
 				PreparedStatement stmtForSelect = conn.prepareStatement(SQLStudentTASelect);
@@ -550,7 +550,7 @@ public class TA extends Student {
 
 					// Retrieve all the professors from one department
 					String ProfessorSelect = "Select *"
-							+ " FROM university.people" + " WHERE PositionID=4";
+							+ " FROM people" + " WHERE PositionID=4";
 					PreparedStatement statement = conn.prepareStatement(ProfessorSelect);
 					ResultSet rs = statement.executeQuery();//execute the query
 
