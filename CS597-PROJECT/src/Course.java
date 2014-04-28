@@ -54,8 +54,9 @@ public class Course {
 						DBAnnotation.annoate("courseName", "courses", "CourseName", true);
 						String courseName = rs.getString("CourseName");
 												
-						DBAnnotation.annoate("courseDept", "courses", "DepartmentID", true);
-						Department courseDept = new Department(rs.getInt("DepartmentID"));
+						DBAnnotation.annoate("deptID", "courses", "DepartmentID", true);
+						int deptID = rs.getInt("DepartmentID");
+						Department courseDept = new Department(deptID);
 						this.department = courseDept;
 						this.courseID = courseID;
 						this.courseName = courseName;
@@ -115,8 +116,9 @@ public class Course {
 						DBAnnotation.annoate("cName", "courses", "CourseName", true);
 						String cName = rs.getString("CourseName");
 						
-						DBAnnotation.annoate("courseDept", "courses", "DepartmentID", true);
-						Department courseDept = new Department(rs.getInt("DepartmentID"));
+						DBAnnotation.annoate("deptID", "courses", "DepartmentID", true);
+						int deptID = rs.getInt("DepartmentID");
+						Department courseDept = new Department(deptID);
 						
 						this.department = courseDept;
 						this.courseID = courseID;
@@ -412,7 +414,10 @@ public class Course {
 						DBAnnotation.annoate("courseID", "courses", "CourseID", true);
 						int courseID = rs.getInt("CourseID");
 						Course c = new Course(courseID);
-						courses.put(c.getCourseID(), c);
+						
+						DBAnnotation.annoate("cID", "courses", "CourseID", true);
+						int cID = c.getCourseID();
+						courses.put(cID, c);
 					}
 					
 				}

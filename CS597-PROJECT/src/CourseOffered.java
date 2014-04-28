@@ -354,7 +354,7 @@ public class CourseOffered {
 						DBAnnotation.annoate("offerID", "coursesoffered", "OfferID", true);
 						int offerID = rs.getInt("OfferID");
 						CourseOffered c = new CourseOffered(offerID);
-						offerdCourses.put(c.getOfferID(), c);
+						offerdCourses.put(offerID, c);
 					}
 										
 				}

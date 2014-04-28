@@ -257,8 +257,15 @@ public class AdminUI extends JPanel {
 					try {
 						student = new Student(UIN);
 						String s = "";
-						s+="Student Name:"+student.getName();
-						s+="\nGPA:"+student.getGPA();
+						
+						DBAnnotation.annoate("name", "people", "Name", true);
+						String name = student.getName();
+						
+						DBAnnotation.annoate("gpa", "student", "GPA", true);
+						double gpa = student.getGPA();
+						
+						s+="Student Name:"+name;
+						s+="\nGPA:"+gpa;
 						taStudentDetails.setText(s);
 						
 					} catch (Student.PersonDoesNotExistException e2) {
@@ -293,12 +300,29 @@ public class AdminUI extends JPanel {
 					try {
 						co = new CourseOffered(offerID);
 						String s = "";
-						s+="Course Name:"+co.getCourseName();
-						s+="\nDepartment:"+co.getDepartmentName();
-						s+="\nClassroom Location:"+co.getClassRoomLocation();
-						s+="\nClasstroom Name:"+co.getClassRoomName();
+						
+						DBAnnotation.annoate("courseName", "courses", "CourseName", true);
+						String courseName = co.getCourseName();
+						s+="Course Name:"+courseName;
+						
+						DBAnnotation.annoate("deptName", "department", "DepartmentName", true);
+						String deptName = co.getDepartmentName();
+						s+="\nDepartment:"+deptName;
+						
+						DBAnnotation.annoate("classLoc", "classroom", "ClassroomLocation", true);
+						String classLoc = co.getClassRoomLocation();
+						s+="\nClassroom Location:"+classLoc;
+						
+						DBAnnotation.annoate("className", "classroom", "ClassroomName", true);
+						String className = co.getClassRoomName();
+						s+="\nClasstroom Name:"+ className;
+						
 						s+="\nTimings:"+co.getTiming();
-						s+="\nTaught by professor:"+co.getProfessorName();
+						
+						DBAnnotation.annoate("prof", "people", "Name", true);
+						String prof = co.getProfessorName();
+						s+="\nTaught by professor:"+prof;
+						
 						taCourseDetails.setText(s);
 						
 					} catch (Course.CourseDoesNotExistException e1) {
@@ -323,7 +347,11 @@ public class AdminUI extends JPanel {
 			public void actionPerformed(ActionEvent arg0) {
 				try {
 					Student s = new Student((Integer) taComboBox.getSelectedItem());
-					TA.addTAtoTAtable(s.getUIN(),	(Integer) courseOfferIDComboBox.getSelectedItem());
+					
+					DBAnnotation.annoate("UIN", "student", "UIN", true);
+					int UIN = s.getUIN();
+					
+					TA.addTAtoTAtable(UIN,	(Integer) courseOfferIDComboBox.getSelectedItem());
 					showMessage("Added a TA successfully", "Success");
 					//DepartmentAdminUI.initializeAllTabs();
 					initializeEveryThing();
@@ -842,11 +870,29 @@ public class AdminUI extends JPanel {
 				
 				try {
 					CourseOffered co = new CourseOffered(offerID);
-					String s = "Course name:"+co.getCourseName();
-					s+="\nDepartment name:"+co.getDepartmentName();
-					s+="\nTaught by Prof. "+co.getProfessorName();
-					s+="\nClass location and name:"+co.getClassRoomLocation()+", "+co.getClassRoomName();
+					
+					DBAnnotation.annoate("courseName", "courses", "CourseName", true);
+					String courseName = co.getCourseName();
+					String s="Course Name:"+courseName;
+					
+					DBAnnotation.annoate("deptName", "department", "DepartmentName", true);
+					String deptName = co.getDepartmentName();
+					s+="\nDepartment:"+deptName;
+					
+					DBAnnotation.annoate("classLoc", "classroom", "ClassroomLocation", true);
+					String classLoc = co.getClassRoomLocation();
+					s+="\nClassroom Location:"+classLoc;
+					
+					DBAnnotation.annoate("className", "classroom", "ClassroomName", true);
+					String className = co.getClassRoomName();
+					s+="\nClasstroom Name:"+ className;
+					
 					s+="\nTimings:"+co.getTiming();
+					
+					DBAnnotation.annoate("prof", "people", "Name", true);
+					String prof = co.getProfessorName();
+					s+="\nTaught by professor:"+prof;
+					
 					courseDetailsTextPane.setText(s);
 					
 				} catch (Course.CourseDoesNotExistException e) {
@@ -1163,11 +1209,27 @@ public class AdminUI extends JPanel {
 			try {
 				System.out.println("OfferID:"+offerIDs.get(i));
 				co = new CourseOffered(offerIDs.get(i));
-				courseNameList[i] = co.getCourseName();
-				courseOfferIDList[i] = co.getOfferID();
-				profNameList[i] = co.getProfessorName();
-				classLocationList[i] = co.getClassRoomLocation();
-				classRoomNameList[i] = co.getClassRoomName();
+				
+				DBAnnotation.annoate("courseName", "courses", "CourseName", true);
+				String courseName = co.getCourseName();
+				courseNameList[i] = courseName;
+				
+				DBAnnotation.annoate("offerID", "coursesoffered", "OfferID", true);
+				int offerID = co.getOfferID();
+				courseOfferIDList[i] = offerID;
+				
+				DBAnnotation.annoate("prof", "people", "Name", true);
+				String prof = co.getProfessorName();
+				profNameList[i] = prof;
+				
+				DBAnnotation.annoate("classLoc", "classroom", "ClassroomLocation", true);
+				String classLoc = co.getClassRoomLocation();
+				classLocationList[i] = classLoc;
+				
+				DBAnnotation.annoate("className", "classroom", "ClassroomName", true);
+				String className = co.getClassRoomName();
+				classRoomNameList[i] = className;
+				
 				classTimingList[i] = co.getTiming();
 				
 			} catch (Course.CourseDoesNotExistException e) {
@@ -1199,11 +1261,28 @@ public class AdminUI extends JPanel {
 	public void initilizeSingleRescheduleTab(int offerID){
 		CourseOffered co = coursesOffered.get(offerID);
 		String s = "";
-		s+="Course Name:"+co.getCourseName();
-		s+="\nClassroom Location:"+co.getClassRoomLocation();
-		s+="\nClasstroom Name:"+co.getClassRoomName();
+		DBAnnotation.annoate("courseName", "courses", "CourseName", true);
+		String courseName = co.getCourseName();
+		s+="Course Name:"+courseName;
+		
+		DBAnnotation.annoate("deptName", "department", "DepartmentName", true);
+		String deptName = co.getDepartmentName();
+		s+="\nDepartment:"+deptName;
+		
+		DBAnnotation.annoate("classLoc", "classroom", "ClassroomLocation", true);
+		String classLoc = co.getClassRoomLocation();
+		s+="\nClassroom Location:"+classLoc;
+		
+		DBAnnotation.annoate("className", "classroom", "ClassroomName", true);
+		String className = co.getClassRoomName();
+		s+="\nClasstroom Name:"+ className;
+		
 		s+="\nTimings:"+co.getTiming();
-		s+="\nTaught by professor:"+co.getProfessorName();
+		
+		DBAnnotation.annoate("prof", "people", "Name", true);
+		String prof = co.getProfessorName();
+		s+="\nTaught by professor:"+prof;
+		
 		courseScheduleTextPane.setText(s);
 	}
 	

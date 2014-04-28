@@ -193,6 +193,7 @@ public class ProfessorCourseUI extends JPanel {
 				
 				try {
 					CourseOffered co = new CourseOffered(courseOfferingCombo.getItemAt(courseOfferingCombo.getSelectedIndex()));
+					DBAnnotation.annoate("offerID", "coursesoffered", "OfferID", true);
 					int offerID = co.getOfferID();
 					for(String s:addFileList){
 						System.out.println("File:"+s);

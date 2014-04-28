@@ -251,12 +251,17 @@ public class StudentUI extends JPanel {
 		btnRegister.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				int offerID = (Integer)selectOfferingCombo.getSelectedItem();
-				StudentEnrollment se = new StudentEnrollment(offerID, student.getUIN());
+				
+				DBAnnotation.annoate("uin", "student", "UIN", true);
+				int uin = student.getUIN();
+				StudentEnrollment se = new StudentEnrollment(offerID, uin);
 				boolean flag = se.enrollStudents();
 				if(flag){
 					showMessage("Successfully registered", "Success");
 					try {
-						StudentUI.student = new Student(student.getUIN());
+						DBAnnotation.annoate("uin2", "student", "UIN", true);
+						int uin2 = student.getUIN();
+						StudentUI.student = new Student(uin2);
 						emptyTabs();
 					} catch (People.PersonDoesNotExistException e1) {
 						// TODO Auto-generated catch block
@@ -280,7 +285,9 @@ public class StudentUI extends JPanel {
 				try {
 					WaitList.addStudentToWaitList(student, offerID);
 					showMessage("Added successfully to wait list", "Success");
-					StudentUI.student = new Student(student.getUIN());
+					DBAnnotation.annoate("uin", "student", "UIN", true);
+					int uin = student.getUIN();
+					StudentUI.student = new Student(uin);
 					initializeAllComboBoxesInRegistrationTab();
 					emptyTabs();
 				} catch (Course.CourseDoesNotExistException e1) {

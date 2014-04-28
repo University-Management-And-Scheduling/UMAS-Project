@@ -103,7 +103,10 @@ public class manageDeptCourses extends JTabbedPane {
 				
 				try {
 					Course courseSelected = new Course((String)allCoursesCombo.getSelectedItem());
-					textField_1.setText(courseSelected.getCourseName());
+					
+					DBAnnotation.annoate("cName", "courses", "CourseName", true);
+					String cName = courseSelected.getCourseName();
+					textField_1.setText(cName);
 					
 				} catch (Course.CourseDoesNotExistException e) {
 					// TODO Auto-generated catch block
@@ -162,9 +165,14 @@ public class manageDeptCourses extends JTabbedPane {
 					DefaultComboBoxModel<String> profModel = new DefaultComboBoxModel<String>();
 					ArrayList<Professor> deptProfessor = Professor.getAllProfInADept(adminDepartment.getDepartmentID());
 					for(Professor p:deptProfessor){
-						profModel.addElement(p.getUserName());
+						
+						DBAnnotation.annoate("prof", "People", "UserName", true);
+						String prof = p.getUserName();
+						profModel.addElement(prof);
 					}
 					updateOfferProfessorCombo.setModel(profModel);
+					
+					DBAnnotation.annoate("professorName", "People", "UserName", true);
 					String professorName = co.getProfessor().getUserName();
 					updateOfferProfessorCombo.setSelectedIndex(getProfessorIndex(professorName));
 					
@@ -297,19 +305,28 @@ public class manageDeptCourses extends JTabbedPane {
 		DefaultComboBoxModel<Integer> model = new DefaultComboBoxModel<Integer>();
 		allDeptCoursesOffered = CourseSchedule.getAllScheduledCourses(adminDepartment);
 		for(CourseSchedule cs:allDeptCoursesOffered){
-			model.addElement(cs.getOfferID());
+			
+			DBAnnotation.annoate("oID", "courseschedule", "OfferID", true);
+			int oID = cs.getOfferID();
+			model.addElement(oID);
 		}
 		updateOfferIDCombo.setModel(model);
 		
 		if(allDeptCoursesOffered.size()>0){
 			try {
-				CourseOffered co = new CourseOffered(allDeptCoursesOffered.get(0).getOfferID());
+				DBAnnotation.annoate("oID", "courseschedule", "OfferID", true);
+				int oID = allDeptCoursesOffered.get(0).getOfferID();
+				CourseOffered co = new CourseOffered(oID);
 				DefaultComboBoxModel<String> profModel = new DefaultComboBoxModel<String>();
 				ArrayList<Professor> deptProfessor = Professor.getAllProfInADept(adminDepartment.getDepartmentID());
 				for(Professor p:deptProfessor){
-					profModel.addElement(p.getUserName());
+					DBAnnotation.annoate("prof", "People", "UserName", true);
+					String prof = p.getUserName();
+					profModel.addElement(prof);
 				}
 				updateOfferProfessorCombo.setModel(profModel);
+				
+				DBAnnotation.annoate("professorName", "People", "UserName", true);
 				String professorName = co.getProfessor().getUserName();
 				updateOfferProfessorCombo.setSelectedIndex(getProfessorIndex(professorName));
 				

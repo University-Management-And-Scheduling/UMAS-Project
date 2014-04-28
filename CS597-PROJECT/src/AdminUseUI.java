@@ -78,8 +78,13 @@ public class AdminUseUI extends JPanel {
 	public AdminUseUI(final Admin a) throws Department.DepartmentDoesNotExistException {
 		
 		AdminUseUI.admin=a;
-		AdminUseUI.dept=new Department(admin.getDeptID());
-		AdminUseUI.UIN=admin.getUIN();
+		DBAnnotation.annoate("deptID", "People", "DepartmentID", true);
+		int deptID = admin.getDeptID();
+		AdminUseUI.dept=new Department(deptID);
+		
+		DBAnnotation.annoate("UIN", "Employee", "UIN", true);
+		int uin = admin.getUIN();
+		AdminUseUI.UIN=uin;
 		
 		setBounds(100, 100, 714, 407);
 		setBorder(new EmptyBorder(5, 5, 5, 5));

@@ -53,7 +53,10 @@ public class DepartmentAdminUI extends JPanel {
 
 	private DepartmentAdminUI(Admin a) throws Department.DepartmentDoesNotExistException {
 		DepartmentAdminUI.admin = a;
-		DepartmentAdminUI.adminDepartment = new Department(admin.getDeptID());
+		
+		DBAnnotation.annoate("deptID", "People", "DepartmentID", true);
+		int deptID = admin.getDeptID();
+		DepartmentAdminUI.adminDepartment = new Department(deptID);
 		//setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setBounds(100, 100, 1024, 800);
 		//contentPane = new JPanel();

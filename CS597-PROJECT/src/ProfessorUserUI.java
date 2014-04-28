@@ -102,7 +102,12 @@ public class ProfessorUserUI extends JPanel {
 	private ProfessorUserUI(Professor p) throws Department.DepartmentDoesNotExistException {
 		
 		ProfessorUserUI.prof=p;
-		ProfessorUserUI.dept=new Department(prof.getDeptID());
+		
+		DBAnnotation.annoate("profDeptID", "people", "DepartmentID", true);
+		int profDeptID = prof.getDeptID();
+		ProfessorUserUI.dept=new Department(profDeptID);
+		
+		DBAnnotation.annoate("UIN", "employee", "UIN", true);
 		ProfessorUserUI.UIN=prof.getUIN();
 		setBounds(100, 100, 675, 473);
 		setLayout(new BorderLayout(0, 0));
@@ -121,7 +126,10 @@ public class ProfessorUserUI extends JPanel {
 		profName.setBounds(224, 57, 101, 20);
 		viewDetails.add(profName);
 		profName.setColumns(10);
-		profName.setText(prof.getName());
+		
+		DBAnnotation.annoate("profNameGet", "people", "Name", true);
+		String profNameGet = prof.getName();
+		profName.setText(profNameGet);
 		
 		profUIn = new JTextField();
 		profUIn.setDisabledTextColor(Color.BLACK);
@@ -130,7 +138,9 @@ public class ProfessorUserUI extends JPanel {
 		profUIn.setBounds(224, 97, 101, 20);
 		viewDetails.add(profUIn);
 		profUIn.setColumns(10);
-		profUIn.setText(""+prof.getUIN());
+		DBAnnotation.annoate("uin", "employee", "UIN", true);
+		int uin = prof.getUIN();
+		profUIn.setText(""+uin);
 		
 		profUserName = new JTextField();
 		profUserName.setDisabledTextColor(Color.BLACK);
@@ -139,7 +149,10 @@ public class ProfessorUserUI extends JPanel {
 		profUserName.setBounds(224, 140, 101, 20);
 		viewDetails.add(profUserName);
 		profUserName.setColumns(10);
-		profUserName.setText(prof.getUserName());
+		
+		DBAnnotation.annoate("profUserNameGet", "people", "UserName", true);
+		String profUserNameGet = prof.getName();
+		profUserName.setText(profUserNameGet);
 		
 		profDept = new JTextField();
 		profDept.setDisabledTextColor(Color.BLACK);
@@ -290,7 +303,9 @@ public class ProfessorUserUI extends JPanel {
 		currentuserNameLbl.setBounds(117, 92, 104, 14);
 		edituserNamePanel.add(currentuserNameLbl);
 		
-		currentUserName = new JLabel(prof.getUserName());
+		DBAnnotation.annoate("profName", "people", "UserName", true);
+		String profName = prof.getUserName();
+		currentUserName = new JLabel(profName);
 		currentUserName.setFont(new Font("Arial", Font.BOLD, 11));
 		currentUserName.setBounds(244, 92, 86, 14);
 		edituserNamePanel.add(currentUserName);

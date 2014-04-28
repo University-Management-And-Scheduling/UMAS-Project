@@ -14,7 +14,9 @@ public class TAListScanner  implements Runnable{
 			ArrayList<CourseOffered> getTACourses=CourseOffered.getAllCurrentCoursesTAedBy(ta);
 			if(getTACourses.size()<=0){
 				System.out.println("Dwongrading TA to student with UIN:"+ta.getUIN());
-				TA.updateTAtoStudent(ta.getUIN());
+				DBAnnotation.annoate("uin", "teachingassistant", "TaUIN", true);
+				int uin = ta.getUIN();
+				TA.updateTAtoStudent(uin);
 			}
 		}
 		// TODO Auto-generated method stub

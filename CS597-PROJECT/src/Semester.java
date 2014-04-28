@@ -81,10 +81,21 @@ public class Semester {
 					ResultSet rs = statement.executeQuery();
 					
 					if(rs.first()){
-						this.SemesterID = rs.getInt("SemesterID");
-						this.SemesterName = rs.getString("SemesterName");
-						this.SemesterYear = rs.getTimestamp("SemesterYear");
-						this.isCurrent = rs.getInt("IsCurrent");
+						DBAnnotation.annoate("semID", "semester", "SemesterID", true);
+						int semID = rs.getInt("SemesterID");
+						this.SemesterID = semID;;
+						
+						DBAnnotation.annoate("semName", "semester", "SemesterName", true);
+						String semName = rs.getString("SemesterName");
+						this.SemesterName = semName;
+						
+						DBAnnotation.annoate("semYear", "semester", "SemesterYear", true);
+						Timestamp semYear =  rs.getTimestamp("SemesterYear");
+						this.SemesterYear = semYear;
+						
+						DBAnnotation.annoate("usCur", "semester", "IsCurrent", true);
+						int isCur = rs.getInt("IsCurrent");
+						this.isCurrent = isCur;
 					}							
 					
 				}
@@ -157,16 +168,23 @@ public class Semester {
 			
 			try{
 				if(conn != null){
+
+					DBAnnotation.annoate("semName", "semester", "SemesterName", true);
+					String semName = this.getSemesterName();
+					
+					DBAnnotation.annoate("t", "semester", "SemesterYear", true);
+					Timestamp t = this.getSemesterYear();
 					
 					//Retrieve the current semester ID
 					String semAdd = "Insert into university.semester"
 							+ " (SemesterName, SemesterYear, isCurrent)"
 							+ " Values(?,?,?)";
 					PreparedStatement statement = conn.prepareStatement(semAdd);
-					statement.setString(1, this.getSemesterName());
-					statement.setTimestamp(2, this.getSemesterYear());
+					statement.setString(1, semName);
+					statement.setTimestamp(2, t);
 					statement.setInt(3, 1);
-					statement.executeUpdate();			
+					statement.executeUpdate();
+					
 					//Database.commitTransaction(conn);
 				}
 			}

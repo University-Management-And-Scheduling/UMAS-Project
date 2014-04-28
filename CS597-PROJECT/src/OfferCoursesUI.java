@@ -55,7 +55,10 @@ public class OfferCoursesUI extends JPanel {
 	
 	private OfferCoursesUI(Admin a) throws Department.DepartmentDoesNotExistException {
 		OfferCoursesUI.admin = a;
-		OfferCoursesUI.adminDepartment = new Department(admin.getDeptID());
+		
+		DBAnnotation.annoate("deptID", "People", "DepartmentID", true);
+		int deptID = admin.getDeptID();
+		OfferCoursesUI.adminDepartment = new Department(deptID);
 		setBounds(100, 100, 1024, 800);
 		setBorder(new EmptyBorder(5, 5, 5, 5));
 		setLayout(new BorderLayout(0, 0));

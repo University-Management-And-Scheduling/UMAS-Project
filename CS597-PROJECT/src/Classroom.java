@@ -242,7 +242,9 @@ public class Classroom {
 					/*
 					 * Check the capacity of the classroom and the required capacity
 					 */
-					if(c.getClassroomCapacity() >= expectedCapacity){
+					DBAnnotation.annoate("classCap", "classroom", "ClassroomCapacity", true);
+					int classCap = c.getClassroomCapacity();
+					if(classCap >= expectedCapacity){
 						/*
 						 * Find empty timeslot for the classroom
 						 */
@@ -251,8 +253,14 @@ public class Classroom {
 						 * If atleast one empty slot is found, return the classroom in which it was found
 						 */
 						if(times.size()>0){
-							System.out.println("Found a classroom with empty time slots:"+c.getClassroomName().toString()+" "
-									+ ""+ c.getClassroomLocation().toString());
+							DBAnnotation.annoate("loc", "classroom", "ClassroomLocation", true);
+							ClassroomLocation loc = c.getClassroomLocation();
+							
+							DBAnnotation.annoate("cName", "classroom", "ClassroomName", true);
+							ClassroomName cName = c.getClassroomName();
+							
+							System.out.println("Found a classroom with empty time slots:"+cName.toString()+" "
+									+ ""+ loc.toString());
 							break;
 						}
 					}
@@ -355,12 +363,23 @@ public class Classroom {
 				c = new Classroom(classID);
 				if(c!=null){
 					//System.out.println("Call findEmptySlotsForClassroom for just checking. Not retreiving");
-					if(c.getClassroomCapacity() >= expectedCapacity){
+					DBAnnotation.annoate("classCap", "classroom", "ClassroomCapacity", true);
+					int classCap = c.getClassroomCapacity();
+					if(classCap >= expectedCapacity){
 						times = c.findOpenSlotsForClassroom(timeSlotType);
 						if(times.size()>0){
-							System.out.println("Found a classroom with empty time slots:"+c.getClassroomName().toString()+" "
-									+ ""+ c.getClassroomLocation().toString());
-							classrooms.put(c.getClassroomID(), c);
+							DBAnnotation.annoate("loc", "classroom", "ClassroomLocation", true);
+							ClassroomLocation loc = c.getClassroomLocation();
+							
+							DBAnnotation.annoate("cName", "classroom", "ClassroomName", true);
+							ClassroomName cName = c.getClassroomName();
+							
+							System.out.println("Found a classroom with empty time slots:"+cName.toString()+" "
+									+ ""+ loc.toString());
+							
+							DBAnnotation.annoate("cID", "classroom", "ClassroomID", true);
+							int cID = c.getClassroomID();
+							classrooms.put(cID, c);
 						}
 					}
 				}
@@ -561,10 +580,6 @@ public class Classroom {
 		return (this.getClassroomID()*31);
 	}
 	
-	public static void main(String[] args){
-		Classroom result = new Classroom(1);
-		Classroom result2 = new Classroom(300);
-	}
 	
 	
 }

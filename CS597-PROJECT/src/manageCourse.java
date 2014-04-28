@@ -105,6 +105,8 @@ public class manageCourse extends JTabbedPane {
 				try {
 					Course courseSelected = new Course((String)allCoursesCombo.getSelectedItem());
 					textField_1.setText(courseSelected.getCourseName());
+					
+					DBAnnotation.annoate("courseDepartment", "department", "Department", true);
 					String courseDepartment = courseSelected.getDepartment().getDepartmentName();
 					int i = getDepartmentIndex(courseDepartment);
 					
@@ -178,7 +180,11 @@ public class manageCourse extends JTabbedPane {
 				try {
 					CourseOffered co = new CourseOffered((Integer)updateOfferIDCombo.getSelectedItem());
 					DefaultComboBoxModel<String> profModel = new DefaultComboBoxModel<String>();
-					ArrayList<Professor> deptProfessor = Professor.getAllProfInADept(new Department(co.getDepartmentName()).getDepartmentID());
+					
+					DBAnnotation.annoate("deptName", "department", "DepartmentName", true);
+					String deptName = co.getDepartmentName();
+					
+					ArrayList<Professor> deptProfessor = Professor.getAllProfInADept(new Department(deptName).getDepartmentID());
 					for(Professor p:deptProfessor){
 						profModel.addElement(p.getUserName());
 					}
@@ -362,7 +368,10 @@ public class manageCourse extends JTabbedPane {
 			CourseOffered co = courseOffered.get(model.getElementAt(0));
 			DefaultComboBoxModel<String> profModel = new DefaultComboBoxModel<String>();
 			try {
-				ArrayList<Professor> deptProfessor = Professor.getAllProfInADept(new Department(co.getDepartmentName()).getDepartmentID());
+				
+				DBAnnotation.annoate("deptName", "department", "DepartmentName", true);
+				String deptName = co.getDepartmentName();
+				ArrayList<Professor> deptProfessor = Professor.getAllProfInADept(new Department(deptName).getDepartmentID());
 				for(Professor p:deptProfessor){
 					profModel.addElement(p.getUserName());
 				}

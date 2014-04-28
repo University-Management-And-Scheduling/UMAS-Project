@@ -49,7 +49,11 @@ public class ManageDeptPeople extends JPanel {
 	private ManageDeptPeople(Admin a)
 			throws Department.DepartmentDoesNotExistException {
 		admin = a;
-		adminDepartment = new Department(admin.getDeptID());
+		
+		DBAnnotation.annoate("deptID", "People", "DepartmentID", true);
+		int deptID = admin.getDeptID();
+		
+		adminDepartment = new Department(deptID);
 		setLayout(null);
 
 		JTabbedPane adminTabs = new JTabbedPane(JTabbedPane.TOP);
@@ -166,8 +170,15 @@ public class ManageDeptPeople extends JPanel {
 				Student s;
 				try {
 					s = new Student(taComboBox.getItemAt(taComboBox.getSelectedIndex()));
-					String details = "Name: "+s.getName();
-					details+= "\nGPA: "+s.getGPA();
+					
+					DBAnnotation.annoate("name", "People", "Name", true);
+					String name = s.getName();
+					
+					DBAnnotation.annoate("gpa", "student", "GPA", true);
+					double gpa = s.getGPA();
+					
+					String details = "Name: "+name;
+					details+= "\nGPA: "+gpa;
 					txtrStudentDetails.setText(details);
 				} catch (People.PersonDoesNotExistException e) {
 					// TODO Auto-generated catch block
@@ -185,8 +196,16 @@ public class ManageDeptPeople extends JPanel {
 				CourseOffered c;
 				try {
 					c = new CourseOffered(courseOfferIDComboBox.getItemAt(courseOfferIDComboBox.getSelectedIndex()));
-					String details = "Course Name: "+c.getCourseName();
-					details += "\nProfessor: "+c.getProfessorName();
+					
+					DBAnnotation.annoate("cName", "courses", "CourseName", true);
+					String cName = c.getCourseName();
+					
+					DBAnnotation.annoate("prof", "people", "Name", true);
+					String prof = c.getProfessorName();
+					
+					String details = "Course Name: "+cName;
+					details += "\nProfessor: "+prof;
+					
 					txtrCourseDetails.setText(details);
 				} catch (Course.CourseDoesNotExistException e1) {
 					// TODO Auto-generated catch block
@@ -205,7 +224,10 @@ public class ManageDeptPeople extends JPanel {
 			public void actionPerformed(ActionEvent arg0) {
 				try {
 					Student s = new Student((Integer) taComboBox.getSelectedItem());
-					TA.addTAtoTAtable(s.getUIN(),	(Integer) courseOfferIDComboBox.getSelectedItem());
+					
+					DBAnnotation.annoate("uin", "student", "UIN", true);
+					int uin = s.getUIN();
+					TA.addTAtoTAtable(uin,	(Integer) courseOfferIDComboBox.getSelectedItem());
 					showMessage("Added a TA successfully", "Success");
 					DepartmentAdminUI.initializeAllTabs();
 					
@@ -292,7 +314,14 @@ public class ManageDeptPeople extends JPanel {
 		ArrayList<Student> allStudents = Student.getAllStudents();
 		students = new ArrayList<Student>();
 		for (Student s : allStudents) {
-			if (s.getDeptID() == adminDepartment.getDepartmentID()) {
+			
+			DBAnnotation.annoate("sDeptID", "people", "DepartmentID", true);
+			int sDeptID = s.getDeptID();
+			
+			DBAnnotation.annoate("aDeptID", "people", "DepartmentID", true);
+			int aDeptID = adminDepartment.getDepartmentID();
+			
+			if (sDeptID == aDeptID) {
 				students.add(s);
 			}
 		}
@@ -314,7 +343,9 @@ public class ManageDeptPeople extends JPanel {
 		ArrayList<CourseSchedule> allCoursesScheduled = CourseSchedule.getAllScheduledCourses(adminDepartment);
 		courseOffered = new ArrayList<Integer>();
 		for (CourseSchedule cs : allCoursesScheduled) {
-			courseOffered.add(cs.getOfferID());
+			DBAnnotation.annoate("offerID", "courseschedule", "OfferID", true);
+			int offerID = cs.getOfferID();
+			courseOffered.add(offerID);
 		}
 		
 		DefaultComboBoxModel<Integer> allIDsModel = new DefaultComboBoxModel<Integer>();

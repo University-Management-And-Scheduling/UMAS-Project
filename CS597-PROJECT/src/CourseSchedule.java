@@ -288,8 +288,11 @@ public class CourseSchedule {
 						DBAnnotation.annoate("offerID", "coursesoffered", "OfferID", true);
 						int offerID = rs.getInt("OfferID");
 						CourseOffered co = new CourseOffered(offerID);
-						if(co.getDepartmentName().equals(departmentName)){
-							courseSchedule.add(new CourseSchedule(co.getOfferID()));
+						
+						DBAnnotation.annoate("deptName", "department", "DepartmentName", true);
+						String deptName = co.getDepartmentName();
+						if(deptName.equals(departmentName)){
+							courseSchedule.add(new CourseSchedule(offerID));
 						}
 					}
 					
