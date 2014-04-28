@@ -161,8 +161,12 @@ public class TA extends Student {
 			
 		}
 		//outer catch block for other exceptions
-		catch (Course.CourseDoesNotExistException
-				| CourseOffered.CourseOfferingDoesNotExistException e1) {
+		catch (Course.CourseDoesNotExistException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
+		
+		catch (CourseOffered.CourseOfferingDoesNotExistException e1) {
 			// TODO Auto-generated catch block
 			e1.printStackTrace();
 		}
