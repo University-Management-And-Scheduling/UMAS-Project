@@ -21,39 +21,36 @@ import java.util.ArrayList;
 public class TA extends Student {
 	
 
-
-	@Target({ElementType.LOCAL_VARIABLE})
-	@Retention(RetentionPolicy.RUNTIME)
-	public @interface DBAnnotation {
-	 String[] variable () default "";
-	 String[] table () default "";
-	 String[] column () default "";
-	 boolean[] isSource () default false; 
-	}
-
+	//TA class constructor takes in the UIN and then sets the values to the UIn specific 
 	public TA(int UIN) throws PersonDoesNotExistException {
-		super(UIN);
+		super(UIN);//calls the super class
 		
 		try{
-			Connection conn = Database.getConnection();
+			Connection conn = Database.getConnection();//get the connection
 			String SQLStudentTASelect="";
 			try{
 			
 				if(conn != null){
 					
-					SQLStudentTASelect = "Select * From university.teachingassistant where TaUIN=?;";
+					SQLStudentTASelect = "Select * From university.teachingassistant where TaUIN=?;";//write the query
 				}
 				
 				PreparedStatement stmtForSelect = conn.prepareStatement(SQLStudentTASelect);
-				stmtForSelect.setInt(1, UIN);
+				stmtForSelect.setInt(1, UIN);//set the UIN
 				
-				ResultSet rs =  stmtForSelect.executeQuery();
+				ResultSet rs =  stmtForSelect.executeQuery();//execute the query
 					
 					if(rs.first())
 					{
+						//if the resultset exists then get the values
 						
+						DBAnnotation.annoate("retrievedTAOfferID", "teachingassistant", "OfferID", true);
 				        int retrievedTAOfferID = rs.getInt("OfferID");
+				        
+				        DBAnnotation.annoate("retrievedTAOfficeHours", "teachingassistant", "TaOfficeHours", true);
 				        String retrievedTAOfficeHours = rs.getString("TaOfficeHours");
+				        
+				        DBAnnotation.annoate("retrievedTAOfficeAddress", "teachingassistant", "TaOfficeLocation", true);
 				        String retrievedTAOfficeAddress = rs.getString("TaOfficeLocation");
 
 
@@ -62,7 +59,7 @@ public class TA extends Student {
 					
 					else
 					{
-						
+						//else the UIN does not exist
 						System.out.println("UIN does not exist in the TA table");
 						throw new PersonDoesNotExistException();
 
@@ -72,14 +69,15 @@ public class TA extends Student {
 			
 		
 	}
-			
+			//catch the SQL exception
 			catch(SQLException e){
 				System.out.print("SQL exception in student const");
 				System.out.println(e);
 				e.printStackTrace();	
 			}
 		}
-		
+			
+		//catch the person deos not exist exception
 		catch(PersonDoesNotExistException e){
 			System.out.println(e);
 			e.printStackTrace();
@@ -87,6 +85,7 @@ public class TA extends Student {
 			
 		}
 		
+		//finally block
 		finally{
 			
 			//System.out.println("retrieved");
@@ -95,41 +94,38 @@ public class TA extends Student {
 	}
 
 	/*
-//	 * addTA function takes in the inputs of the UIN of the TA and the
-//	 * offer ID of the course
-//	 * 
-//	 * Before adding into the TA table it needs to be added as an employee
-//	 * 
-//	 * Calls the addtoEmployee function which returns a boolean value
-//	 * 
-//	 * if the UIN is added then it adds into the TA table 
-//	 * 
-//	 * if returns true then it is successfully added
-//	 * 
-//	 * else the function returns false
-//	 */
+	 * updateTA office sddress function takes in the inputs of the UIN of the TA and the
+	 * offer ID of the course and the new office address
+	 * 
+	 * Calls the addtoEmployee function which returns a boolean value 
+	 * 
+	 * it updated it returns true
+	 * 
+	 * else the function returns false
+	 */
 
 	public static boolean updateTaOfficeAddress(int UIN, int offerID, String newOfficeAddress){
 		
 		boolean isUpdated=false; 
 		
+		//check for null
 		if(newOfficeAddress==null){
 			return false;
 			
 		}
-		
+		//check the length
 		if(newOfficeAddress.length()==0){
 			return false;
 		}
 		
 		
-		boolean check=addTAtoTAtableCheck(UIN, offerID);
+		boolean check=addTAtoTAtableCheck(UIN, offerID);//check if TA exists
 		if(!check){
 			return false;
 		}
 		
 		try{
-			Connection conn = Database.getConnection();
+			Connection conn = Database.getConnection();//get the connection
 			
 			try{
 				
@@ -138,11 +134,16 @@ public class TA extends Student {
 						System.out.println("Updating data in the database");
 						String SQLPeopleInsert= "UPDATE teachingassistant SET TaOfficeLocation= ? where TaUIN=? and OfferID=? ;";
 						PreparedStatement stmt = conn.prepareStatement(SQLPeopleInsert);
-						stmt.setString(1, newOfficeAddress);
-						stmt.setInt(2, UIN);
-						stmt.setInt(3, offerID);
+						stmt.setString(1, newOfficeAddress);//set the values
+						stmt.setInt(2, UIN);//set the values
+						stmt.setInt(3, offerID);//set the values
 						System.out.println(stmt);
-						int i = stmt.executeUpdate();
+						int i = stmt.executeUpdate();//execute the query
+						
+						DBAnnotation.annoate("newOfficeAddress", "teachingassistant", "TaOfficeLocation", false);
+						DBAnnotation.annoate("UIN", "teachingassistant", "TaUIN", false);
+						DBAnnotation.annoate("offerID", "teachingassistant", "OfferID", false);
+						
 						System.out.println(i);
 						System.out.println("Updated");
 						isUpdated=true;
@@ -152,14 +153,14 @@ public class TA extends Student {
 					
 					
 			}
-			
+			//catch block for SQL exception
 			catch(SQLException e){
 				System.out.println("Error adding/updating to database");
 				System.out.println(e);	
 			}
 			
 		}
-		
+		//outer catch block for other exceptions
 		catch (Course.CourseDoesNotExistException
 				| CourseOffered.CourseOfferingDoesNotExistException e1) {
 			// TODO Auto-generated catch block
@@ -181,28 +182,40 @@ public class TA extends Student {
 		
 	}
 	
+	
+	/*
+	 * updateTA office hours function takes in the inputs of the UIN of the TA and the
+	 * offer ID of the course and the new office hours
+	 * 
+	 * Calls the addtoEmployee function which returns a boolean value 
+	 * 
+	 * it updated it returns true
+	 * 
+	 * else the function returns false
+	 */
 	public static boolean updateTaOfficeHours(int UIN, int offerID, String newOfficeHours){
 		
-		boolean isUpdated=false; 
+		boolean isUpdated=false; //set to false
 		
+		//check for null
 		if(newOfficeHours==null){
 			return false;
 			
 		}
-		
+		//check the length
 		if(newOfficeHours.length()==0){
 			return false;
 		}
 		
 		
-		boolean check=addTAtoTAtableCheck(UIN, offerID);
+		boolean check=addTAtoTAtableCheck(UIN, offerID);//check if the Uin exists
 		if(!check){
 			return false;
 		}
 		
 		
 		try{
-			Connection conn = Database.getConnection();
+			Connection conn = Database.getConnection();//get the connection
 			
 			try{
 				
@@ -211,11 +224,16 @@ public class TA extends Student {
 						System.out.println("Updating data in the database");
 						String SQLPeopleInsert= "UPDATE teachingassistant SET TaOfficeHours= ? where TaUIN=? and OfferID=? ;";
 						PreparedStatement stmt = conn.prepareStatement(SQLPeopleInsert);
-						stmt.setString(1, newOfficeHours);
-						stmt.setInt(2, UIN);
-						stmt.setInt(3, offerID);
+						stmt.setString(1, newOfficeHours);//set the values
+						stmt.setInt(2, UIN);//set the values
+						stmt.setInt(3, offerID);//set the values
 						System.out.println(stmt);
-						int i = stmt.executeUpdate();
+						int i = stmt.executeUpdate();//execute the query
+						
+						DBAnnotation.annoate("newOfficeHours", "teachingassistant", "TaOfficeHours", false);
+						DBAnnotation.annoate("UIN", "teachingassistant", "TaUIN", false);
+						DBAnnotation.annoate("offerID", "teachingassistant", "OfferID", false);
+						
 						System.out.println(i);
 						System.out.println("Updated");
 						isUpdated=true;
@@ -225,20 +243,20 @@ public class TA extends Student {
 					
 					
 			}
-			
+			//catch block for SQL query
 			catch(SQLException e){
 				System.out.println("Error adding/updating to database");
 				System.out.println(e);	
 			}
 			
 		}
-		
+		//catch block 
 		catch(Exception e){
 			System.out.println("Connection failed");
 			System.out.println(e);
 			
 		}
-		
+		//finally block
 		finally{
 			
 			//System.out.println("retrieved");
@@ -248,46 +266,52 @@ public class TA extends Student {
 		
 	}
 	
+	/*this function is to retrieve the office address of the Ta
+	 * 
+	 * passed is the offer ID and the UIN
+	 * 
+	 * it returns a string */
 	public static String getTAOfficeAddress(int UIN, int offerID){
 		
 		
 		try{
-			Connection conn = Database.getConnection();
+			Connection conn = Database.getConnection();//get the connection
 			
 			try{
 				
 				    CourseOffered c=new CourseOffered(offerID);
 						
 						System.out.println("selecting TA s office location");
-						String SQLTASelect= "select * from teachingassistant where TaUIN=? and OfferID=? ;";
+						String SQLTASelect= "select * from teachingassistant where TaUIN=? and OfferID=? ;";//write the query
 						PreparedStatement stmt = conn.prepareStatement(SQLTASelect);
-						stmt.setInt(1, UIN);
-						stmt.setInt(2, offerID);
-						System.out.println(stmt);
-						ResultSet rs=stmt.executeQuery();
+						stmt.setInt(1, UIN);//set the values
+						stmt.setInt(2, offerID);//set the values
+						System.out.println(stmt);//set the values
+						ResultSet rs=stmt.executeQuery();//execute the queries
 						System.out.println("Retreived");
 						
 						if(rs.first()){
 							
-							String getTAOfficeLocation=rs.getString("TaOfficeLocation");
+							DBAnnotation.annoate("getTAOfficeLocation", "teachingassistant", "TaOfficeLocation", true);
+							String getTAOfficeLocation=rs.getString("TaOfficeLocation");//get the values
 							return getTAOfficeLocation;
 						}
 					
 			}
-			
+			//catch block
 			catch(SQLException e){
 				System.out.println("Error adding/updating to database");
 				System.out.println(e);	
 			}
 			
 		}
-		
+		//catch block 
 		catch(Exception e){
 			System.out.println("Connection failed");
 			System.out.println(e);
 			
 		}
-		
+		//finally block 
 		finally{
 			
 			//System.out.println("retrieved");
@@ -297,46 +321,53 @@ public class TA extends Student {
 		
 	}
 	
+	
+	/*this function is to retrieve the office hours of the Ta
+	 * 
+	 * passed is the offer ID and the UIN
+	 * 
+	 * it returns a string */
 	public static String getTAOfficeHours(int UIN, int offerID){
 		
 		
 		try{
-			Connection conn = Database.getConnection();
+			Connection conn = Database.getConnection();//get the connection
 			
 			try{
 				
 				CourseOffered c=new CourseOffered(offerID);
 						
 						System.out.println("selecting TA s office hours");
-						String SQLTASelect= "select * from teachingassistant where TaUIN=? and OfferID=? ;";
+						String SQLTASelect= "select * from teachingassistant where TaUIN=? and OfferID=? ;";//write the query
 						PreparedStatement stmt = conn.prepareStatement(SQLTASelect);
-						stmt.setInt(1, UIN);
-						stmt.setInt(2, offerID);
+						stmt.setInt(1, UIN);//set the values
+						stmt.setInt(2, offerID);//set the values
 						System.out.println(stmt);
 						ResultSet rs=stmt.executeQuery();
 						System.out.println("Retreived");
 						
 						if(rs.first()){
-							
+							//if the resultset exists
+							DBAnnotation.annoate("getTAOfficeHours", "teachingassistant", "TaOfficeHours", true);
 							String getTAOfficeHours=rs.getString("TaOfficeHours");
 							return getTAOfficeHours;
 						}
 					
 			}
-			
+			//catch the SQL exception
 			catch(SQLException e){
 				System.out.println("Error adding/updating to database");
 				System.out.println(e);	
 			}
 			
 		}
-		
+		//catch block 
 		catch(Exception e){
 			System.out.println("Connection failed");
 			System.out.println(e);
 			
 		}
-		
+		//finally block
 		finally{
 			
 			//System.out.println("retrieved");
@@ -362,10 +393,10 @@ public class TA extends Student {
 	public static boolean addTAtoTAtable(int UIN, int offerID) throws AlreadyExistsInTAException{
 
 				
-		boolean isAdded = false;
+		boolean isAdded = false;//set it to false
 
 		try {
-			Connection conn = Database.getConnection();
+			Connection conn = Database.getConnection();//get the connection
 
 				try{
 					Student stud=new Student(UIN);
@@ -385,7 +416,7 @@ public class TA extends Student {
 					e.printStackTrace();
 				}
 
-				boolean ifExists = addTAtoTAtableCheck(UIN, offerID);
+				boolean ifExists = addTAtoTAtableCheck(UIN, offerID);//check if it exists
 
 				if (ifExists) {
 					throw new AlreadyExistsInTAException();
@@ -395,26 +426,25 @@ public class TA extends Student {
 
 					System.out.println("Adding new data into the database");
 					
-					@DBAnnotation (
-							variable = {"UIN","offerID"}, table = "teachingassistant", 
-							column = {"TaUIN","OfferID"}, 
-							isSource = false)
 					
-					String SQLPeopleInsert = "Insert into teachingassistant (TaUIN, OfferID) Values (?,?);";
-					PreparedStatement stmt = conn
-							.prepareStatement(SQLPeopleInsert);
-					stmt.setInt(1, UIN);
-					stmt.setInt(2, offerID);
-					int i = stmt.executeUpdate();
+					String SQLPeopleInsert = "Insert into teachingassistant (TaUIN, OfferID) Values (?,?);";//write the query
+					PreparedStatement stmt = conn.prepareStatement(SQLPeopleInsert);
+					stmt.setInt(1, UIN);//set the values
+					stmt.setInt(2, offerID);//set the values
+					int i = stmt.executeUpdate();//execute the query
+					
+					DBAnnotation.annoate("UIN", "teachingassistant", "TaUIN", false);
+					DBAnnotation.annoate("offerID", "teachingassistant", "OfferID", false);
+					
 					System.out.println(i);
 					System.out.println("Inserted");
 					isAdded = true;
-					updateStudentToTA(UIN);
+					updateStudentToTA(UIN);//call the update function
 
 				}
 
 			}
-
+			//catch block 
 			catch (SQLException e) {
 				System.out.println("Error adding/updating to database");
 				e.printStackTrace();
@@ -422,7 +452,7 @@ public class TA extends Student {
 			}
 
 		
-
+		//catch the already exists exception
 		catch (AlreadyExistsInTAException e) {
 			System.out.println("Error");
 			e.printStackTrace();
@@ -452,19 +482,19 @@ public class TA extends Student {
 	 * */	
 	public static boolean addTAtoTAtableCheck(int UIN, int offerID) {
 
-		boolean isExisting = false;
+		boolean isExisting = false;//set it to false
 
 		try {
-			Connection conn = Database.getConnection();
+			Connection conn = Database.getConnection();//get the connection
 			String SQLPeopleSelect = "";
 
 			try {
 
-				SQLPeopleSelect = "Select TaUIN From teachingassistant where OfferID=? and TaUIN= ?;";
+				SQLPeopleSelect = "Select TaUIN From teachingassistant where OfferID=? and TaUIN= ?;";//write the query
 				PreparedStatement stmt = conn.prepareStatement(SQLPeopleSelect);
-				stmt.setInt(1, offerID);
-				stmt.setInt(2, UIN);
-				ResultSet rs = stmt.executeQuery();
+				stmt.setInt(1, offerID);//set the values
+				stmt.setInt(2, UIN);//set the values
+				ResultSet rs = stmt.executeQuery();//execute the query
 
 				if (rs.first()) {
 					System.out.println(UIN+ "already exists as a TA");
@@ -472,26 +502,22 @@ public class TA extends Student {
 				}
 
 			}
-
+			//catch the exception
 			catch (SQLException e) {
 				System.out.println("Error adding/updating to database");
 				e.printStackTrace();
 				System.out.println(e);
 			}
-
-			finally {
-				// System.out.println("retrieved");
-				// Database.closeConnection(conn);
-			}
+			
 		}
-
+		//catch block
 		catch (Exception e) {
 			System.out.println("Connection failed");
 			e.printStackTrace();
 			System.out.println(e);
 
 		}
-
+		//finally
 		finally {
 
 			// System.out.println("retrieved");
@@ -510,10 +536,10 @@ public class TA extends Student {
 	public static ArrayList<TA> getAllTAs() {
 
 
-		ArrayList<TA> getAllTAs = new ArrayList<TA>();
+		ArrayList<TA> getAllTAs = new ArrayList<TA>();//initialize an arraylist
 
 		try {
-			Connection conn = Database.getConnection();
+			Connection conn = Database.getConnection();//get the connection
 
 			try {
 				if (conn != null) {
@@ -521,18 +547,18 @@ public class TA extends Student {
 					// Retrieve all the professors from one department
 					String ProfessorSelect = "Select *"
 							+ " FROM university.people" + " WHERE PositionID=4";
-					PreparedStatement statement = conn
-							.prepareStatement(ProfessorSelect);
-					ResultSet rs = statement.executeQuery();
+					PreparedStatement statement = conn.prepareStatement(ProfessorSelect);
+					ResultSet rs = statement.executeQuery();//execute the query
 
 					while (rs.next()) {
 
+						DBAnnotation.annoate("retreivedTAUIN", "people", "UIN", true);
 						int retreivedTAUIN = rs.getInt("UIN");
 						// System.out.println(retreivedProfUserNames);
 						TA teachingAssistant;
 						try {
 							teachingAssistant = new TA(retreivedTAUIN);
-							getAllTAs.add(teachingAssistant);
+							getAllTAs.add(teachingAssistant);//add the retreived TA objects to the arraylist
 							System.out.println(teachingAssistant.getUserName());
 						} catch (PersonDoesNotExistException e) {
 							// TODO Auto-generated catch block
@@ -544,20 +570,20 @@ public class TA extends Student {
 				}
 
 			}
-
+			//catch the SQl exception
 			catch (SQLException e) {
 				System.out.println("Error fetching all the professors");
 				System.out.println(e.getMessage());
 				e.printStackTrace();
 
 			}
-
+			//finally block
 			finally {
 				// Database.commitTransaction(conn);
 			}
 
 		}
-
+		//finally block 
 		finally {
 		}
 
@@ -578,30 +604,30 @@ public class TA extends Student {
 	 */
 	public boolean updateTAUserName(String userName) {
 
+		//check for null
 		if(userName==null){
 			return false;
 			
 		}
-		
+		//check for empty string
 		if(userName.length()==0){
 			return false;
 		}
 		
 		
-		boolean isUpdated = false;
+		boolean isUpdated = false;//set to false to be returned if it does not exist in login table
 
 		try {
-			Connection conn = Database.getConnection();
+			Connection conn = Database.getConnection();//get the connection
 
 			try {
 
-				boolean ifAddedInLogin = People.updateUserNameIntoLoginTable(
-						userName, this.getUserName());
-				if (ifAddedInLogin)
+				boolean ifUpdatedInLogin = People.updateUserNameIntoLoginTable(userName, this.getUserName());//check if it is updated in the login table
+				if (ifUpdatedInLogin)
 					isUpdated = true;
 
 			}
-
+			//catch block
 			catch (Exception e) {
 				System.out.println("Error adding/updating to database");
 				e.printStackTrace();
@@ -609,14 +635,14 @@ public class TA extends Student {
 			}
 
 		}
-
+		//catch the exception
 		catch (Exception e) {
 			System.out.println("Connection failed");
 			e.printStackTrace();
 			System.out.println(e);
 
 		}
-
+		//finally block
 		finally {
 
 			// System.out.println("retrieved");
@@ -642,28 +668,28 @@ public class TA extends Student {
 
 		boolean isUpdated = false;
 		
+		//check for null
 		if(name==null){
 			return false;
 			
 		}
-		
+		//check if the length of the string is 0
 		if(name.length()==0){
 			return false;
 		}
 		
 
 		try {
-			Connection conn = Database.getConnection();
+			Connection conn = Database.getConnection();//get the connection
 
 			try {
 
-				boolean ifAddedInPeople = People.updateNameIntoPeopleTable(
-						name, this.getUIN());
-				if (ifAddedInPeople)
+				boolean ifUpdatedInPeople = People.updateNameIntoPeopleTable(name, this.getUIN());//update in the people table
+				if (ifUpdatedInPeople)
 					isUpdated = true;
 
 			}
-
+			//catch block
 			catch (Exception e) {
 				System.out.println("Error adding/updating to database");
 				e.printStackTrace();
@@ -671,14 +697,14 @@ public class TA extends Student {
 			}
 
 		}
-
+		//catch block
 		catch (Exception e) {
 			System.out.println("Connection failed");
 			e.printStackTrace();
 			System.out.println(e);
 
 		}
-
+		//finally block
 		finally {
 
 			// System.out.println("retrieved");
@@ -708,20 +734,19 @@ public class TA extends Student {
 			e1.printStackTrace();
 		}
 
-		boolean isUpdated = false;
+		boolean isUpdated = false;//set the value to be returned as false
 
 		try {
-			Connection conn = Database.getConnection();
+			Connection conn = Database.getConnection();//get the connection
 
 			try {
 
-				boolean ifUpdatedInPeople = People.updateDeptIntoPeopleTable(
-						deptID, this.getUIN());
+				boolean ifUpdatedInPeople = People.updateDeptIntoPeopleTable(deptID, this.getUIN());//update in people
 				if (ifUpdatedInPeople)
 					isUpdated = true;
 
 			}
-
+			//catch block
 			catch (Exception e) {
 				System.out.println("Error adding/updating to database");
 				e.printStackTrace();
@@ -729,14 +754,14 @@ public class TA extends Student {
 			}
 
 		}
-
+		//catch block
 		catch (Exception e) {
 			System.out.println("Connection failed");
 			e.printStackTrace();
 			System.out.println(e);
 
 		}
-
+		//finally block
 		finally {
 
 			// System.out.println("retrieved");
@@ -746,12 +771,18 @@ public class TA extends Student {
 
 	}
 
+	/*if a student is added as a TA the nhis position ID is changed to TA
+	 * 
+	 * the parameter passed is UIN
+	 * 
+	 * the return type is boolean*/
 	public static boolean updateStudentToTA(int UIN){
 		
-		boolean isUpdated=false;
+		boolean isUpdated=false;//set the return value to false
+		int setPosition=4;
 		
 		try{
-			Connection conn = Database.getConnection();
+			Connection conn = Database.getConnection();//get the connection
 			
 			try{
 				
@@ -760,10 +791,14 @@ public class TA extends Student {
 						System.out.println("Updating data in the database");
 						String SQLDeptUpdate= "UPDATE people SET PositionID= ? where UIN=?;";
 						PreparedStatement stmt = conn.prepareStatement(SQLDeptUpdate);
-						stmt.setInt(1, 4);
-						stmt.setInt(2, UIN);
+						stmt.setInt(1,setPosition);//set the values
+						stmt.setInt(2, UIN);//set the values
 						System.out.println(stmt);
-						int i = stmt.executeUpdate();
+						int i = stmt.executeUpdate();//execute the query
+						
+						DBAnnotation.annoate("setPosition", "people", "PositionID", false);
+						DBAnnotation.annoate("UIN", "people", "UIN", false);
+						
 						System.out.println(i);
 						System.out.println("Inserted");
 						isUpdated=true;
@@ -772,26 +807,21 @@ public class TA extends Student {
 					
 					
 			}
-			
+			//catch the SQL exception
 			catch(SQLException e){
 				System.out.println("Error adding/updating to database");
 				System.out.println(e);	
 				e.printStackTrace();
 			}
-			
-			finally{
-				//System.out.println("retrieved");
-				//Database.closeConnection(conn);
-			}
 		}
-		
+		//outer catch block 
 		catch(Exception e){
 			System.out.println("Connection failed");
 			System.out.println(e);
 			e.printStackTrace();
 			
 		}
-		
+		//finally block
 		finally{
 			
 			//System.out.println("retrieved");
@@ -800,23 +830,32 @@ public class TA extends Student {
 	return isUpdated;
 	}
 		
-
+	/*if a TA is relieved of his Ta ship then his position ID is changed 3 as all students
+	 * 
+	 * the parameter passed is UIN
+	 * 
+	 * the return type is boolean*/
 	public static boolean updateTAtoStudent(int UIN){
 		
-		boolean isUpdated=false;
+		boolean isUpdated=false;//set the return value to be false
+		int setPosition=3;
 		
 		
 		try{
-			Connection conn = Database.getConnection();
+			Connection conn = Database.getConnection();//get the connection
 			
 			try{
 				System.out.println("Updating data in the database");
-				String SQLDeptUpdate= "UPDATE people SET PositionID= ? where UIN=?;";
+				String SQLDeptUpdate= "UPDATE people SET PositionID= ? where UIN=?;";//write the query
 				PreparedStatement stmt = conn.prepareStatement(SQLDeptUpdate);
-				stmt.setInt(1, 3);
-				stmt.setInt(2, UIN);
+				stmt.setInt(1, setPosition);//set the values
+				stmt.setInt(2, UIN);//set the values
 				System.out.println(stmt);
-				int i = stmt.executeUpdate();
+				int i = stmt.executeUpdate();//execute the query
+				
+				DBAnnotation.annoate("setPosition", "people", "PositionID", false);
+				DBAnnotation.annoate("UIN", "people", "UIN", false);
+				
 				System.out.println(i);
 				System.out.println("Inserted");
 				isUpdated=true;
@@ -829,7 +868,7 @@ public class TA extends Student {
 					
 					
 			}
-			
+			//catch block for SQL exception
 			catch(SQLException e){
 				System.out.println("Error adding/updating to database");
 				System.out.println(e);	
@@ -837,14 +876,14 @@ public class TA extends Student {
 			}
 			
 		}
-		
+		//catch block
 		catch(Exception e){
 			System.out.println("Connection failed");
 			System.out.println(e);
 			e.printStackTrace();
 			
 		}
-		
+		//finally block
 		finally{
 			
 			//System.out.println("retrieved");
@@ -853,7 +892,7 @@ public class TA extends Student {
 	return isUpdated;
 	}
 
-	
+	//new added exceptions that can be thrown
 	public static class AlreadyExistsInTAException extends Exception {
 		private static final long serialVersionUID = 1L;
 		private String message = null;
