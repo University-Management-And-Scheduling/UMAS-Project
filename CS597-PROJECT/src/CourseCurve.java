@@ -460,10 +460,12 @@ public class CourseCurve {
 		CourseOffered offeredCourse = null;
 		try {
 			offeredCourse = new CourseOffered(offerID);
-		} catch (Course.CourseDoesNotExistException
-				| CourseOffered.CourseOfferingDoesNotExistException e) {
+		} catch (Course.CourseDoesNotExistException e) {
+			e.printStackTrace();
+		} catch (CourseOffered.CourseOfferingDoesNotExistException e) {
 			e.printStackTrace();
 		}
+		
 		HashMap<Student,String> studentGrades = this.getCourseCurve();
 		
 		gradesUpdated = StudentEnrollment.updateAllStudentGrade(studentGrades, offeredCourse);

@@ -75,7 +75,7 @@ public class OfferCoursesUI extends JPanel {
 		allProfessorCombo.setBounds(184, 52, 106, 20);
 		offerCourseTab.add(allProfessorCombo);
 		
-		classCapacity = new JComboBox<Integer>(new DefaultComboBoxModel<Integer>(new Integer[] {40,50,60}));
+		classCapacity = new JComboBox<Integer>(new DefaultComboBoxModel<Integer>(new Integer[] {5,8,10}));
 		classCapacity.setBounds(318, 52, 106, 20);
 		offerCourseTab.add(classCapacity);
 		

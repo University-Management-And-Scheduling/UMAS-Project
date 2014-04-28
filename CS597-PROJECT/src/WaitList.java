@@ -351,8 +351,11 @@ public class WaitList {
 				return true;
 			else
 				return false;
-		} catch (Course.CourseDoesNotExistException
-				| CourseOffered.CourseOfferingDoesNotExistException e) {
+		} catch (Course.CourseDoesNotExistException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			return false;
+		} catch (CourseOffered.CourseOfferingDoesNotExistException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 			return false;
@@ -907,10 +910,11 @@ public class WaitList {
 				}
 				
 				
-			} catch (Course.CourseDoesNotExistException
-					| CourseOffered.CourseOfferingDoesNotExistException e) {
+			} catch (Course.CourseDoesNotExistException e) {
 				e.printStackTrace();
-			} catch (InterruptedException e) {
+			} catch (CourseOffered.CourseOfferingDoesNotExistException e) {
+				e.printStackTrace();
+			}catch (InterruptedException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}

@@ -91,8 +91,10 @@ public class WaitListMonitorDeptUI extends JPanel {
 					s+="\nTaught by professor:"+co.getProfessorName();
 					courseOfferDetailsText.setText(s);
 					
-				} catch (Course.CourseDoesNotExistException
-						| CourseOffered.CourseOfferingDoesNotExistException e) {
+				} catch (Course.CourseDoesNotExistException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				} catch (CourseOffered.CourseOfferingDoesNotExistException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
