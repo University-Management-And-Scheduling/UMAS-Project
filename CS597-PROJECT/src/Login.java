@@ -1,5 +1,5 @@
 
-import java.lang.annotation.*;
+//import java.lang.annotation.*;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -9,14 +9,14 @@ public class Login {
 	String username;
 	String password;
 	
-	@Target({ElementType.LOCAL_VARIABLE})
-	@Retention(RetentionPolicy.RUNTIME)
-	public @interface DBAnnotation {
-	 String[] variable () default "";
-	 String[] table () default "";
-	 String[] column () default "";
-	 boolean[] isSource () default false; 
-	}
+//	@Target({ElementType.LOCAL_VARIABLE})
+//	@Retention(RetentionPolicy.RUNTIME)
+//	public @interface DBAnnotation {
+//	 String[] variable () default "";
+//	 String[] table () default "";
+//	 String[] column () default "";
+//	 boolean[] isSource () default false; 
+//	}
 	
 	public String getUsername() {
 		return username;
@@ -45,11 +45,11 @@ public class Login {
 		String username = this.getUsername();
 		String password =  this.getPassword();
 		boolean isValidUser = false; 
-		@DBAnnotation (
-				variable = {"username","password"},  
-				table = "logindetails", 
-				column = {"Username","Password"}, 
-				isSource = true)
+//		@DBAnnotation (
+//				variable = {"username","password"},  
+//				table = "logindetails", 
+//				column = {"Username","Password"}, 
+//				isSource = true)
 		String SQLLoginSelect = "SELECT Username, Password FROM logindetails WHERE username = ? AND Password = ? ;";
 		
 		try {
@@ -58,12 +58,16 @@ public class Login {
 				if (conn != null) {
 					// Check if file is already present. 
 					PreparedStatement statement = conn.prepareStatement(SQLLoginSelect);
+					DBAnnotation.annoate("username", "logindetails", "Username", false);
 					statement.setString(1, username);
+					DBAnnotation.annoate("password", "logindetails", "Password", false);
 					statement.setString(2, password);
 					ResultSet rs = statement.executeQuery();
 					if (rs.next()) {
 						// Retrieve by column name
+						DBAnnotation.annoate("tableUsername", "logindetails", "Username", true);
 						String tableUsername = rs.getString("Username");
+						DBAnnotation.annoate("tablePassword", "logindetails", "Password", true);
 						String tablePassword = rs.getString("Password");
 						
 						if((tableUsername.equals(username)) && (tablePassword.equals(password))){ 
@@ -89,11 +93,11 @@ public class Login {
 		boolean isUsernamePresent = checkUsernameInDatabase(username);
 		
 		if (isUsernamePresent == false){
-			@DBAnnotation (
-				variable = {"username","password"},  
-				table = "logindetails", 
-				column = {"Username","Password"}, 
-				isSource = false)
+//			@DBAnnotation (
+//				variable = {"username","password"},  
+//				table = "logindetails", 
+//				column = {"Username","Password"}, 
+//				isSource = false)
 		
 			String SQLLoginInsert = "INSERT INTO logindetails (Username,Password) VALUES(?,?);";
 			
@@ -103,7 +107,9 @@ public class Login {
 					if (conn != null) {
 			
 						PreparedStatement statement = conn.prepareStatement(SQLLoginInsert);
+						DBAnnotation.annoate("username", "logindetails", "Username", false);
 						statement.setString(1, username);
+						DBAnnotation.annoate("password", "logindetails", "Password", false);
 						statement.setString(2, password);
 						statement.executeUpdate();
 						Database.commitTransaction(conn);
@@ -127,11 +133,11 @@ public class Login {
 	private static boolean checkUsernameInDatabase(String username) {
 		boolean isUsernamePresent = false;
 		
-		@DBAnnotation (
-				variable = "username",  
-				table = "logindetails", 
-				column = "Username", 
-				isSource = true)
+//		@DBAnnotation (
+//				variable = "username",  
+//				table = "logindetails", 
+//				column = "Username", 
+//				isSource = true)
 		String SQLLoginSelect = "SELECT Username FROM logindetails WHERE username = ? ;";
 		
 		try {
@@ -141,10 +147,12 @@ public class Login {
 					
 					// Check if file is already present. 
 					PreparedStatement statement = conn.prepareStatement(SQLLoginSelect);
+					DBAnnotation.annoate("username", "logindetails", "Username", false);
 					statement.setString(1, username);
 					ResultSet rs = statement.executeQuery();
 					while (rs.next()) {
 						// Retrieve by column name
+						DBAnnotation.annoate("tableUsername", "logindetails", "Username", true);
 						String tableUsername = rs.getString("Username");
 						if(tableUsername.equals(username)){
 							isUsernamePresent = true;
@@ -169,11 +177,11 @@ public class Login {
 		boolean passwordChanged = false;
 	//	String username = this.getUsername();
 		
-		@DBAnnotation (
-			variable = {"username","newPassword"},  
-			table = "logindetails", 
-			column = {"Username","Password"}, 
-			isSource = false)
+//		@DBAnnotation (
+//			variable = {"username","newPassword"},  
+//			table = "logindetails", 
+//			column = {"Username","Password"}, 
+//			isSource = false)
 		
 		String SQLLoginUpdate = "UPDATE logindetails SET Password = ? WHERE Username = ?;";
 			
@@ -183,7 +191,9 @@ public class Login {
 				if (conn != null) {
 		
 					PreparedStatement statement = conn.prepareStatement(SQLLoginUpdate);
+					DBAnnotation.annoate("newPassword", "logindetails", "Password", false);
 					statement.setString(1, newPassword);
+					DBAnnotation.annoate("username", "logindetails", "Username", false);
 					statement.setString(2, username);
 					statement.executeUpdate();
 					Database.commitTransaction(conn);
@@ -207,11 +217,11 @@ public class Login {
 			System.out.println("Username not present");
 		}
 		else {
-			@DBAnnotation (
-					variable = {"username","password"},  
-					table = "logindetails",
-					column = {"Username", "Password"}, 
-					isSource = true)
+//			@DBAnnotation (
+//					variable = {"username","password"},  
+//					table = "logindetails",
+//					column = {"Username", "Password"}, 
+//					isSource = true)
 			
 			String SQLFileSelect = "SELECT Password FROM logindetails WHERE Username = ?;";
 			
@@ -222,10 +232,12 @@ public class Login {
 						
 						// Check if file is already present. 
 						PreparedStatement statement = conn.prepareStatement(SQLFileSelect);
+						DBAnnotation.annoate("username", "logindetails", "Username", false);
 						statement.setString(1, username);
 						ResultSet rs = statement.executeQuery();
 						while (rs.next()) {
 							// Retrieve by column name
+							DBAnnotation.annoate("password", "logindetails", "Password", false);
 							String password = rs.getString("Password");
 							//this.setPassword(password);
 							Email email = Email.getInstance("umas.uic@gmail.com", "cs597project");

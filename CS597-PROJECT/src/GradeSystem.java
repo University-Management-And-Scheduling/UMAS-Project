@@ -1,8 +1,8 @@
 
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
+//import java.lang.annotation.ElementType;
+//import java.lang.annotation.Retention;
+//import java.lang.annotation.RetentionPolicy;
+//import java.lang.annotation.Target;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -13,15 +13,15 @@ public class GradeSystem {
 	String grade; // A+, A, A-, B+, B, B-, C
 	int gradeLevel; // 1, 2, 3, 4, 5, 6, 7
 
-	@Target({ElementType.LOCAL_VARIABLE})
-	@Retention(RetentionPolicy.RUNTIME)
-	public @interface DBAnnotation {
-	 String[] variable () default "";
-	 String[] table () default "";
-	 String[] column () default "";
-	 boolean[] isSource () default false; 
-	}
-	
+//	@Target({ElementType.LOCAL_VARIABLE})
+//	@Retention(RetentionPolicy.RUNTIME)
+//	public @interface DBAnnotation {
+//	 String[] variable () default "";
+//	 String[] table () default "";
+//	 String[] column () default "";
+//	 boolean[] isSource () default false; 
+//	}
+//	
 	public String getGrade() {
 		return grade;
 	}
@@ -63,11 +63,11 @@ public class GradeSystem {
 		if(isGradePresent == true){
 			System.out.println("This grade is already present");
 		} else{
-			@DBAnnotation (
-					variable = {"grade","gradeLevel"},  
-					table = "gradingsystem", 
-					column = {"Grade","GradeLevel"}, 
-					isSource = false)
+//			@DBAnnotation (
+//					variable = {"grade","gradeLevel"},  
+//					table = "gradingsystem", 
+//					column = {"Grade","GradeLevel"}, 
+//					isSource = false)
 			
 			String SQLGradeInsert = "INSERT INTO gradingsystem VALUES(?,?);";
 			
@@ -76,7 +76,9 @@ public class GradeSystem {
 				try {
 					if (conn != null) {
 						PreparedStatement statement = conn.prepareStatement(SQLGradeInsert);
+						DBAnnotation.annoate("grade", "gradingsystem", "Grade", false);
 						statement.setString(1, grade);
+						DBAnnotation.annoate("gradeLevel", "gradingsystem", "GradeLevel", false);
 						statement.setInt(2, gradeLevel);
 						
 						statement.executeUpdate();
@@ -103,11 +105,11 @@ public class GradeSystem {
 		boolean isGradePresent = false;
 		
 		String grade = this.getGrade();
-		@DBAnnotation (
-				variable = "tableGrade",  
-				table = "gradingsystem", 
-				column = "Grade", 
-				isSource = true)
+//		@DBAnnotation (
+//				variable = "tableGrade",  
+//				table = "gradingsystem", 
+//				column = "Grade", 
+//				isSource = true)
 		
 		String SQLGradeSelect = "SELECT Grade FROM gradingsystem;";
 		
@@ -118,6 +120,7 @@ public class GradeSystem {
 					PreparedStatement statement = conn.prepareStatement(SQLGradeSelect);
 					ResultSet rs = statement.executeQuery();
 					while (rs.next()) {
+						DBAnnotation.annoate("tableGrade", "gradingsystem", "Grade", true);
 						String tableGrade = rs.getString("Grade");
 						if(tableGrade.equals(grade)){
 							isGradePresent = true;
@@ -141,11 +144,11 @@ public class GradeSystem {
 		boolean isGradeLevelPresent = false;
 		
 		//int gradeLevel = this.getGradeLevel();
-		@DBAnnotation (
-				variable = "tableGradeLevel",  
-				table = "gradingsystem", 
-				column = "GradeLevel", 
-				isSource = true)
+//		@DBAnnotation (
+//				variable = "tableGradeLevel",  
+//				table = "gradingsystem", 
+//				column = "GradeLevel", 
+//				isSource = true)
 		
 		String SQLGradeSelect = "SELECT GradeLevel FROM gradingsystem;";
 		
@@ -156,6 +159,7 @@ public class GradeSystem {
 					PreparedStatement statement = conn.prepareStatement(SQLGradeSelect);
 					ResultSet rs = statement.executeQuery();
 					while (rs.next()) {
+						DBAnnotation.annoate("tableGradeLevel", "gradingsystem", "GradeLevel", true);
 						int tableGradeLevel = rs.getInt("GradeLevel");
 						if(tableGradeLevel == gradeLevel){
 							isGradeLevelPresent = true;
@@ -184,11 +188,11 @@ public class GradeSystem {
 		if(isGradePresent == false){
 			System.out.println("This grade is not present");
 		} else{
-			@DBAnnotation (
-					variable = "grade",  
-					table = "gradingsystem", 
-					column = "Grade", 
-					isSource = false)
+//			@DBAnnotation (
+//					variable = "grade",  
+//					table = "gradingsystem", 
+//					column = "Grade", 
+//					isSource = false)
 			
 			String SQLGradedDelete = "DELETE FROM gradingsystem WHERE Grade = ?;";
 			
@@ -197,6 +201,7 @@ public class GradeSystem {
 				try {
 					if (conn != null) {
 						PreparedStatement statement = conn.prepareStatement(SQLGradedDelete);
+						DBAnnotation.annoate("grade", "gradingsystem", "Grade", false);
 						statement.setString(1, grade);
 						statement.executeUpdate();
 						Database.commitTransaction(conn);
@@ -226,11 +231,11 @@ public class GradeSystem {
 		if(isGradePresent == false){
 			System.out.println("This grade is not present");
 		} else{
-			@DBAnnotation (
-					variable = "newGrade",  
-					table = "gradingsystem", 
-					column = "Grade", 
-					isSource = false)
+//			@DBAnnotation (
+//					variable = "newGrade",  
+//					table = "gradingsystem", 
+//					column = "Grade", 
+//					isSource = false)
 			
 			String SQLGradeUpdate = "UPDATE gradingsystem SET Grade = ? WHERE Grade = ? ;";
 			
@@ -239,8 +244,10 @@ public class GradeSystem {
 				try {
 					if (conn != null) {
 						PreparedStatement statement = conn.prepareStatement(SQLGradeUpdate);
+						DBAnnotation.annoate("grade", "gradingsystem", "Grade", false);
 						statement.setString(1, grade);
-						statement.setString(1, newGrade);
+						DBAnnotation.annoate("newGrade", "gradingsystem", "Grade", false);
+						statement.setString(2, newGrade);
 						statement.executeUpdate();
 						Database.commitTransaction(conn);
 						isGradeModified = true;
@@ -272,11 +279,11 @@ public class GradeSystem {
 			if(isNewGradeLevelPresent == true){
 				System.out.println(" new Grade Level is not present");
 			} else {
-				@DBAnnotation (
-						variable = "newGradeLevel",  
-						table = "gradingsystem", 
-						column = "GradeLevel", 
-						isSource = false)
+//				@DBAnnotation (
+//						variable = "newGradeLevel",  
+//						table = "gradingsystem", 
+//						column = "GradeLevel", 
+//						isSource = false)
 				
 				String SQLGradeUpdate = "UPDATE gradingsystem SET GradeLevel = ? WHERE GradeLevel = ? ;";
 				
@@ -285,6 +292,7 @@ public class GradeSystem {
 					try {
 						if (conn != null) {
 							PreparedStatement statement = conn.prepareStatement(SQLGradeUpdate);
+							
 							statement.setInt(1, gradeLevel);
 							statement.setInt(1, newGradeLevel);
 							statement.executeUpdate();
@@ -314,11 +322,11 @@ public class GradeSystem {
 		if(isGradePresent == false){
 			System.out.println("Grade " + grade + " is not present");
 		} else {
-			@DBAnnotation (
-					variable = "grade",  
-					table = "gradingsystem", 
-					column = "Grade", 
-					isSource = true)
+//			@DBAnnotation (
+//					variable = "grade",  
+//					table = "gradingsystem", 
+//					column = "Grade", 
+//					isSource = true)
 			
 			String SQLGradeSelect = "SELECT GradeLevel FROM gradingsystem WHERE Grade = ?;";
 			
@@ -327,9 +335,11 @@ public class GradeSystem {
 				try {
 					if (conn != null) {
 						PreparedStatement statement = conn.prepareStatement(SQLGradeSelect);
+						DBAnnotation.annoate("grade", "gradingsystem", "Grade", false);
 						statement.setString(1, grade);
 						ResultSet rs = statement.executeQuery();
 						while (rs.next()) {
+							DBAnnotation.annoate("gradeLevel", "gradingsystem", "GradeLevel", true);
 							int gradeLevel = rs.getInt("GradeLevel");
 							this.setGradeLevel(gradeLevel);
 						}
@@ -354,11 +364,11 @@ public class GradeSystem {
 		if(isGradeLevelPresent == false){
 			System.out.println("Grade Level " + gradeLevel + " is not present");
 		} else {
-			@DBAnnotation (
-					variable = "gradeLevel",  
-					table = "gradingsystem", 
-					column = "GradeLevel", 
-					isSource = true)
+//			@DBAnnotation (
+//					variable = "gradeLevel",  
+//					table = "gradingsystem", 
+//					column = "GradeLevel", 
+//					isSource = true)
 			
 			String SQLGradeSelect = "SELECT Grade FROM gradingsystem WHERE GradeLevel = ?;";
 			
@@ -367,9 +377,11 @@ public class GradeSystem {
 				try {
 					if (conn != null) {
 						PreparedStatement statement = conn.prepareStatement(SQLGradeSelect);
+						DBAnnotation.annoate("gradeLevel", "gradingsystem", "GradeLevel", false);
 						statement.setInt(1, gradeLevel);
 						ResultSet rs = statement.executeQuery();
 						while (rs.next()) {
+							DBAnnotation.annoate("grade", "gradingsystem", "Grade", true);
 							String grade = rs.getString("Grade");
 							gradeObject = new GradeSystem(grade,gradeLevel);
 						}
@@ -391,11 +403,11 @@ public class GradeSystem {
 	public static int getMaxGradeLevel(){
 		int maxGradeLevel = 0;
 		
-		@DBAnnotation (
-				variable = "gradeLevel",  
-				table = "gradingsystem", 
-				column = "GradeLevel", 
-				isSource = true)
+//		@DBAnnotation (
+//				variable = "gradeLevel",  
+//				table = "gradingsystem", 
+//				column = "GradeLevel", 
+//				isSource = true)
 		
 		String SQLGradeSelect = "SELECT max(GradeLevel) FROM gradingsystem;";
 		
@@ -406,6 +418,7 @@ public class GradeSystem {
 					PreparedStatement statement = conn.prepareStatement(SQLGradeSelect);
 					ResultSet rs = statement.executeQuery();
 					while (rs.next()) {
+						DBAnnotation.annoate("maxGradeLevel", "gradingsystem", "max(GradeLevel)", true);
 						maxGradeLevel = rs.getInt(1);
 					}
 				}	

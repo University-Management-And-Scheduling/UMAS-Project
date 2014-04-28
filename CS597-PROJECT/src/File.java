@@ -1,8 +1,8 @@
 
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
+//import java.lang.annotation.ElementType;
+//import java.lang.annotation.Retention;
+//import java.lang.annotation.RetentionPolicy;
+//import java.lang.annotation.Target;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -17,14 +17,14 @@ public class File {
 	String fileLocation;
 	int offerID;
 	
-	@Target({ElementType.LOCAL_VARIABLE})
-	@Retention(RetentionPolicy.RUNTIME)
-	public @interface DBAnnotation {
-	 String[] variable () default "";
-	 String[] table () default "";
-	 String[] column () default "";
-	 boolean[] isSource () default false; 
-	}
+//	@Target({ElementType.LOCAL_VARIABLE})
+//	@Retention(RetentionPolicy.RUNTIME)
+//	public @interface DBAnnotation {
+//	 String[] variable () default "";
+//	 String[] table () default "";
+//	 String[] column () default "";
+//	 boolean[] isSource () default false; 
+//	}
 	
 	
 	// Constructor
@@ -89,11 +89,11 @@ public class File {
 	public static boolean addFileToDB(String fileName, String fileLocation, int offerID){
 		boolean fileAdded = false;
 		// String newFileLocation = fileLocation.replace("/","//");
-		@DBAnnotation (
-				variable = {"fileName","newfileLocation", "offerID"},  
-				table = "files", 
-				column = {"FileName","FileLocation", "OfferID"}, 
-				isSource = false)
+//		@DBAnnotation (
+//				variable = {"fileName","newfileLocation", "offerID"},  
+//				table = "files", 
+//				column = {"FileName","FileLocation", "OfferID"}, 
+//				isSource = false)
 		
 		String SQLFileInsert = "INSERT INTO files (FileName,FileLocation,OfferID) VALUES(?,?,?);";
 		
@@ -115,15 +115,20 @@ public class File {
 						Scanner in = new Scanner(System.in);
 						System.out.println("File already Present. Do you want to Replace it? Yes/No: ");
 						addFileToDB = in.next();
+						in.close();
 					}
+				
 						
 					// Add file in database
 					if(addFileToDB.toLowerCase().equals("yes")){
 						File file = new File(fileName, fileLocation, offerID);
 						file.deleteFileFromDB();
 						PreparedStatement statement = conn.prepareStatement(SQLFileInsert);
+						DBAnnotation.annoate("fileName", "files", "FileName", false);
 						statement.setString(1, fileName);
+						DBAnnotation.annoate("fileLocation", "files", "FileLocation", false);
 						statement.setString(2, fileLocation);
+						DBAnnotation.annoate("offerID", "files", "OfferID", false);
 						statement.setInt(3, offerID);
 						statement.executeUpdate();
 						Database.commitTransaction(conn);
@@ -147,11 +152,11 @@ public class File {
 	private static boolean isFilePresent(String fileName, String fileLocation, int offerID){
 		boolean isFilePresent = false;
 //		String newFileLocation = fileLocation.replace("/","//");
-		@DBAnnotation (
-				variable = "fileName",  
-				table = "files", 
-				column = "FileName", 
-				isSource = true)
+//		@DBAnnotation (
+//				variable = "fileName",  
+//				table = "files", 
+//				column = "FileName", 
+//				isSource = true)
 		
 		String SQLFileSelect = "SELECT FileName FROM files WHERE OfferID = ? AND FileName = ? AND FileLocation = ?;";
 		
@@ -162,12 +167,16 @@ public class File {
 					
 					// Check if file is already present. 
 					PreparedStatement statement = conn.prepareStatement(SQLFileSelect);
+					DBAnnotation.annoate("offerID", "files", "OfferID", false);
 					statement.setInt(1, offerID);
+					DBAnnotation.annoate("fileName", "files", "FileName", false);
 					statement.setString(2, fileName);
+					DBAnnotation.annoate("fileLocation", "files", "FileLocation", false);
 					statement.setString(3, fileLocation);
 					ResultSet rs = statement.executeQuery();
 					while (rs.next()) {
 						// Retrieve by column name
+						DBAnnotation.annoate("fileName", "files", "FileName", true);
 						String tableFileName = rs.getString("FileName");
 						if(tableFileName.equals(fileName)){
 							isFilePresent = true;
@@ -198,11 +207,11 @@ public class File {
 		if(isFilePresent == false){
 			System.out.println("The file is not present");
 		} else {
-			@DBAnnotation (
-					variable = {"fileID"},  
-					table = "files", 
-					column = {"FileID"}, 
-					isSource = false)
+//			@DBAnnotation (
+//					variable = {"fileID"},  
+//					table = "files", 
+//					column = {"FileID"}, 
+//					isSource = false)
 			
 			String SQLFileSelect = "DELETE FROM files WHERE FileID = ?;";
 			try {
@@ -210,6 +219,7 @@ public class File {
 				try {
 					if (conn != null) {
 						PreparedStatement statement = conn.prepareStatement(SQLFileSelect);
+						DBAnnotation.annoate("fileID", "files", "FileID", false);
 						statement.setInt(1, fileID);				
 						statement.executeUpdate();
 						Database.commitTransaction(conn);
@@ -242,11 +252,11 @@ public class File {
 		if(isFilePresent == false){
 			System.out.println("The file is not present");
 		} else {
-			@DBAnnotation (
-					variable = {"fileID","fileLocation"},  
-					table = "files", 
-					column = {"FileID","FileLocation"}, 
-					isSource = false)
+//			@DBAnnotation (
+//					variable = {"fileID","fileLocation"},  
+//					table = "files", 
+//					column = {"FileID","FileLocation"}, 
+//					isSource = false)
 			
 			String SQLFileSelect = "UPDATE files SET `FileLocation`= ? WHERE `FileID`= ? ;";
 			try {
@@ -254,7 +264,9 @@ public class File {
 				try {
 					if (conn != null) {
 						PreparedStatement statement = conn.prepareStatement(SQLFileSelect);
+						DBAnnotation.annoate("newFileLocation", "files", "FileLocation", false);
 						statement.setString(1, newFileLocation);
+						DBAnnotation.annoate("fileID", "files", "FileID", false);
 						statement.setInt(2, fileID);				
 						statement.executeUpdate();
 						Database.commitTransaction(conn);
@@ -278,11 +290,11 @@ public class File {
 	public static int getFileIDFromDB(String fileName,String fileLocation){
 		int fileID = 0;
 		
-		@DBAnnotation (
-				variable = {"fileID", "fileName","fileLocation"},  
-				table = "files", 
-				column = {"FileID","FileName","FileLocation"}, 
-				isSource = {true})
+//		@DBAnnotation (
+//				variable = {"fileID", "fileName","fileLocation"},  
+//				table = "files", 
+//				column = {"FileID","FileName","FileLocation"}, 
+//				isSource = {true})
 		
 		String SQLFileSelect = "SELECT FileID FROM files WHERE FileName = ? AND FileLocation = ?;";
 		try {
@@ -290,7 +302,9 @@ public class File {
 			try {
 				if (conn != null) {
 					PreparedStatement statement = conn.prepareStatement(SQLFileSelect);
+					DBAnnotation.annoate("fileName", "files", "FileName", false);
 					statement.setString(1, fileName);
+					DBAnnotation.annoate("fileLocation", "files", "FileLocation", false);
 					statement.setString(2, fileLocation);
 					
 					ResultSet rs = statement.executeQuery();
@@ -312,12 +326,12 @@ public class File {
 	
 	// Get a list of files for a single course
 	public static ArrayList<File> getFiles(int offerID){
-		
-		@DBAnnotation (
-				variable = {"fileID", "fileName","fileLocation", "offerID"},  
-				table = "files", 
-				column = {"FileID","FileName","FileLocation", "OfferID"}, 
-				isSource = {false,false,false,true})
+//		
+//		@DBAnnotation (
+//				variable = {"fileID", "fileName","fileLocation", "offerID"},  
+//				table = "files", 
+//				column = {"FileID","FileName","FileLocation", "OfferID"}, 
+//				isSource = {false,false,false,true})
 		
 		ArrayList<File> courseFiles = new ArrayList<File>();
 		int fileID = 0;
@@ -330,13 +344,17 @@ public class File {
 			try {
 				if (conn != null) {
 					PreparedStatement statement = conn.prepareStatement(SQLFileSelect);
+					DBAnnotation.annoate("offerID", "files", "OfferID", false);
 					statement.setInt(1, offerID);
 					
 					ResultSet rs = statement.executeQuery();
 					
 					while(rs.next()){
+						DBAnnotation.annoate("fileID", "files", "FileID", false);
 						fileID = rs.getInt("FileID");
+						DBAnnotation.annoate("fileName", "files", "FileName", false);
 						fileName = rs.getString("FileName");
+						DBAnnotation.annoate("fileLocation", "files", "FileLocation", false);
 						fileLocation = rs.getString("FileLocation");
 						// String newFileLocation = fileLocation.replace("/","//");
 						File file = new File(fileID, fileName, fileLocation, offerID);
@@ -356,12 +374,12 @@ public class File {
 	}
 	
 	public static void main(String[] args){
-		String fileName = "CS442Syllabus";
-		String fileLocation = "C:/CS442";
-		int offerID = 123456;
-		
-		File file = new File(fileName,fileLocation,offerID);
-		
+//		String fileName = "CS442Syllabus";
+//		String fileLocation = "C:/CS442";
+//		int offerID = 123456;
+//		
+//		File file = new File(fileName,fileLocation,offerID);
+//		
 //		boolean fileAdded = File.addFileToDB(fileName, fileLocation, offerID);
 //		
 //		if(fileAdded == true){
