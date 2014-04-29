@@ -12,7 +12,7 @@ import javax.swing.JTabbedPane;
 public class ProfessorExamPanel extends JPanel {
 
 	public static Professor professor;
-	private JTabbedPane tabbedPane;
+	private static JTabbedPane tabbedPane;
 	/**
 	 * Create the panel.
 	 */
@@ -28,7 +28,7 @@ public class ProfessorExamPanel extends JPanel {
 		
 	}
 	
-	public void initialize(){
+	public static void initialize(){
 		tabbedPane.removeAll();
 		tabbedPane.revalidate();
 		tabbedPane.repaint();
@@ -37,9 +37,12 @@ public class ProfessorExamPanel extends JPanel {
 		for(CourseOffered co:courses){
 			JPanel p = new CourseExamsUI(co, false);
 			tabbedPane.addTab(co.getCourseName(), p);
+			tabbedPane.revalidate();
+			tabbedPane.repaint();
+			p.revalidate();
+			p.repaint();
 		}
-		tabbedPane.revalidate();
-		tabbedPane.repaint();
+
 		
 	}
 

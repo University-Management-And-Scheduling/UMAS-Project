@@ -9,6 +9,8 @@ import javax.swing.JPanel;
 
 import java.awt.BorderLayout;
 import java.util.ArrayList;
+import java.util.Timer;
+import java.util.TimerTask;
 
 
 public class UMASAPP {
@@ -61,8 +63,22 @@ public class UMASAPP {
 		Thread taListMonitor = new Thread(new TAListScanner());
 		taListMonitor.start();
 		
-		Thread waitListMonitor = new Thread(new WaitListScan());
-		waitListMonitor.start();
+//		Thread waitListMonitor = new Thread(new WaitListScan());
+//		waitListMonitor.start();
+//		waitListMonitor.setPriority(Thread.MIN_PRIORITY);
+		
+		Timer timer = new Timer();
+		timer.scheduleAtFixedRate(new TimerTask() {
+			
+			@Override
+			public void run() {
+				System.out.println("Starting a new scan");
+				WaitList.scanWaitList();
+				System.out.println("Scanning cycle complete");
+				
+			}
+		}, 100, 10000);
+
 	}
 	
 	public static void initializeLoggedInUser(String username, boolean isLoggedIn){

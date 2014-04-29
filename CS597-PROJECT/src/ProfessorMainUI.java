@@ -16,7 +16,6 @@ public class ProfessorMainUI extends JPanel {
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
-	private JPanel contentPane;
 	private static ProfessorUserUI profUser;
 	private static Professor professor;
 	private static ProfessorCourseUI profCourseUI;
@@ -70,8 +69,7 @@ public class ProfessorMainUI extends JPanel {
 		tabbedPane.addTab("Manage course exams", examPanel);
 		
 		JPanel logOut = new LogOutUI();
-		tabbedPane.addTab("Log out", logOut);
-		
+		tabbedPane.addTab("Log out", logOut);		
 	}
 
 }

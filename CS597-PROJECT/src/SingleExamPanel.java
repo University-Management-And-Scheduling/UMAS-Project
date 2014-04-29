@@ -95,8 +95,9 @@ public class SingleExamPanel extends JPanel {
 				System.out.println(confirmation);
 				if (confirmation == 0){
 					courseExam.deleteExistingExam();
+					CourseExamsUI.deleteFlag = true;
+					System.out.println("Delete successfull");
 				} 
-				CourseExamsUI.initialize();
 				
 			}
 		});
