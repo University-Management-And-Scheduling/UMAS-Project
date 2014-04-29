@@ -8,6 +8,7 @@ import java.sql.SQLException;
 public class Login {
 	String username;
 	String password;
+	People people;
 	
 //	@Target({ElementType.LOCAL_VARIABLE})
 //	@Retention(RetentionPolicy.RUNTIME)

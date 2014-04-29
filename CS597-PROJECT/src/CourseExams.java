@@ -17,7 +17,7 @@ public class CourseExams {
 	int offerID; // CourseOffered offerID
 	String examName; // Name of the exam
 	HashMap<Student,Double> examMarks = new HashMap<Student,Double>(); 
-	// <Student,MarksIn The Exam> 
+	CourseOffered courseoffered;
 	
 //	@Target({ElementType.LOCAL_VARIABLE})
 //	@Retention(RetentionPolicy.RUNTIME)
@@ -40,6 +40,15 @@ public class CourseExams {
 	public CourseExams(int offerID) {
 		super();
 		this.offerID = offerID;
+		try {
+			this.courseoffered = new CourseOffered(this.offerID);
+		} catch (Course.CourseDoesNotExistException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (CourseOffered.CourseOfferingDoesNotExistException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		//this.examName = examName;
 	}
 

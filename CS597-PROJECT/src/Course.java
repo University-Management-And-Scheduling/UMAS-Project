@@ -10,9 +10,9 @@ import java.util.LinkedHashMap;
 
 
 public class Course {
-	Department department;
-	int courseID;
-	String courseName;
+	private Department department;
+	private int courseID;
+	private String courseName;
 	
 	/*Basic constructor when all the initialization values are known*/
 	public Course(int courseID, Department department, String courseName) {

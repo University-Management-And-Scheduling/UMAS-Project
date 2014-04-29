@@ -20,6 +20,7 @@ public class Job {
 	
 	int jobID;
 	int postedByUIN;
+	private Professor professor;
 	String jobInDepartment;
 	double reqdMinimumGPA;
 	double reqdMinimumWorkExperience;
@@ -96,6 +97,7 @@ public class Job {
 					this.skillset3 = retreivedSkill3;
 					this.skillset4 = retreivedSkill4;
 					this.skillset5 = retreivedSkill5;
+					this.professor = new Professor(this.postedByUIN);
 				}
 
 				else {

@@ -25,6 +25,7 @@ public class CourseCurve {
 	int offerID; // CourseOffered offerID
 	List<Integer> curvingCriteria; // <10,20,10>
 	HashMap<Student,String> courseCurve; // <Student,Grade>
+	CourseOffered courseoffered;
 	
 //	@Target({ElementType.LOCAL_VARIABLE})
 //	@Retention(RetentionPolicy.RUNTIME)
@@ -41,6 +42,15 @@ public class CourseCurve {
 		super();
 		this.offerID = offerID;
 		this.curvingCriteria = curvingCriteria;
+		try {
+			this.courseoffered = new CourseOffered(this.offerID);
+		} catch (Course.CourseDoesNotExistException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (CourseOffered.CourseOfferingDoesNotExistException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 	
 	public int getOfferID() {

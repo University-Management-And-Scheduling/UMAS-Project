@@ -18,6 +18,8 @@ public class StudentEnrollment {
 	int UIN;		// Student UIN
 	int offerID; //OfferID of course offered in a sem
 	String grade; //Student Grade = 'A', 'B','C', 'D' and 'F'
+	private Student stdnt;
+	private CourseOffered cOffered;
 	
 	
 //	@Target({ElementType.LOCAL_VARIABLE})

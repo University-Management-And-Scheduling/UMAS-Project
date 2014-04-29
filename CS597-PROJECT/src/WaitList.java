@@ -18,6 +18,7 @@ public class WaitList {
 	int offerID;
 	int UIN;
 	int queuePos;
+	CourseOffered courseoffered;
 	
 	private WaitList(){
 		//Wait List class cannot be initialized directly

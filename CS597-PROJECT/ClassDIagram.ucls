@@ -1,0 +1,386 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<class-diagram version="1.1.5" icons="true" always-add-relationships="true" generalizations="true" realizations="true" 
+  associations="true" dependencies="true" nesting-relationships="true">  
+  <class id="1" language="java" name="Admin" project="CS597-PROJECT" file="/CS597-PROJECT/src/Admin.java" binary="false" 
+    corner="BOTTOM_RIGHT">    
+    <position height="-1" width="-1" x="162" y="192"/>    
+    <display autosize="true" stereotype="true" package="false" initial-value="false" signature="true" accessors="true" 
+      visibility="true">      
+      <attributes public="false" package="false" protected="false" private="true" static="false"/>      
+      <operations public="false" package="false" protected="false" private="false" static="false"/>    
+    </display>  
+  </class>  
+  <class id="2" language="java" name="Classroom" project="CS597-PROJECT" file="/CS597-PROJECT/src/Classroom.java" 
+    binary="false" corner="BOTTOM_RIGHT">    
+    <position height="-1" width="-1" x="579" y="124"/>    
+    <display autosize="true" stereotype="true" package="false" initial-value="false" signature="true" accessors="true" 
+      visibility="true">      
+      <attributes public="false" package="false" protected="true" private="true" static="false"/>      
+      <operations public="false" package="false" protected="false" private="false" static="false"/>    
+    </display>  
+  </class>  
+  <enumeration id="3" language="java" name="ClassroomLocation" project="CS597-PROJECT" 
+    file="/CS597-PROJECT/src/ClassroomLocation.java" binary="false" corner="BOTTOM_RIGHT">    
+    <position height="-1" width="-1" x="658" y="-98"/>    
+    <display autosize="true" stereotype="true" package="false" initial-value="false" signature="true" accessors="true" 
+      visibility="true">      
+      <attributes public="false" package="false" protected="true" private="true" static="false"/>      
+      <operations public="false" package="false" protected="false" private="false" static="false"/>    
+    </display>  
+  </enumeration>  
+  <enumeration id="4" language="java" name="ClassroomName" project="CS597-PROJECT" 
+    file="/CS597-PROJECT/src/ClassroomName.java" binary="false" corner="BOTTOM_RIGHT">    
+    <position height="-1" width="-1" x="745" y="-35"/>    
+    <display autosize="true" stereotype="true" package="false" initial-value="false" signature="true" accessors="true" 
+      visibility="true">      
+      <attributes public="false" package="false" protected="true" private="true" static="false"/>      
+      <operations public="false" package="false" protected="false" private="false" static="false"/>    
+    </display>  
+  </enumeration>  
+  <class id="5" language="java" name="Course" project="CS597-PROJECT" file="/CS597-PROJECT/src/Course.java" 
+    binary="false" corner="BOTTOM_RIGHT">    
+    <position height="-1" width="-1" x="478" y="218"/>    
+    <display autosize="true" stereotype="true" package="false" initial-value="false" signature="true" accessors="true" 
+      visibility="true">      
+      <attributes public="false" package="false" protected="true" private="true" static="false"/>      
+      <operations public="false" package="false" protected="false" private="false" static="false"/>    
+    </display>  
+  </class>  
+  <class id="6" language="java" name="CourseExamStructure" project="CS597-PROJECT" 
+    file="/CS597-PROJECT/src/CourseExamStructure.java" binary="false" corner="BOTTOM_RIGHT">    
+    <position height="-1" width="-1" x="81" y="398"/>    
+    <display autosize="true" stereotype="true" package="false" initial-value="false" signature="true" accessors="true" 
+      visibility="true">      
+      <attributes public="false" package="true" protected="true" private="true" static="false"/>      
+      <operations public="false" package="false" protected="false" private="false" static="false"/>    
+    </display>  
+  </class>  
+  <class id="7" language="java" name="CourseOffered" project="CS597-PROJECT" 
+    file="/CS597-PROJECT/src/CourseOffered.java" binary="false" corner="BOTTOM_RIGHT">    
+    <position height="-1" width="-1" x="313" y="318"/>    
+    <display autosize="true" stereotype="true" package="false" initial-value="false" signature="true" accessors="true" 
+      visibility="true">      
+      <attributes public="false" package="false" protected="true" private="true" static="false"/>      
+      <operations public="false" package="false" protected="false" private="false" static="false"/>    
+    </display>  
+  </class>  
+  <class id="8" language="java" name="CourseSchedule" project="CS597-PROJECT" 
+    file="/CS597-PROJECT/src/CourseSchedule.java" binary="false" corner="BOTTOM_RIGHT">    
+    <position height="-1" width="-1" x="697" y="266"/>    
+    <display autosize="true" stereotype="true" package="false" initial-value="false" signature="true" accessors="true" 
+      visibility="true">      
+      <attributes public="false" package="false" protected="true" private="true" static="false"/>      
+      <operations public="false" package="false" protected="false" private="false" static="false"/>    
+    </display>  
+  </class>  
+  <class id="9" language="java" name="Department" project="CS597-PROJECT" file="/CS597-PROJECT/src/Department.java" 
+    binary="false" corner="BOTTOM_RIGHT">    
+    <position height="-1" width="-1" x="425" y="98"/>    
+    <display autosize="true" stereotype="true" package="false" initial-value="false" signature="true" accessors="true" 
+      visibility="true">      
+      <attributes public="false" package="false" protected="true" private="true" static="false"/>      
+      <operations public="false" package="false" protected="false" private="false" static="false"/>    
+    </display>  
+  </class>  
+  <class id="10" language="java" name="Employee" project="CS597-PROJECT" file="/CS597-PROJECT/src/Employee.java" 
+    binary="false" corner="BOTTOM_RIGHT">    
+    <position height="-1" width="-1" x="78" y="76"/>    
+    <display autosize="true" stereotype="true" package="false" initial-value="false" signature="true" accessors="true" 
+      visibility="true">      
+      <attributes public="false" package="false" protected="true" private="true" static="false"/>      
+      <operations public="false" package="false" protected="false" private="false" static="false"/>    
+    </display>  
+  </class>  
+  <class id="11" language="java" name="File" project="CS597-PROJECT" file="/CS597-PROJECT/src/File.java" binary="false" 
+    corner="BOTTOM_RIGHT">    
+    <position height="-1" width="-1" x="573" y="352"/>    
+    <display autosize="true" stereotype="true" package="false" initial-value="false" signature="true" accessors="true" 
+      visibility="true">      
+      <attributes public="false" package="false" protected="true" private="true" static="false"/>      
+      <operations public="false" package="false" protected="false" private="false" static="false"/>    
+    </display>  
+  </class>  
+  <class id="12" language="java" name="JobApplication" project="CS597-PROJECT" 
+    file="/CS597-PROJECT/src/JobApplication.java" binary="false" corner="BOTTOM_RIGHT">    
+    <position height="-1" width="-1" x="492" y="-104"/>    
+    <display autosize="true" stereotype="true" package="false" initial-value="false" signature="true" accessors="true" 
+      visibility="true">      
+      <attributes public="false" package="false" protected="true" private="true" static="false"/>      
+      <operations public="false" package="false" protected="false" private="false" static="false"/>    
+    </display>  
+  </class>  
+  <class id="13" language="java" name="People" project="CS597-PROJECT" file="/CS597-PROJECT/src/People.java" 
+    binary="false" corner="BOTTOM_RIGHT">    
+    <position height="-1" width="-1" x="77" y="-130"/>    
+    <display autosize="true" stereotype="true" package="false" initial-value="false" signature="true" accessors="true" 
+      visibility="true">      
+      <attributes public="false" package="false" protected="true" private="true" static="false"/>      
+      <operations public="false" package="false" protected="false" private="false" static="false"/>    
+    </display>  
+  </class>  
+  <class id="14" language="java" name="Professor" project="CS597-PROJECT" file="/CS597-PROJECT/src/Professor.java" 
+    binary="false" corner="BOTTOM_RIGHT">    
+    <position height="-1" width="-1" x="55" y="193"/>    
+    <display autosize="true" stereotype="true" package="false" initial-value="false" signature="true" accessors="true" 
+      visibility="true">      
+      <attributes public="false" package="false" protected="true" private="true" static="false"/>      
+      <operations public="false" package="false" protected="false" private="false" static="false"/>    
+    </display>  
+  </class>  
+  <class id="15" language="java" name="CourseCurve" project="CS597-PROJECT" file="/CS597-PROJECT/src/CourseCurve.java" 
+    binary="false" corner="BOTTOM_RIGHT">    
+    <position height="-1" width="-1" x="378" y="491"/>    
+    <display autosize="true" stereotype="true" package="false" initial-value="false" signature="true" accessors="true" 
+      visibility="true">      
+      <attributes public="false" package="false" protected="true" private="true" static="false"/>      
+      <operations public="false" package="false" protected="false" private="false" static="false"/>    
+    </display>  
+  </class>  
+  <class id="16" language="java" name="CourseExams" project="CS597-PROJECT" file="/CS597-PROJECT/src/CourseExams.java" 
+    binary="false" corner="BOTTOM_RIGHT">    
+    <position height="-1" width="-1" x="489" y="438"/>    
+    <display autosize="true" stereotype="true" package="false" initial-value="false" signature="true" accessors="true" 
+      visibility="true">      
+      <attributes public="false" package="false" protected="true" private="true" static="false"/>      
+      <operations public="false" package="false" protected="false" private="false" static="false"/>    
+    </display>  
+  </class>  
+  <class id="17" language="java" name="Job" project="CS597-PROJECT" file="/CS597-PROJECT/src/Job.java" binary="false" 
+    corner="BOTTOM_RIGHT">    
+    <position height="-1" width="-1" x="58" y="298"/>    
+    <display autosize="true" stereotype="true" package="false" initial-value="false" signature="true" accessors="true" 
+      visibility="true">      
+      <attributes public="false" package="false" protected="true" private="true" static="false"/>      
+      <operations public="false" package="false" protected="false" private="false" static="false"/>    
+    </display>  
+  </class>  
+  <class id="18" language="java" name="Student" project="CS597-PROJECT" file="/CS597-PROJECT/src/Student.java" 
+    binary="false" corner="BOTTOM_RIGHT">    
+    <position height="-1" width="-1" x="298" y="-98"/>    
+    <display autosize="true" stereotype="true" package="false" initial-value="false" signature="true" accessors="true" 
+      visibility="true">      
+      <attributes public="false" package="false" protected="true" private="true" static="false"/>      
+      <operations public="false" package="false" protected="false" private="false" static="false"/>    
+    </display>  
+  </class>  
+  <class id="19" language="java" name="StudentEnrollment" project="CS597-PROJECT" 
+    file="/CS597-PROJECT/src/StudentEnrollment.java" binary="false" corner="BOTTOM_RIGHT">    
+    <position height="-1" width="-1" x="268" y="114"/>    
+    <display autosize="true" stereotype="true" package="false" initial-value="false" signature="true" accessors="true" 
+      visibility="true">      
+      <attributes public="false" package="false" protected="true" private="true" static="false"/>      
+      <operations public="false" package="false" protected="false" private="false" static="false"/>    
+    </display>  
+  </class>  
+  <class id="20" language="java" name="TA" project="CS597-PROJECT" file="/CS597-PROJECT/src/TA.java" binary="false" 
+    corner="BOTTOM_RIGHT">    
+    <position height="-1" width="-1" x="182" y="-29"/>    
+    <display autosize="true" stereotype="true" package="false" initial-value="false" signature="true" accessors="true" 
+      visibility="true">      
+      <attributes public="false" package="false" protected="true" private="true" static="false"/>      
+      <operations public="false" package="false" protected="false" private="false" static="false"/>    
+    </display>  
+  </class>  
+  <class id="21" language="java" name="Timeslots" project="CS597-PROJECT" file="/CS597-PROJECT/src/Timeslots.java" 
+    binary="false" corner="BOTTOM_RIGHT">    
+    <position height="-1" width="-1" x="788" y="79"/>    
+    <display autosize="true" stereotype="true" package="false" initial-value="false" signature="true" accessors="true" 
+      visibility="true">      
+      <attributes public="false" package="false" protected="true" private="true" static="false"/>      
+      <operations public="false" package="false" protected="false" private="false" static="false"/>    
+    </display>  
+  </class>  
+  <class id="22" language="java" name="WaitList" project="CS597-PROJECT" file="/CS597-PROJECT/src/WaitList.java" 
+    binary="false" corner="BOTTOM_RIGHT">    
+    <position height="-1" width="-1" x="243" y="508"/>    
+    <display autosize="true" stereotype="true" package="false" initial-value="false" signature="true" accessors="true" 
+      visibility="true">      
+      <attributes public="false" package="false" protected="true" private="true" static="false"/>      
+      <operations public="false" package="false" protected="false" private="false" static="false"/>    
+    </display>  
+  </class>  
+  <class id="23" language="java" name="Login" project="CS597-PROJECT" file="/CS597-PROJECT/src/Login.java" 
+    binary="false" corner="BOTTOM_RIGHT">    
+    <position height="-1" width="-1" x="256" y="-184"/>    
+    <display autosize="true" stereotype="true" package="false" initial-value="false" signature="true" accessors="true" 
+      visibility="true">      
+      <attributes public="false" package="false" protected="true" private="true" static="false"/>      
+      <operations public="false" package="false" protected="false" private="false" static="false"/>    
+    </display>  
+  </class>  
+  <generalization id="24">    
+    <end type="SOURCE" refId="20"/>    
+    <end type="TARGET" refId="18"/>  
+  </generalization>  
+  <association id="25">    
+    <end type="SOURCE" refId="5" navigable="false">      
+      <attribute id="26" name="department"/>      
+      <multiplicity id="27" minimum="0" maximum="1"/>    
+    </end>    
+    <end type="TARGET" refId="9" navigable="true"/>    
+    <display labels="true" multiplicity="true"/>  
+  </association>  
+  <association id="28">    
+    <end type="SOURCE" refId="7" navigable="false">      
+      <attribute id="29" name="professor">        
+        <position height="18" width="56" x="128" y="238"/>      
+      </attribute>      
+      <multiplicity id="30" minimum="0" maximum="1"/>    
+    </end>    
+    <end type="TARGET" refId="14" navigable="true"/>    
+    <display labels="true" multiplicity="true"/>  
+  </association>  
+  <association id="31">    
+    <end type="SOURCE" refId="15" navigable="false">      
+      <attribute id="32" name="courseoffered"/>      
+      <multiplicity id="33" minimum="0" maximum="1"/>    
+    </end>    
+    <end type="TARGET" refId="7" navigable="true"/>    
+    <display labels="true" multiplicity="true"/>  
+  </association>  
+  <association id="34">    
+    <end type="SOURCE" refId="22" navigable="false">      
+      <attribute id="35" name="courseoffered"/>      
+      <multiplicity id="36" minimum="0" maximum="1"/>    
+    </end>    
+    <end type="TARGET" refId="7" navigable="true"/>    
+    <display labels="true" multiplicity="true"/>  
+  </association>  
+  <association id="37">    
+    <end type="SOURCE" refId="19" navigable="false">      
+      <attribute id="38" name="cOffered"/>      
+      <multiplicity id="39" minimum="0" maximum="1"/>    
+    </end>    
+    <end type="TARGET" refId="7" navigable="true"/>    
+    <display labels="true" multiplicity="true"/>  
+  </association>  
+  <association id="40">    
+    <end type="SOURCE" refId="7" navigable="false">      
+      <attribute id="41" name="course"/>      
+      <multiplicity id="42" minimum="0" maximum="1"/>    
+    </end>    
+    <end type="TARGET" refId="5" navigable="true"/>    
+    <display labels="true" multiplicity="true"/>  
+  </association>  
+  <association id="43">    
+    <end type="SOURCE" refId="17" navigable="false">      
+      <attribute id="44" name="professor">        
+        <position height="18" width="56" x="-2" y="236"/>      
+      </attribute>      
+      <multiplicity id="45" minimum="0" maximum="1"/>    
+    </end>    
+    <end type="TARGET" refId="14" navigable="true"/>    
+    <display labels="true" multiplicity="true"/>  
+  </association>  
+  <association id="46">    
+    <end type="SOURCE" refId="7" navigable="false">      
+      <attribute id="47" name="courseSchedule"/>      
+      <multiplicity id="48" minimum="0" maximum="1"/>    
+    </end>    
+    <end type="TARGET" refId="8" navigable="true"/>    
+    <display labels="true" multiplicity="true"/>  
+  </association>  
+  <association id="49">    
+    <end type="SOURCE" refId="18" navigable="false">      
+      <attribute id="50" name="jobApplication"/>      
+      <multiplicity id="51" minimum="0" maximum="1"/>    
+    </end>    
+    <end type="TARGET" refId="12" navigable="true"/>    
+    <display labels="true" multiplicity="true"/>  
+  </association>  
+  <association id="52">    
+    <end type="SOURCE" refId="23" navigable="false">      
+      <attribute id="53" name="people"/>      
+      <multiplicity id="54" minimum="0" maximum="1"/>    
+    </end>    
+    <end type="TARGET" refId="13" navigable="true"/>    
+    <display labels="true" multiplicity="true"/>  
+  </association>  
+  <association id="55">    
+    <end type="SOURCE" refId="8" navigable="false">      
+      <attribute id="56" name="timeslot"/>      
+      <multiplicity id="57" minimum="0" maximum="1"/>    
+    </end>    
+    <end type="TARGET" refId="21" navigable="true"/>    
+    <display labels="true" multiplicity="true"/>  
+  </association>  
+  <association id="58">    
+    <end type="SOURCE" refId="7" navigable="false">      
+      <attribute id="59" name="files"/>      
+      <multiplicity id="60" minimum="0" maximum="2147483647"/>    
+    </end>    
+    <end type="TARGET" refId="11" navigable="true"/>    
+    <display labels="true" multiplicity="true"/>  
+  </association>  
+  <generalization id="61">    
+    <end type="SOURCE" refId="10"/>    
+    <end type="TARGET" refId="13"/>  
+  </generalization>  
+  <generalization id="62">    
+    <end type="SOURCE" refId="18"/>    
+    <end type="TARGET" refId="13"/>  
+  </generalization>  
+  <association id="63">    
+    <end type="SOURCE" refId="2" navigable="false">      
+      <attribute id="64" name="classroomName"/>      
+      <multiplicity id="65" minimum="0" maximum="1"/>    
+    </end>    
+    <end type="TARGET" refId="4" navigable="true"/>    
+    <display labels="true" multiplicity="true"/>  
+  </association>  
+  <association id="66">    
+    <end type="SOURCE" refId="2" navigable="false">      
+      <attribute id="67" name="classroomLocation"/>      
+      <multiplicity id="68" minimum="0" maximum="1"/>    
+    </end>    
+    <end type="TARGET" refId="3" navigable="true"/>    
+    <display labels="true" multiplicity="true"/>  
+  </association>  
+  <association id="69">    
+    <bendpoint x="290" y="94"/>    
+    <end type="SOURCE" refId="19" navigable="false">      
+      <attribute id="70" name="stdnt"/>      
+      <multiplicity id="71" minimum="0" maximum="1"/>    
+    </end>    
+    <end type="TARGET" refId="18" navigable="true"/>    
+    <display labels="true" multiplicity="true"/>  
+  </association>  
+  <generalization id="72">    
+    <end type="SOURCE" refId="14"/>    
+    <end type="TARGET" refId="10"/>  
+  </generalization>  
+  <generalization id="73">    
+    <end type="SOURCE" refId="1"/>    
+    <end type="TARGET" refId="10"/>  
+  </generalization>  
+  <association id="74">    
+    <end type="SOURCE" refId="6" navigable="false">      
+      <attribute id="75" name="offeredCourse"/>      
+      <multiplicity id="76" minimum="0" maximum="1"/>    
+    </end>    
+    <end type="TARGET" refId="7" navigable="true"/>    
+    <display labels="true" multiplicity="true"/>  
+  </association>  
+  <association id="77">    
+    <end type="SOURCE" refId="16" navigable="false">      
+      <attribute id="78" name="courseoffered"/>      
+      <multiplicity id="79" minimum="0" maximum="1"/>    
+    </end>    
+    <end type="TARGET" refId="7" navigable="true"/>    
+    <display labels="true" multiplicity="true"/>  
+  </association>  
+  <association id="80">    
+    <end type="SOURCE" refId="8" navigable="false">      
+      <attribute id="81" name="classroom"/>      
+      <multiplicity id="82" minimum="0" maximum="1"/>    
+    </end>    
+    <end type="TARGET" refId="2" navigable="true"/>    
+    <display labels="true" multiplicity="true"/>  
+  </association>  
+  <classifier-display autosize="true" stereotype="true" package="false" initial-value="false" signature="true" 
+    accessors="true" visibility="true">    
+    <attributes public="false" package="false" protected="true" private="true" static="false"/>    
+    <operations public="false" package="false" protected="false" private="false" static="false"/>  
+  </classifier-display>  
+  <association-display labels="false" multiplicity="false"/>
+</class-diagram>
