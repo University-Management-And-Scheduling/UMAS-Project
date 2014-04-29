@@ -306,11 +306,12 @@ public class ProfessorCourseUI extends JPanel {
 		String dir = System.getProperty("user.dir");
 		String fileLocation = dir+"/Files/"+courseName+"-"+offerID;
 		String destDir = dir+"/Files/"+courseName+"-"+offerID+"/"+file.getName();
+		String fileLocForDB = "/Files/"+courseName+"-"+offerID;
 		System.out.println("Dest:"+destDir);
 		System.out.println("File:"+file.getPath());
 		
 		try {
-			boolean flag = File.addFileToDB(file.getName(), fileLocation, offerID);
+			boolean flag = File.addFileToDB(file.getName(), fileLocForDB, offerID);
 			if(flag){
 				Files.copy(file.toPath(), new java.io.File(destDir).toPath(), StandardCopyOption.REPLACE_EXISTING);
 				Database.commitTransaction(Database.getConnection());

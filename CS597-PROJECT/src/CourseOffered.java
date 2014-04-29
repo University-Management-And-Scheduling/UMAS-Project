@@ -524,8 +524,9 @@ public class CourseOffered {
 						
 												
 						if(fileFlag){
-							String currentPath = System.getProperty("user.dir");
-							String fileDir = currentPath+"/Files/"+course.getCourseName()+"-"+generatedID;
+							//String currentPath = System.getProperty("user.dir");
+							//String fileDir = currentPath+"/Files/"+course.getCourseName()+"-"+generatedID;
+							String fileDir = "/Files/"+course.getCourseName()+"-"+generatedID;
 							String fileName = course.getCourseName()+generatedID+"-details.txt";
 							fileFlag = File.addFileToDB(fileName, fileDir, generatedID);
 						}
@@ -1227,7 +1228,8 @@ public class CourseOffered {
 		String [] attachments = new String[file.size()];
 		for(int i=0;i<file.size();i++){
 			File f = file.get(i);
-			attachments[i] = f.getFileLocation()+"\\"+f.getFileName();
+			String userDir = System.getProperty("user.dir");
+			attachments[i] = userDir+f.getFileLocation()+"\\"+f.getFileName();
 		}
 		
 		Email email = Email.getInstance("umas.uic@gmail.com", "cs597project");
