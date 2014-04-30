@@ -43,6 +43,16 @@ public class Admin extends Employee {
 			//if the dept object is null then return false
 			return false;
 		}
+		
+		if (name == null) {
+			//if the name is null then return false
+			return false;
+		}
+		
+		if (name.length()==0) {
+			//if the name is null then return false
+			return false;
+		}
 
 		int addedUIN = Employee.addIntoDatabase(name, dept, 1);//add the admin into the database with the name, dept and position ID
 

@@ -574,7 +574,9 @@ public class AdminUI extends JPanel {
 			public void actionPerformed(ActionEvent arg0) {
 				if(courseScheduledCombo.getModel().getSize()>0)
 					initilizeSingleRescheduleTab((Integer)courseScheduledCombo.getSelectedItem());
-				//Add available locations, classrooms, 
+
+				classRoomCombo.removeAllItems();
+				timingAvailableCombo.removeAllItems();
 			}
 		});
 		courseScheduledCombo.setBounds(30, 38, 159, 29);

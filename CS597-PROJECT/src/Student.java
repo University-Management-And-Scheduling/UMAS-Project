@@ -550,6 +550,10 @@ public class Student extends People {
 	/*update student name when the username is passed*/
 	public boolean updateStudentUserName(String userName) {
 
+		if (userName==null) {
+			throw new NullPointerException();//check if its null
+		}
+		
 		if (userName.equals("")) {
 			throw new NullPointerException();//check if its null
 		}
@@ -596,9 +600,14 @@ public class Student extends People {
 	/*update the student name which passed the new name to this function*/
 	public boolean updateStudentName(String name) {
 
+		if (name==null) {
+			throw new NullPointerException();//throw an exception
+		}
+		
 		if (name.equals("")) {
 			throw new NullPointerException();//throw an exception
 		}
+		
 
 		boolean isUpdated = false;
 
