@@ -879,7 +879,6 @@ public class CourseOffered {
 			try{
 				if(conn != null){
 					
-					//Retrieve the current semester ID
 					String SemesterSelect = "Select *"
 							+ " FROM studentenrollment"
 							+ " WHERE UIN= ?";
@@ -1237,6 +1236,54 @@ public class CourseOffered {
 				+ "Find attachments", attachments);
 		
 		return isSent;
+	}
+	
+	public static ArrayList<TA> getTAsForCourse(CourseOffered co){
+		ArrayList<TA> tas = new ArrayList<TA>();
+		if(co==null)
+			return tas;
+		
+		try{
+			Connection conn = Database.getConnection();
+			
+			try{
+				if(conn != null){
+					String SQLSelect = "Select *"
+							+ " FROM coursesoffered as c join teachingassistant as t"
+							+ " WHERE c.OfferID = ?";
+					PreparedStatement statement = conn.prepareStatement(SQLSelect);
+					statement.setInt(1, co.getOfferID());
+					ResultSet rs = statement.executeQuery();
+					
+					while(rs.next()){
+						DBAnnotation.annoate("taID", "teachingassistant", "TaUIN", true);
+						int taID = rs.getInt("TaUIN");
+						TA ta = new TA(taID);
+						tas.add(ta);
+					}					
+				}
+					
+					
+				else{
+					throw new IllegalAccessException("TA does not exits - CoursesOffered.java");
+				}
+										
+					
+				
+			}
+			
+			catch(Exception e){
+				System.out.println(e.getMessage());
+				e.printStackTrace();
+				
+			}
+			
+		}
+		finally{
+		}
+		
+		return tas;
+		
 	}
 	
 	/*

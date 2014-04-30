@@ -5,6 +5,7 @@ import javax.swing.JLabel;
 import javax.swing.JTextArea;
 import javax.swing.JButton;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.awt.Color;
 import java.awt.Font;
@@ -36,7 +37,7 @@ public class singleCoursePanel extends JPanel {
 		txtrCourseDetails.setBackground(Color.BLACK);
 		txtrCourseDetails.setForeground(Color.WHITE);
 		txtrCourseDetails.setEditable(false);
-		txtrCourseDetails.setBounds(10, 37, 290, 252);
+		txtrCourseDetails.setBounds(10, 37, 290, 300);
 		txtrCourseDetails.setText("Course Details");
 		add(txtrCourseDetails);
 		
@@ -114,17 +115,31 @@ public class singleCoursePanel extends JPanel {
 	}
 	
 	public void initialize(){
+		ArrayList<TA> tas = CourseOffered.getTAsForCourse(courseOffered);
 		
 		if(WaitList.isStudentOnWaitList(student, courseOffered.getOfferID())){
 			txtrGrade.setText("N/A");
 			isWaitList = true;
 			btnSendMeCourse.setEnabled(false);
 			String courseDetails = "Taught by Prof. "+courseOffered.getProfessorName();
+			courseDetails+="\nOffice location and hours:"+courseOffered.getProfessor().getOfficeAddress()+", "
+					+ ""+courseOffered.getProfessor().getOfficeHours();
+			courseDetails+="\n-------------------------------";
+			
 			try {
 				if(courseOffered.checkIfScheduled()){
 					courseDetails+="\nClass location: "+courseOffered.getClassRoomLocation();
 					courseDetails+="\nClassroom name: "+courseOffered.getClassRoomName();
 					courseDetails+="\nTimings: "+courseOffered.getTiming();
+					courseDetails+="\n-------------------------------";
+					for(TA ta:tas){
+						String name = ta.getName();
+						String officeLoc = TA.getTAOfficeAddress(ta.getUIN(), courseOffered.getOfferID());
+						String officeHours = TA.getTAOfficeHours(ta.getUIN(), courseOffered.getOfferID());
+						courseDetails+="\nTeaching assistant:"+name;
+						courseDetails+="\nOffice location and hours:"+officeLoc+", "+officeHours;
+						courseDetails+="\n-------------------------------";
+					}
 				}
 			} catch (CourseOffered.CourseOfferingNotCurrentException e) {
 				e.printStackTrace();
@@ -138,11 +153,23 @@ public class singleCoursePanel extends JPanel {
 			txtrGrade.setText(grades.get(courseOffered));
 			
 			String courseDetails = "Taught by Prof. "+courseOffered.getProfessorName();
+			courseDetails+="\nOffice location and hours:"+courseOffered.getProfessor().getOfficeAddress()+", "
+					+ ""+courseOffered.getProfessor().getOfficeHours();
+			courseDetails+="\n-------------------------------";
 			try {
 				if(courseOffered.checkIfScheduled()){
 					courseDetails+="\nClass location: "+courseOffered.getClassRoomLocation();
 					courseDetails+="\nClassroom name: "+courseOffered.getClassRoomName();
 					courseDetails+="\nTimings: "+courseOffered.getTiming();
+					courseDetails+="\n-------------------------------";
+					for(TA ta:tas){
+						String name = ta.getName();
+						String officeLoc = TA.getTAOfficeAddress(ta.getUIN(), courseOffered.getOfferID());
+						String officeHours = TA.getTAOfficeHours(ta.getUIN(), courseOffered.getOfferID());
+						courseDetails+="\nTeaching assistant:"+name;
+						courseDetails+="\nOffice location and hours:"+officeLoc+", "+officeHours;
+						courseDetails+="\n-------------------------------";
+					}
 				}
 			} catch (CourseOffered.CourseOfferingNotCurrentException e) {
 				e.printStackTrace();

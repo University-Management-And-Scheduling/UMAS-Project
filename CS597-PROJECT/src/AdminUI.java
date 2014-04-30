@@ -574,19 +574,29 @@ public class AdminUI extends JPanel {
 			public void actionPerformed(ActionEvent arg0) {
 				if(courseScheduledCombo.getModel().getSize()>0)
 					initilizeSingleRescheduleTab((Integer)courseScheduledCombo.getSelectedItem());
-
-				classRoomCombo.removeAllItems();
-				timingAvailableCombo.removeAllItems();
+				//Add available locations, classrooms, 
 			}
 		});
 		courseScheduledCombo.setBounds(30, 38, 159, 29);
 		rescheduleIndividual.add(courseScheduledCombo);
 		
 		timeSlotTypeCombo = new JComboBox<String>(new DefaultComboBoxModel<String>(new String[] {"M-W-F", "T-Th"}));
+		timeSlotTypeCombo.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				classRoomCombo.setModel(new DefaultComboBoxModel<String>());
+				timingAvailableCombo.setModel(new DefaultComboBoxModel<String>());
+			}
+		});
 		timeSlotTypeCombo.setBounds(587, 84, 164, 31);
 		rescheduleIndividual.add(timeSlotTypeCombo);
 		
 		classLocationCombo = new JComboBox<String>(new DefaultComboBoxModel<String>(ClassroomLocation.getAllLocations()));
+		classLocationCombo.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				classRoomCombo.setModel(new DefaultComboBoxModel<String>());
+				timingAvailableCombo.setModel(new DefaultComboBoxModel<String>());
+			}
+		});
 		classLocationCombo.setBounds(587, 131, 164, 29);
 		rescheduleIndividual.add(classLocationCombo);
 		

@@ -263,6 +263,7 @@ public class CourseScheduleUI extends JPanel {
 		timeSlotTypeCombo = new JComboBox<String>(new DefaultComboBoxModel<String>(new String[] {"M-W-F", "T-Th"}));
 		timeSlotTypeCombo.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
+				initilizeSingleRescheduleTab();
 				classRoomCombo.setModel(new DefaultComboBoxModel<String>());
 				timingAvailableCombo.setModel(new DefaultComboBoxModel<String>());
 			}
@@ -273,6 +274,7 @@ public class CourseScheduleUI extends JPanel {
 		classLocationCombo = new JComboBox<String>(new DefaultComboBoxModel<String>(ClassroomLocation.getAllLocations()));
 		classLocationCombo.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
+				initilizeSingleRescheduleTab();
 				classRoomCombo.setModel(new DefaultComboBoxModel<String>());
 				timingAvailableCombo.setModel(new DefaultComboBoxModel<String>());
 			}
