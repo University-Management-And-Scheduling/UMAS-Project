@@ -37,7 +37,7 @@ public class singleCoursePanel extends JPanel {
 		txtrCourseDetails.setBackground(Color.BLACK);
 		txtrCourseDetails.setForeground(Color.WHITE);
 		txtrCourseDetails.setEditable(false);
-		txtrCourseDetails.setBounds(10, 37, 290, 300);
+		txtrCourseDetails.setBounds(10, 37, 348, 425);
 		txtrCourseDetails.setText("Course Details");
 		add(txtrCourseDetails);
 		
@@ -49,7 +49,7 @@ public class singleCoursePanel extends JPanel {
 		txtrGrade.setFont(new Font("Monospaced", Font.PLAIN, 70));
 		txtrGrade.setBackground(Color.BLACK);
 		txtrGrade.setEditable(false);
-		txtrGrade.setBounds(310, 69, 130, 136);
+		txtrGrade.setBounds(368, 175, 130, 136);
 		txtrGrade.setText("A");
 		add(txtrGrade);
 		
@@ -66,7 +66,7 @@ public class singleCoursePanel extends JPanel {
 				}
 			}
 		});
-		btnSendMeCourse.setBounds(310, 216, 130, 73);
+		btnSendMeCourse.setBounds(368, 389, 130, 73);
 		add(btnSendMeCourse);
 		
 		btnDrop = new JButton("Drop");
@@ -100,7 +100,7 @@ public class singleCoursePanel extends JPanel {
 				}
 			}
 		});
-		btnDrop.setBounds(310, 0, 130, 38);
+		btnDrop.setBounds(368, 30, 130, 38);
 		add(btnDrop);
 		
 		JLabel lblCourseDetails = new JLabel("Course Details");
@@ -108,7 +108,7 @@ public class singleCoursePanel extends JPanel {
 		add(lblCourseDetails);
 		
 		JLabel lblCurrentGrade = new JLabel("Current Grade");
-		lblCurrentGrade.setBounds(310, 49, 130, 14);
+		lblCurrentGrade.setBounds(368, 151, 130, 14);
 		add(lblCurrentGrade);
 		
 		initialize();

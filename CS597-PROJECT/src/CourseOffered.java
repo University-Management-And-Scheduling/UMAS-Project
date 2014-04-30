@@ -1249,8 +1249,8 @@ public class CourseOffered {
 			try{
 				if(conn != null){
 					String SQLSelect = "Select *"
-							+ " FROM coursesoffered as c join teachingassistant as t"
-							+ " WHERE c.OfferID = ?";
+							+ " FROM teachingassistant as t"
+							+ " WHERE t.OfferID = ?";
 					PreparedStatement statement = conn.prepareStatement(SQLSelect);
 					statement.setInt(1, co.getOfferID());
 					ResultSet rs = statement.executeQuery();
