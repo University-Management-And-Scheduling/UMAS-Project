@@ -21,10 +21,10 @@ public class CourseTest {
 		/*
 		 * Initializing existing course with the corresponding department
 		 */
-		course = new Course(1);
+		course = new Course(102);
 		department = course.getDepartment();
-		course.updateCourse("CS422", department);
-		course = new Course(1);
+		course.updateCourse("CS300", department);
+		course = new Course(102);
 		
 	}
 	
@@ -94,19 +94,9 @@ public class CourseTest {
 		 * Retrieve course id
 		 */
 		int id = course.getCourseID();
-		assertEquals(1, id);
+		assertEquals(102, id);
 	}
 
-	@Test
-	public void testGetCourseName() {
-		/*
-		 * Retrieve course name
-		 * The course name for the initialized object is CS422
-		 * Will fail if the course name is not that
-		 */
-		String courseName = course.getCourseName();
-		assertEquals("CS422", courseName);
-	}
 
 	
 	@Test(expected = Course.CourseAlreadyExistsException.class)

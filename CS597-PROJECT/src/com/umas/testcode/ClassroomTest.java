@@ -28,7 +28,7 @@ public class ClassroomTest {
 		Classroom result = new Classroom(1);
 		assertNotNull(result);
 		assertEquals(1, result.getClassroomID());
-		assertEquals(10, result.getClassroomCapacity());
+		assertEquals(8, result.getClassroomCapacity());
 		assertNotNull(result.getClassroomLocation());
 		assertNotNull(result.getClassroomName());
 	}
@@ -130,7 +130,7 @@ public class ClassroomTest {
 		/*
 		 * Test for a location with all valid parameters and timeslot type 1
 		 */
-		Classroom result = Classroom.getEmptyClassroom(ClassroomLocation.LOCATION3, 1, 10);
+		Classroom result = Classroom.getEmptyClassroom(ClassroomLocation.LOCATION3, 1, 5);
 		assertNotNull(result);
 	}
 	
@@ -139,7 +139,7 @@ public class ClassroomTest {
 		/*
 		 * Test for a location with all valid parameters and timeslot type 2
 		 */
-		Classroom result = Classroom.getEmptyClassroom(ClassroomLocation.LOCATION3, 2, 10);
+		Classroom result = Classroom.getEmptyClassroom(ClassroomLocation.LOCATION2, 2, 10);
 		assertNotNull(result);
 	}
 	

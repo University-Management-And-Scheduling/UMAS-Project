@@ -33,7 +33,7 @@ public class DepartmentTest {
 		 * Success the first time
 		 * Fails later
 		 */
-		Department.addNewDepartment("Radiology");
+		Department.addNewDepartment("Geology");
 	}
 
 	@Test

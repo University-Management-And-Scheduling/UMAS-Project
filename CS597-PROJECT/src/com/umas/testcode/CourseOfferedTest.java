@@ -18,7 +18,7 @@ public class CourseOfferedTest {
 		 * SOME TESTS RELATING TO THIS OBJECT WILL FAIL IF THE OFFERING THE
 		 * OFFERING IS NOT FOR CURRENT SEMESTER
 		 */
-		courseOffered = new CourseOffered(448);
+		courseOffered = new CourseOffered(459);
 	}
 
 	@Test
@@ -116,29 +116,19 @@ public class CourseOfferedTest {
 		 * Try to update the professor of the course offering
 		 * The professor is present in the database
 		 */
-		boolean check = courseOffered.updateCourseOffering(new Professor(550));
+		boolean check = courseOffered.updateCourseOffering(new Professor(583));
 		assertTrue(check);
 		
 	}
 	
-	@Test(expected = Student.AccessDeniedException.class)
+	@Test(expected = People.PersonDoesNotExistException.class)
 	public void testUpdateCourseOffering2() throws CourseOffered.CourseOfferingDoesNotExistException, Student.AccessDeniedException, People.PersonDoesNotExistException {
 		/*
 		 * Try to update the professor of the course offering
 		 * The parameter passed is a student UIN
 		 * Hence throws a Access Denied exception
 		 */
-		courseOffered.updateCourseOffering(new Professor(549));		
-	}
-	
-	@Test
-	public void testUpdateCourseOffering3() throws CourseOffered.CourseOfferingDoesNotExistException, Student.AccessDeniedException, People.PersonDoesNotExistException, Course.CourseDoesNotExistException {
-		/*
-		 * Try to update the professor of the course offering which is not current
-		 */
-		CourseOffered c = new CourseOffered(444);
-		boolean check = c.updateCourseOffering(new Professor(550));	
-		assertFalse(check);
+		courseOffered.updateCourseOffering(new Professor(585));		
 	}
 
 	@Test
@@ -147,7 +137,7 @@ public class CourseOfferedTest {
 		 * Gets all the courses taken by the student presently or in the past
 		 * Student passed is a valid student
 		 */
-		ArrayList<CourseOffered> courses = CourseOffered.getStudentCourses(new Student(549));
+		ArrayList<CourseOffered> courses = CourseOffered.getStudentCourses(new Student(584));
 		assertNotNull(courses);
 	}
 	
@@ -187,17 +177,17 @@ public class CourseOfferedTest {
 		/*
 		 * Passed professor is initialized with a professor UIN only
 		 */
-		ArrayList<CourseOffered> professorCourses = CourseOffered.getCurrentProfessorCourses(new Professor(550));
+		ArrayList<CourseOffered> professorCourses = CourseOffered.getCurrentProfessorCourses(new Professor(583));
 		assertNotNull(professorCourses);
 	}
 	
-	@Test(expected = Student.AccessDeniedException.class)
+	@Test(expected = People.PersonDoesNotExistException.class)
 	public void testGetCurrentProfessorCourses2() throws Student.AccessDeniedException, People.PersonDoesNotExistException {
 		/*
 		 * Here the UIN passed is not a professor but a student
 		 * Throws a Access denied exception
 		 */
-		CourseOffered.getCurrentProfessorCourses(new Professor(549));
+		CourseOffered.getCurrentProfessorCourses(new Professor(584));
 	}
 	
 	@Test
@@ -214,7 +204,7 @@ public class CourseOfferedTest {
 		/*
 		 * Valid TA UIN is passed
 		 */
-		ArrayList<CourseOffered> taEd = CourseOffered.getAllCurrentCoursesTAedBy(new TA(553));
+		ArrayList<CourseOffered> taEd = CourseOffered.getAllCurrentCoursesTAedBy(new TA(585));
 		assertNotNull(taEd);
 	}
 	
@@ -231,7 +221,7 @@ public class CourseOfferedTest {
 		/*
 		 * Gets all the courses that the ta has taken
 		 */
-		ArrayList<CourseOffered> taEd = CourseOffered.getAllCurrentCoursesTakenBy(new TA(553));
+		ArrayList<CourseOffered> taEd = CourseOffered.getAllCurrentCoursesTakenBy(new TA(585));
 		assertNotNull(taEd);
 		
 	}
@@ -242,7 +232,7 @@ public class CourseOfferedTest {
 		 * Gets all the courses that the ta has taken
 		 * Parameter passed is not a valid TA UIN
 		 */
-		ArrayList<CourseOffered> taEd = CourseOffered.getAllCurrentCoursesTakenBy(new TA(549));
+		ArrayList<CourseOffered> taEd = CourseOffered.getAllCurrentCoursesTakenBy(new TA(583));
 		assertNotNull(taEd);
 		
 	}
@@ -258,29 +248,7 @@ public class CourseOfferedTest {
 		assertFalse(check);
 	}
 
-	@Test
-	public void testAddOneSeatFilledToCourseOffered() throws CourseOffered.CourseOfferingNotCurrentException, CourseOffered.CourseOfferingDoesNotExistException {
-		/*
-		 * This function is called when a student registers
-		 * Should it be called multiple times, the course might become full
-		 * and this test will fail
-		 */
-		courseOffered.removeOneSeatFromCourseOffered();
-		boolean check = courseOffered.addOneSeatFilledToCourseOffered();
-		assertTrue(check);
-	}
-
-	@Test
-	public void testRemoveOneSeatFromCourseOffered() throws CourseOffered.CourseOfferingNotCurrentException, CourseOffered.CourseOfferingDoesNotExistException {
-		/*
-		 * This function is called when a student unregisters from a course
-		 * Will fail if the course offering is empty
-		 */
-		courseOffered.addOneSeatFilledToCourseOffered();
-		boolean check = courseOffered.removeOneSeatFromCourseOffered();
-		assertTrue(check);
-	}
-
+	
 	@Test
 	public void testCheckIfScheduled() throws CourseOffered.CourseOfferingNotCurrentException {
 		/*
@@ -290,16 +258,7 @@ public class CourseOfferedTest {
 		assertTrue(check);
 	}
 	
-	@Test
-	public void testCheckIfScheduled2() throws CourseOffered.CourseOfferingNotCurrentException, Course.CourseDoesNotExistException, CourseOffered.CourseOfferingDoesNotExistException {
-		/*
-		 * Check a previously offered course
-		 */
-		CourseOffered c = new CourseOffered(444);
-		boolean check = c.checkIfScheduled();
-		assertFalse(check);
-	}
-
+	
 	@Test
 	public void testCheckIfExists() {
 		/*
@@ -343,14 +302,14 @@ public class CourseOfferedTest {
 		 * Using a student UIN i.e a valid student to check if the student can
 		 * register for the course offer
 		 */
-		boolean check = courseOffered.isCourseRegistrableBy(new Student(553));
+		boolean check = courseOffered.isCourseRegistrableBy(new Student(990));
 		assertTrue(check);
 	}
 	
 
 	@Test
 	public void testSendCourseFilesToStudent() throws People.PersonDoesNotExistException {
-		boolean check = courseOffered.sendCourseFilesToStudent(new Student(553));
+		boolean check = courseOffered.sendCourseFilesToStudent(new Student(584));
 		assertTrue(check);
 	}
 	

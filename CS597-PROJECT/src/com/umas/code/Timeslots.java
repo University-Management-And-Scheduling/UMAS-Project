@@ -156,7 +156,7 @@ public class Timeslots {
 				}
 			}
 			
-			catch(Exception e){
+			catch(SQLException e){
 				System.out.println(e.getMessage());
 			}
 			

@@ -10,7 +10,7 @@ public class WaitListTest {
 	static Student student;
 	@Before
 	public void setUp() throws Exception {
-		student = new Student(553);
+		student = new Student(584);
 	}
 
 	@Test
