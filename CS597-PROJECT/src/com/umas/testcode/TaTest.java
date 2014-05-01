@@ -1,24 +1,22 @@
 package com.umas.testcode;
+
 import static org.junit.Assert.*;
 import java.util.ArrayList;
 import org.junit.Test;
-import com.umas.code.*;
 
 
 import com.mysql.jdbc.UpdatableResultSet;
+import com.umas.code.People;
 import com.umas.code.*;
+
 
 public class TaTest {
 
-	@Test
-	public void testTA() {
-		//fail("Not yet implemented");
-	}
 
 	@Test
 	public void testUpdateTaOfficeAddress1() {
 		
-		boolean check=TA.updateTaOfficeAddress(3, 295, "testing");
+		boolean check=TA.updateTaOfficeAddress(585, 410, "testing");
 		assertTrue(check);
 		
 	}
@@ -72,7 +70,7 @@ public class TaTest {
 	@Test
 	public void testUpdateTaOfficeHours1() {
 		
-		boolean check=TA.updateTaOfficeHours(3, 295, "testing");
+		boolean check=TA.updateTaOfficeHours(585, 410, "testing");
 		assertTrue(check);
 		
 	}
@@ -125,7 +123,7 @@ public class TaTest {
 	@Test
 	public void testGetTAOfficeAddress1() {
 		
-		String check=TA.getTAOfficeAddress(3, 295);
+		String check=TA.getTAOfficeAddress(585, 410);
 		assertNotNull(check);
 	}
 	
@@ -153,7 +151,7 @@ public class TaTest {
 	@Test
 	public void testGetTAOfficeHours1() {
 		
-		String check=TA.getTAOfficeHours(3, 295);
+		String check=TA.getTAOfficeHours(585, 410);
 		assertNotNull(check);
 	}
 	
@@ -187,7 +185,7 @@ public class TaTest {
 	@Test
 	public void testAddTAtoTAtableCheck1() {
 		
-		boolean check=TA.addTAtoTAtableCheck(3, 295);
+		boolean check=TA.addTAtoTAtableCheck(585, 410);
 		assertTrue(check);
 	}
 

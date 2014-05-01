@@ -318,13 +318,13 @@ public class CourseOfferedTest {
 		assertFalse(check);
 	}
 
-	@Test
-	public void testGetCurrentSemesterID() {
-		int semID = CourseOffered.getCurrentSemesterID();
-		assertNotEquals(-1, semID);
-		assertNotEquals(0, semID);
-	}
-	
+//	@Test
+//	public void testGetCurrentSemesterID() {
+//		int semID = CourseOffered.getCurrentSemesterID();
+//		assertNotEquals(-1, semID);
+//		assertNotEquals(0, semID);
+//	}
+//	
 
 	@Test
 	public void testCheckIfCurrent() {
