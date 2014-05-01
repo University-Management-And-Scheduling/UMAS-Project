@@ -59,6 +59,7 @@ public class ClassroomTest {
 		 * This test succeeds only at the first run, fails on next consecutive runs
 		 */
 		boolean isAdded = Classroom.addNewClassroom(ClassroomName.CLASS1, ClassroomLocation.LOCATION3, 10);
+		assertFalse(isAdded);
 	}
 	
 	@Test
