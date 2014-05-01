@@ -67,7 +67,6 @@ public class WaitListTest {
 		}
 	}
 
-	
 	@Test
 	public final void testRemoveFromWaitList() {
 		/*
@@ -124,7 +123,6 @@ public class WaitListTest {
 			e.printStackTrace();
 		}
 	}
-
 	
 	@Test
 	public final void testIsStudentRegistered() {

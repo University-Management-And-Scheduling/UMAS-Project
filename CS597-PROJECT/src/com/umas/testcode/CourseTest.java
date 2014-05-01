@@ -34,7 +34,7 @@ public class CourseTest {
 		 */
 		Course c = null;
 		try {
-			c = new Course(2);
+			c = new Course(102);
 		} catch (Course.CourseDoesNotExistException e) {
 			e.printStackTrace();
 		}
