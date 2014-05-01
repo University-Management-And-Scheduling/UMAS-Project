@@ -9,6 +9,8 @@ import org.junit.Test;
 import com.mysql.jdbc.UpdatableResultSet;
 import com.umas.code.*;
 
+/************************@author Simant Purohit*************************/
+
 public class CourseScheduleTest {
 
 	@Before

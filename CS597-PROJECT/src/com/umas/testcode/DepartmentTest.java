@@ -7,6 +7,8 @@ import org.junit.Test;
 import com.umas.code.*;
 import com.umas.code.Department.DepartmentAlreadyExistsException;
 
+/************************@author Simant Purohit*************************/
+
 public class DepartmentTest {
 
 	public static Department department1;
