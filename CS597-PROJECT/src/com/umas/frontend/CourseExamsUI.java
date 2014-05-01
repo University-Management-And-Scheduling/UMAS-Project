@@ -1,4 +1,4 @@
-package com.umas.code;
+package com.umas.frontend;
 
 
 import java.awt.BorderLayout;
@@ -36,6 +36,13 @@ import java.awt.Color;
 
 import javax.swing.border.BevelBorder;
 import javax.swing.border.EtchedBorder;
+
+import com.umas.code.CourseCurve;
+import com.umas.code.CourseExamStructure;
+import com.umas.code.CourseExams;
+import com.umas.code.CourseOffered;
+import com.umas.code.Student;
+import com.umas.code.StudentEnrollment;
 
 
 public class CourseExamsUI extends JPanel {

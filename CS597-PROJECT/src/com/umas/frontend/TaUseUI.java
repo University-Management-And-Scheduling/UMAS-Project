@@ -1,4 +1,4 @@
-package com.umas.code;
+package com.umas.frontend;
 
 import java.awt.BorderLayout;
 import java.awt.EventQueue;
@@ -14,6 +14,14 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTabbedPane;
 import javax.swing.JTextField;
+
+import com.umas.code.CourseOffered;
+import com.umas.code.Department;
+import com.umas.code.Job;
+import com.umas.code.People;
+import com.umas.code.TA;
+import com.umas.code.Department.DepartmentDoesNotExistException;
+import com.umas.code.People.PersonDoesNotExistException;
 
 
 /**

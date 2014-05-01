@@ -1,4 +1,4 @@
-package com.umas.code;
+package com.umas.frontend;
 
 
 /****************@author Simant Purohit*********************************/
@@ -16,6 +16,18 @@ import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
+
+import com.umas.code.Admin;
+import com.umas.code.Course;
+import com.umas.code.CourseOffered;
+import com.umas.code.DBAnnotation;
+import com.umas.code.Department;
+import com.umas.code.Professor;
+import com.umas.code.Course.CourseDoesNotExistException;
+import com.umas.code.CourseOffered.CourseOfferingAlreadyExistsException;
+import com.umas.code.CourseOffered.CourseOfferingNotSchedulable;
+import com.umas.code.Department.DepartmentDoesNotExistException;
+import com.umas.code.Professor.ProfessorDoesNotExistException;
 
 
 public class OfferCoursesUI extends JPanel {

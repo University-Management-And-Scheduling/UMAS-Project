@@ -1,4 +1,4 @@
-package com.umas.code;
+package com.umas.frontend;
 
 
 
@@ -30,6 +30,24 @@ import java.awt.event.ActionEvent;
 
 import javax.swing.JList;
 import javax.swing.JTextPane;
+
+import com.umas.code.Admin;
+import com.umas.code.Classroom;
+import com.umas.code.ClassroomLocation;
+import com.umas.code.Course;
+import com.umas.code.CourseOffered;
+import com.umas.code.CourseSchedule;
+import com.umas.code.DBAnnotation;
+import com.umas.code.Database;
+import com.umas.code.Department;
+import com.umas.code.People;
+import com.umas.code.Professor;
+import com.umas.code.Semester;
+import com.umas.code.Student;
+import com.umas.code.TA;
+import com.umas.code.Timeslots;
+import com.umas.code.WaitList;
+
 
 import java.awt.Color;
 import java.awt.Font;

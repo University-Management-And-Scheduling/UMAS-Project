@@ -1,4 +1,4 @@
-package com.umas.code;
+package com.umas.frontend;
 
 
 import javax.swing.JPanel;

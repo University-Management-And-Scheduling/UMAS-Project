@@ -1,4 +1,4 @@
-package com.umas.code;
+package com.umas.frontend;
 
 
 import javax.swing.JOptionPane;
@@ -13,6 +13,13 @@ import java.awt.Color;
 import java.awt.Font;
 
 import javax.swing.border.LineBorder;
+
+import com.umas.code.CourseOffered;
+import com.umas.code.Student;
+import com.umas.code.StudentEnrollment;
+import com.umas.code.TA;
+import com.umas.code.WaitList;
+import com.umas.code.CourseOffered.CourseOfferingNotCurrentException;
 
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;

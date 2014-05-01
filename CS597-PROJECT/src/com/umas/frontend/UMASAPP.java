@@ -1,4 +1,4 @@
-package com.umas.code;
+package com.umas.frontend;
 
 
 /****************@author Simant Purohit*********************************/
@@ -8,6 +8,19 @@ import java.awt.EventQueue;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+
+import com.umas.code.Admin;
+import com.umas.code.Department;
+import com.umas.code.People;
+import com.umas.code.Professor;
+import com.umas.code.Semester;
+import com.umas.code.Student;
+import com.umas.code.TA;
+import com.umas.code.TAListScanner;
+import com.umas.code.WaitList;
+import com.umas.code.Department.DepartmentDoesNotExistException;
+import com.umas.code.People.PersonDoesNotExistException;
+import com.umas.code.Student.AccessDeniedException;
 
 import java.awt.BorderLayout;
 import java.util.ArrayList;

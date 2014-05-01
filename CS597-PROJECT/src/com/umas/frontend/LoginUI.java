@@ -1,4 +1,4 @@
-package com.umas.code;
+package com.umas.frontend;
 
 
 import javax.swing.JPanel;
@@ -12,6 +12,8 @@ import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
 
 import javax.swing.JPasswordField;
+
+import com.umas.code.Login;
 
 
 

@@ -1,4 +1,4 @@
-package com.umas.code;
+package com.umas.frontend;
 
 
 import javax.swing.JFrame;
@@ -24,6 +24,9 @@ import java.awt.GridLayout;
 
 import javax.swing.border.MatteBorder;
 import javax.swing.border.LineBorder;
+
+import com.umas.code.CourseExamStructure;
+import com.umas.code.CourseOffered;
 
 
 public class SingleExamPanel extends JPanel {

@@ -1,4 +1,4 @@
-package com.umas.code;
+package com.umas.frontend;
 
 
 import java.awt.BorderLayout;
@@ -24,6 +24,21 @@ import javax.swing.JLabel;
 import javax.swing.JCheckBox;
 import javax.swing.BoxLayout;
 
+
+
+import com.umas.code.DBAnnotation;
+import com.umas.code.Department;
+import com.umas.code.Employee;
+import com.umas.code.Job;
+import com.umas.code.JobApplication;
+import com.umas.code.Login;
+import com.umas.code.People;
+import com.umas.code.Professor;
+import com.umas.code.Student;
+import com.umas.code.Department.DepartmentDoesNotExistException;
+import com.umas.code.Job.NoPermissionException;
+import com.umas.code.People.PersonDoesNotExistException;
+import com.umas.code.Student.AccessDeniedException;
 
 import java.awt.Font;
 import java.awt.Color;

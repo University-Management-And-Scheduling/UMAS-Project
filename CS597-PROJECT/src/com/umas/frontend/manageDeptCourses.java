@@ -1,4 +1,4 @@
-package com.umas.code;
+package com.umas.frontend;
 
 
 /****************@author Simant Purohit*********************************/
@@ -11,12 +11,23 @@ import javax.swing.JLabel;
 
 import java.awt.GridLayout;
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.LinkedHashMap;
 
 import javax.swing.JTextField;
 import javax.swing.JComboBox;
 import javax.swing.JButton;
+
+import com.umas.code.Admin;
+import com.umas.code.Course;
+import com.umas.code.CourseOffered;
+import com.umas.code.CourseSchedule;
+import com.umas.code.DBAnnotation;
+import com.umas.code.Department;
+import com.umas.code.Professor;
+import com.umas.code.Course.CourseAlreadyExistsException;
+import com.umas.code.Course.CourseDoesNotExistException;
+import com.umas.code.CourseOffered.CourseOfferingDoesNotExistException;
+import com.umas.code.Department.DepartmentDoesNotExistException;
+import com.umas.code.Professor.ProfessorDoesNotExistException;
 
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
@@ -24,41 +35,42 @@ import java.awt.event.ActionEvent;
 
 
 
-public class manageCourse extends JTabbedPane {
-	/**
-	 * 
-	 */
+public class manageDeptCourses extends JTabbedPane {
+	private static Admin admin;
+	private static Department adminDepartment;
+	private static manageDeptCourses deptCoursesTab;
+	
+	
 	private static final long serialVersionUID = 1L;
 	private JTextField textField;
-	private JComboBox<String> allDepartmentCombo;
-	private static manageCourse manageCourseInstance;
 	
 	//-----update COURSE variables-------------//
 	private JTextField textField_1;
 	private JComboBox<String> allCoursesCombo;
-	private JComboBox<String> updateCourseDeptCombo;
 	private JButton btnConfirmUpdate;
 	
 	//-------------UPDATE COURSE OFFERING VARIABLES------------------//
 	private JComboBox<Integer> updateOfferIDCombo;
 	private JComboBox<String> updateOfferProfessorCombo;
 	private JButton btnUpdateOffer;
+	private ArrayList<CourseSchedule> allDeptCoursesOffered;
 	
-	
-	public static manageCourse getInstance(){
-		if(manageCourseInstance == null){
-			manageCourseInstance = new manageCourse();
-		}
-		
-		return manageCourseInstance;
-	}
 
-	/**
-	 * Create the panel.
-	 */
-	private manageCourse() {
+	public static manageDeptCourses getInstance(Admin a){
+		try {
+			deptCoursesTab = new manageDeptCourses(a);
+			return deptCoursesTab;
+		} catch (Department.DepartmentDoesNotExistException e) {
+			e.printStackTrace();
+			return null;
+		}
+	}
+	
+	private manageDeptCourses(Admin a) throws Department.DepartmentDoesNotExistException {
 		
 		//-------------ADD A COURSE CODE----------//
+		manageDeptCourses.admin = a;
+		manageDeptCourses.adminDepartment = new Department(admin.getDeptID());
 		JPanel addACourse = new JPanel();
 		addTab("Add a Course", null, addACourse, null);
 		addACourse.setLayout(new GridLayout(3, 2, 0, 0));
@@ -70,11 +82,11 @@ public class manageCourse extends JTabbedPane {
 		addACourse.add(textField);
 		textField.setColumns(10);
 		
-		JLabel lblNewLabel = new JLabel("Select Department");
+		JLabel lblNewLabel = new JLabel("Course Department");
 		addACourse.add(lblNewLabel);
 		
-		allDepartmentCombo = new JComboBox<String>();
-		addACourse.add(allDepartmentCombo);
+		JLabel lblDepartment = new JLabel(adminDepartment.getDepartmentName());
+		addACourse.add(lblDepartment);
 		
 		JLabel lblNewLabel_1 = new JLabel("Confirm Changes");
 		addACourse.add(lblNewLabel_1);
@@ -84,12 +96,13 @@ public class manageCourse extends JTabbedPane {
 			public void actionPerformed(ActionEvent arg0) {
 				addCourse();
 				textField.setText("");
-				initializeDepartments();
 			}
 		});
 		addACourse.add(btnNewButton);
+		//-------------END ADD COURSE-------------//
 		
-		//------------UPDATE COURSE CODE-----------------//
+		
+		//------------UPDATE COURSE CODE---------//
 		JPanel updateCourse = new JPanel();
 		addTab("Update a course", null, updateCourse, null);
 		updateCourse.setLayout(new GridLayout(4, 2, 0, 0));
@@ -100,26 +113,15 @@ public class manageCourse extends JTabbedPane {
 		allCoursesCombo = new JComboBox<String>();
 		allCoursesCombo.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
-				updateCourseDeptCombo.setEnabled(true);
 				textField_1.setEnabled(true);
 				btnConfirmUpdate.setEnabled(true);
 				
 				try {
 					Course courseSelected = new Course((String)allCoursesCombo.getSelectedItem());
-					textField_1.setText(courseSelected.getCourseName());
 					
-					DBAnnotation.annoate("courseDepartment", "department", "Department", true);
-					String courseDepartment = courseSelected.getDepartment().getDepartmentName();
-					int i = getDepartmentIndex(courseDepartment);
-					
-					if(i==-1){
-						showMessage("Error retrieving the department", "Failure");
-						updateCourseDeptCombo.setSelectedIndex(i);
-						return;
-					}
-					
-					updateCourseDeptCombo.setSelectedIndex(i);
-					
+					DBAnnotation.annoate("cName", "courses", "CourseName", true);
+					String cName = courseSelected.getCourseName();
+					textField_1.setText(cName);
 					
 				} catch (Course.CourseDoesNotExistException e) {
 					// TODO Auto-generated catch block
@@ -140,9 +142,8 @@ public class manageCourse extends JTabbedPane {
 		JLabel lblSelectedCourseDepartment = new JLabel("Selected Course Department");
 		updateCourse.add(lblSelectedCourseDepartment);
 		
-		updateCourseDeptCombo = new JComboBox<String>();
-		updateCourseDeptCombo.setEnabled(false);
-		updateCourse.add(updateCourseDeptCombo);
+		JLabel lblDepartment_1 = new JLabel(adminDepartment.getDepartmentName());
+		updateCourse.add(lblDepartment_1);
 		
 		JLabel lblUpdateWithAbove = new JLabel("Update with above values");
 		updateCourse.add(lblUpdateWithAbove);
@@ -151,14 +152,9 @@ public class manageCourse extends JTabbedPane {
 		btnConfirmUpdate.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 				updateCourse();
-				initializeDepartments();
-				initializeCourseList();
-				initializeCourseOfferingUpdateTab();
+				DepartmentAdminUI.initializeAllTabs();
 				textField_1.setEnabled(false);
-				updateCourseDeptCombo.setEnabled(false);
 				btnConfirmUpdate.setEnabled(false);
-				AdminUI adminUI = AdminUI.getInstance();
-				adminUI.initializeEveryThing();
 			}
 		});
 		btnConfirmUpdate.setEnabled(false);
@@ -182,31 +178,26 @@ public class manageCourse extends JTabbedPane {
 				try {
 					CourseOffered co = new CourseOffered((Integer)updateOfferIDCombo.getSelectedItem());
 					DefaultComboBoxModel<String> profModel = new DefaultComboBoxModel<String>();
-					
-					DBAnnotation.annoate("deptName", "department", "DepartmentName", true);
-					String deptName = co.getDepartmentName();
-					
-					ArrayList<Professor> deptProfessor = Professor.getAllProfInADept(new Department(deptName).getDepartmentID());
+					ArrayList<Professor> deptProfessor = Professor.getAllProfInADept(adminDepartment.getDepartmentID());
 					for(Professor p:deptProfessor){
-						profModel.addElement(p.getUserName());
+						
+						DBAnnotation.annoate("prof", "People", "UserName", true);
+						String prof = p.getUserName();
+						profModel.addElement(prof);
 					}
 					updateOfferProfessorCombo.setModel(profModel);
+					
+					DBAnnotation.annoate("professorName", "People", "UserName", true);
 					String professorName = co.getProfessor().getUserName();
 					updateOfferProfessorCombo.setSelectedIndex(getProfessorIndex(professorName));
 					
 				} catch (Professor.ProfessorDoesNotExistException e) {
 					System.out.println("Failed to initialize list");
 					e.printStackTrace();
-				}
-				catch (Department.DepartmentDoesNotExistException e) {
+				} catch (Course.CourseDoesNotExistException e) {
 					System.out.println("Failed to initialize list");
 					e.printStackTrace();
-				}
-				catch (Course.CourseDoesNotExistException e) {
-					System.out.println("Failed to initialize list");
-					e.printStackTrace();
-				}
-				catch (CourseOffered.CourseOfferingDoesNotExistException e) {
+				} catch (CourseOffered.CourseOfferingDoesNotExistException e) {
 					System.out.println("Failed to initialize list");
 					e.printStackTrace();
 				}
@@ -234,11 +225,7 @@ public class manageCourse extends JTabbedPane {
 					boolean updated = co.updateCourseOffering(professor);
 					if(updated){
 						showMessage("Update is successfull", "Success");
-						initializeDepartments();
-						initializeCourseList();
-						initializeCourseOfferingUpdateTab();
-						AdminUI adminUI = AdminUI.getInstance();
-						adminUI.initializeEveryThing();
+						DepartmentAdminUI.initializeAllTabs();
 						
 					}
 					else
@@ -257,7 +244,6 @@ public class manageCourse extends JTabbedPane {
 		updateCourseOffering.add(btnUpdateOffer);
 		
 		//initialization functions
-		initializeDepartments();
 		initializeCourseList();
 		initializeCourseOfferingUpdateTab();
 
@@ -265,71 +251,48 @@ public class manageCourse extends JTabbedPane {
 	
 	private void addCourse(){
 		String courseName = textField.getText();
-		String department = null;
 		if(!checkStringForCourseName(courseName)){
 			showMessage("Please enter course name with two or three uppercase character followed by a number"
 					+ " greater than 100 less than 1000", "Error in course name");
 			return;
 		}
 		
-		int indexDept = allDepartmentCombo.getSelectedIndex();
 		
-		if(indexDept<0){
-			showMessage("Error retrieving the department", "Department does not exist");
-			return;
-		}
-		
-		department = (String)allDepartmentCombo.getSelectedItem();
 		try {
-			Department d = new Department(department);
+			Department d = adminDepartment;
 			if(Course.addCourse(courseName, d)){
 				showMessage("Course added successfully", "Success");
 			}
 			else{
 				showMessage("Course not added, unknown error occurred", "Failure");
 			}
-		} catch (Department.DepartmentDoesNotExistException e) {
-			showMessage("Error retrieving the department", "Department does not exist");
-			return;
 		} catch (Course.CourseAlreadyExistsException e) {
-			showMessage("Course offering with the same name and department already exists", "Duplicate course");
+			showMessage("Course with the same name and department already exists", "Duplicate course");
 			return;
 		}
+		
+		DepartmentAdminUI.initializeAllTabs();
 	}
 
 	private void updateCourse(){
 		String courseNameNew = textField_1.getText();
-		showMessage(courseNameNew, "New");
+		//showMessage(courseNameNew, "New");
 		String courseNameOld = (String)allCoursesCombo.getSelectedItem();
 		try {
 			Course courseOld = new Course(courseNameOld);
-			String department = null;
+			
 			if(!checkStringForCourseName(courseNameNew)){
 				showMessage("Please enter course name with two or three uppercase character followed by a number"
 						+ " greater than 100 less than 1000", "Error in course name");
 				return;
 			}
 			
-			int indexDept = updateCourseDeptCombo.getSelectedIndex();
-			
-			if(indexDept<0){
-				showMessage("Error retrieving the department", "Department does not exist");
-				return;
+			Department d = adminDepartment;
+			if(courseOld.updateCourse(courseNameNew.toString(), d)){
+				showMessage("Course updated successfully", "Success");
 			}
-			
-			department = (String)updateCourseDeptCombo.getSelectedItem();
-			
-			try {
-				Department d = new Department(department);
-				if(courseOld.updateCourse(courseNameNew.toString(), d)){
-					showMessage("Course updated successfully", "Success");
-				}
-				else{
-					showMessage("Course not updated, unknown error occurred", "Failure");
-				}
-			} catch (Department.DepartmentDoesNotExistException e) {
-				showMessage("Error retrieving the department", "Department does not exist");
-				return;
+			else{
+				showMessage("Course not updated, unknown error occurred", "Failure");
 			}
 			
 		} catch (Course.CourseDoesNotExistException e1) {
@@ -338,21 +301,16 @@ public class manageCourse extends JTabbedPane {
 		}
 	}
 	
-	private void initializeDepartments(){
-		DefaultComboBoxModel<String> model = new DefaultComboBoxModel<String>();
-		ArrayList<Department> departments = Department.getAllDepartments();
-		for(Department d:departments){
-			model.addElement(d.getDepartmentName());
-		}
-		allDepartmentCombo.setModel(model);
-		updateCourseDeptCombo.setModel(model);
+	public void initializeData(){
+		initializeCourseList();
+		initializeCourseOfferingUpdateTab();
 	}
 	
 	private void initializeCourseList(){
 		DefaultComboBoxModel<String> model = new DefaultComboBoxModel<String>();
-		LinkedHashMap<Integer, Course> courses = Course.getAllCourses();
-		for(Integer i : courses.keySet()){
-			model.addElement(courses.get(i).getCourseName());
+		ArrayList<Course> courses = Course.getCoursesOfDepartment(adminDepartment);
+		for(Course c : courses){
+			model.addElement(c.getCourseName());
 		}
 		allCoursesCombo.setModel(model);
 		if(model.getSize()>0)
@@ -361,43 +319,46 @@ public class manageCourse extends JTabbedPane {
 	
 	private void initializeCourseOfferingUpdateTab(){
 		DefaultComboBoxModel<Integer> model = new DefaultComboBoxModel<Integer>();
-		HashMap<Integer, CourseOffered> courseOffered = CourseOffered.getAllOfferedIDAndCourseOffered();
-		for(Integer i:courseOffered.keySet()){
-			model.addElement(i);
+		allDeptCoursesOffered = CourseSchedule.getAllScheduledCourses(adminDepartment);
+		for(CourseSchedule cs:allDeptCoursesOffered){
+			
+			DBAnnotation.annoate("oID", "courseschedule", "OfferID", true);
+			int oID = cs.getOfferID();
+			model.addElement(oID);
 		}
 		updateOfferIDCombo.setModel(model);
 		
-		if(model.getSize()>0){
-			CourseOffered co = courseOffered.get(model.getElementAt(0));
-			DefaultComboBoxModel<String> profModel = new DefaultComboBoxModel<String>();
+		if(allDeptCoursesOffered.size()>0){
 			try {
-				
-				DBAnnotation.annoate("deptName", "department", "DepartmentName", true);
-				String deptName = co.getDepartmentName();
-				ArrayList<Professor> deptProfessor = Professor.getAllProfInADept(new Department(deptName).getDepartmentID());
+				DBAnnotation.annoate("oID", "courseschedule", "OfferID", true);
+				int oID = allDeptCoursesOffered.get(0).getOfferID();
+				CourseOffered co = new CourseOffered(oID);
+				DefaultComboBoxModel<String> profModel = new DefaultComboBoxModel<String>();
+				ArrayList<Professor> deptProfessor = Professor.getAllProfInADept(adminDepartment.getDepartmentID());
 				for(Professor p:deptProfessor){
-					profModel.addElement(p.getUserName());
+					DBAnnotation.annoate("prof", "People", "UserName", true);
+					String prof = p.getUserName();
+					profModel.addElement(prof);
 				}
 				updateOfferProfessorCombo.setModel(profModel);
+				
+				DBAnnotation.annoate("professorName", "People", "UserName", true);
+				String professorName = co.getProfessor().getUserName();
+				updateOfferProfessorCombo.setSelectedIndex(getProfessorIndex(professorName));
+				
 				
 			} catch (Professor.ProfessorDoesNotExistException e) {
 				System.out.println("Failed to initialize professor list");
 				e.printStackTrace();
-			} catch (Department.DepartmentDoesNotExistException e) {
-				System.out.println("Failed to initialize professor list");
+			} catch (Course.CourseDoesNotExistException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (CourseOffered.CourseOfferingDoesNotExistException e) {
+				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
-			
-			String professorName = co.getProfessor().getUserName();
-			updateOfferProfessorCombo.setSelectedIndex(getProfessorIndex(professorName));
 		}
 		
-	}
-	
-	public void initializeAll(){
-		initializeCourseList();
-		initializeDepartments();
-		initializeCourseOfferingUpdateTab();
 	}
 	
 	private int getProfessorIndex(String professorName){
@@ -408,16 +369,6 @@ public class manageCourse extends JTabbedPane {
 		}
 		
 		return 0;
-	}
-	
-	private int getDepartmentIndex(String departmentName){
-		for(int i=0; i<updateCourseDeptCombo.getItemCount() ;i++){
-			if(departmentName.equals((String)updateCourseDeptCombo.getItemAt(i))){
-				return i;
-			}
-		}
-		
-		return -1;
 	}
 	
 	public void showMessage(String message, String title)

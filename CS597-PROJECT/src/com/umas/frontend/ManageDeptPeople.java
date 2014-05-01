@@ -1,4 +1,4 @@
-package com.umas.code;
+package com.umas.frontend;
 
 
 
@@ -18,6 +18,23 @@ import javax.swing.JPanel;
 import javax.swing.JTabbedPane;
 import javax.swing.JTextField;
 import javax.swing.JTextArea;
+
+import com.umas.code.Admin;
+import com.umas.code.Course;
+import com.umas.code.CourseOffered;
+import com.umas.code.CourseSchedule;
+import com.umas.code.DBAnnotation;
+import com.umas.code.Department;
+import com.umas.code.People;
+import com.umas.code.Professor;
+import com.umas.code.Student;
+import com.umas.code.TA;
+import com.umas.code.Course.CourseDoesNotExistException;
+import com.umas.code.CourseOffered.CourseOfferingDoesNotExistException;
+import com.umas.code.Department.DepartmentDoesNotExistException;
+import com.umas.code.People.PersonDoesNotExistException;
+import com.umas.code.Student.levelNotExistException;
+import com.umas.code.TA.AlreadyExistsInTAException;
 
 
 public class ManageDeptPeople extends JPanel {

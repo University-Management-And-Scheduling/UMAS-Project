@@ -1,4 +1,4 @@
-package com.umas.code;
+package com.umas.frontend;
 
 
 /****************@author Simant Purohit*********************************/
@@ -17,6 +17,19 @@ import javax.swing.JScrollPane;
 import javax.swing.JTextPane;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
+
+import com.umas.code.Admin;
+import com.umas.code.Course;
+import com.umas.code.CourseOffered;
+import com.umas.code.CourseSchedule;
+import com.umas.code.Department;
+import com.umas.code.People;
+import com.umas.code.Student;
+import com.umas.code.WaitList;
+import com.umas.code.Course.CourseDoesNotExistException;
+import com.umas.code.CourseOffered.CourseOfferingDoesNotExistException;
+import com.umas.code.Department.DepartmentDoesNotExistException;
+import com.umas.code.People.PersonDoesNotExistException;
 
 
 

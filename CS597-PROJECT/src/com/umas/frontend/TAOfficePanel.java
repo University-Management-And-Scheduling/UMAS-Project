@@ -1,4 +1,4 @@
-package com.umas.code;
+package com.umas.frontend;
 
 
 /****************@author Simant Purohit*********************************/
@@ -9,6 +9,11 @@ import java.util.ArrayList;
 
 import javax.swing.JPanel;
 import javax.swing.JTabbedPane;
+
+import com.umas.code.CourseOffered;
+import com.umas.code.Department;
+import com.umas.code.TA;
+import com.umas.code.Department.DepartmentDoesNotExistException;
 
 
 public class TAOfficePanel extends JPanel {

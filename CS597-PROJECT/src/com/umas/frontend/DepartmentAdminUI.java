@@ -1,4 +1,4 @@
-package com.umas.code;
+package com.umas.frontend;
 
 
 /****************@author Simant Purohit*********************************/
@@ -10,6 +10,11 @@ import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
 import javax.swing.JTabbedPane;
+
+import com.umas.code.Admin;
+import com.umas.code.DBAnnotation;
+import com.umas.code.Department;
+import com.umas.code.Department.DepartmentDoesNotExistException;
 
 
 public class DepartmentAdminUI extends JPanel {

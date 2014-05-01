@@ -1,4 +1,4 @@
-package com.umas.code;
+package com.umas.frontend;
 
 
 /****************@author Simant Purohit*********************************/
@@ -20,6 +20,20 @@ import javax.swing.border.EmptyBorder;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.JTabbedPane;
+
+import com.umas.code.Admin;
+import com.umas.code.Classroom;
+import com.umas.code.ClassroomLocation;
+import com.umas.code.Course;
+import com.umas.code.CourseOffered;
+import com.umas.code.CourseSchedule;
+import com.umas.code.DBAnnotation;
+import com.umas.code.Department;
+import com.umas.code.Timeslots;
+import com.umas.code.Course.CourseDoesNotExistException;
+import com.umas.code.CourseOffered.CourseOfferingDoesNotExistException;
+import com.umas.code.CourseOffered.CourseOfferingNotCurrentException;
+import com.umas.code.Department.DepartmentDoesNotExistException;
 
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;

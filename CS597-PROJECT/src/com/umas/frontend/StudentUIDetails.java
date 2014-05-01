@@ -1,4 +1,4 @@
-package com.umas.code;
+package com.umas.frontend;
 
 
 import java.awt.BorderLayout;
@@ -21,6 +21,14 @@ import java.awt.event.ActionEvent;
 
 import javax.swing.JComboBox;
 import javax.swing.JCheckBox;
+
+import com.umas.code.Department;
+import com.umas.code.JobApplication;
+import com.umas.code.Login;
+import com.umas.code.People;
+import com.umas.code.Student;
+import com.umas.code.Department.DepartmentDoesNotExistException;
+import com.umas.code.People.PersonDoesNotExistException;
 
 import java.awt.Color;
 

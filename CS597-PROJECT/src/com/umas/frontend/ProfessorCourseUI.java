@@ -1,4 +1,4 @@
-package com.umas.code;
+package com.umas.frontend;
 
 
 import java.awt.BorderLayout;
@@ -24,6 +24,7 @@ import javax.swing.JOptionPane;
 import javax.swing.ListSelectionModel;
 
 
+
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
 
@@ -32,6 +33,15 @@ import javax.swing.JSeparator;
 import java.awt.Color;
 
 import javax.swing.JLabel;
+
+import com.umas.code.Course;
+import com.umas.code.CourseOffered;
+import com.umas.code.DBAnnotation;
+import com.umas.code.Database;
+import com.umas.code.File;
+import com.umas.code.Professor;
+import com.umas.code.Course.CourseDoesNotExistException;
+import com.umas.code.CourseOffered.CourseOfferingDoesNotExistException;
 
 
 /****************@author Simant Purohit*********************************/

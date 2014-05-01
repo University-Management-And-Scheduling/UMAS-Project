@@ -1,4 +1,4 @@
-package com.umas.code;
+package com.umas.frontend;
 
 import java.awt.BorderLayout;
 import java.awt.EventQueue;
@@ -11,12 +11,24 @@ import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JTextField;
 import javax.swing.JButton;
+
 import java.awt.Font;
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
 import java.util.ArrayList;
 
 import javax.swing.JComboBox;
+
+import com.umas.code.Department;
+import com.umas.code.Employee;
+import com.umas.code.People;
+import com.umas.code.Professor;
+import com.umas.code.Student;
+import com.umas.code.Department.DepartmentDoesNotExistException;
+import com.umas.code.Employee.bonusNotValidException;
+import com.umas.code.People.PersonDoesNotExistException;
+import com.umas.code.Professor.ProfessorDoesNotExistException;
+import com.umas.code.Student.AccessDeniedException;
 
 
 /**

@@ -1,4 +1,4 @@
-package com.umas.code;
+package com.umas.frontend;
 
 
 /****************@author Simant Purohit*********************************/
@@ -19,6 +19,20 @@ import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JTextArea;
 
+
+
+import com.umas.code.Course;
+import com.umas.code.CourseOffered;
+import com.umas.code.DBAnnotation;
+import com.umas.code.Department;
+import com.umas.code.People;
+import com.umas.code.Student;
+import com.umas.code.StudentEnrollment;
+import com.umas.code.WaitList;
+import com.umas.code.Course.CourseDoesNotExistException;
+import com.umas.code.CourseOffered.CourseOfferingDoesNotExistException;
+import com.umas.code.Department.DepartmentDoesNotExistException;
+import com.umas.code.People.PersonDoesNotExistException;
 
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;

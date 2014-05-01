@@ -1,4 +1,4 @@
-package com.umas.code;
+package com.umas.frontend;
 
 
 import javax.swing.JPanel;
@@ -8,6 +8,9 @@ import java.awt.Rectangle;
 import java.util.ArrayList;
 
 import javax.swing.JTabbedPane;
+
+import com.umas.code.CourseOffered;
+import com.umas.code.Professor;
 
 
 
