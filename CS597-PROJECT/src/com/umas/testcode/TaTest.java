@@ -113,7 +113,6 @@ public class TaTest {
 	@Test
 	public void testUpdateTaOfficeHours6() {
 		
-		
 		boolean check=TA.updateTaOfficeHours(6, 400, null);
 		assertFalse(check);
 		
@@ -205,6 +204,7 @@ public class TaTest {
 	
 	@Test
 	public void testAddTAtoTAtableCheck4() {
+		
 		
 		boolean check=TA.addTAtoTAtableCheck(3, 400);
 		assertFalse(check);
@@ -374,8 +374,8 @@ public class TaTest {
 	public void testUpdateTADept1() {
 	
 		try {
-			TA ta=new TA(3);
-			boolean check=ta.updateStudentDept(16);
+			TA ta=new TA(585);
+			boolean check=ta.updateStudentDept(1);
 			assertTrue(check);
 		} catch (People.PersonDoesNotExistException e) {
 			// TODO Auto-generated catch block
@@ -433,7 +433,7 @@ public class TaTest {
 	@Test
 	public void testUpdateStudentToTA1() {
 	
-		boolean check=TA.updateStudentToTA(451);
+		boolean check=TA.updateStudentToTA(584);
 		assertTrue(check);
 	}
 
@@ -441,7 +441,7 @@ public class TaTest {
 	@Test
 	public void testUpdateTAtoStudent1() {
 		
-		boolean check=TA.updateTAtoStudent(451);
+		boolean check=TA.updateTAtoStudent(584);
 		assertTrue(check);
 
 	}

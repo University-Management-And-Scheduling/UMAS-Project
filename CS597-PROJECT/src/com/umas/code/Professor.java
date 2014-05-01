@@ -145,6 +145,14 @@ public class Professor extends Employee {
 	/*this function mainly checks if the username beongs to the professor or not*/
 	public static boolean checkIfProfessor(String userName) {
 
+		if(userName==null){
+			return false;
+		}
+		
+		if(userName.length()==0){
+			return false;
+		}
+
 		try {
 			Connection conn = Database.getConnection();// get the connection
 			String SQLProfSelect = "";
@@ -503,6 +511,14 @@ public class Professor extends Employee {
 
 	//update the professor username
 	public boolean updateProfUserName(String userName) {
+		
+		if(userName==null){
+			return false;
+		}
+		
+		if(userName.length()==0){
+			return false;
+		}
 
 		boolean isUpdated = false;
 
@@ -545,6 +561,14 @@ public class Professor extends Employee {
 	
 	//update the professor name
 	public boolean updateProfName(String name) {
+		
+		if(name==null){
+			return false;
+		}
+		
+		if(name.length()==0){
+			return false;
+		}
 
 		boolean isUpdated = false;
 
