@@ -1,5 +1,3 @@
-package com.umas.code;
-
 
 //import java.lang.annotation.ElementType;
 //import java.lang.annotation.Retention;
@@ -148,11 +146,11 @@ public class CourseExamStructure {
 	
 	
 	// To retrive the total marks for an exam. 
-	public static int getTotalMarksForExam(String examName){
-		int totalMarks=0;
-		
-		return totalMarks;
-	}
+//	public static int getTotalMarksForExam(String examName){
+//		int totalMarks=0;
+//		
+//		return totalMarks;
+//	}
 	
 	// To add a new exam.
 	// This function would internally call addNewExamColumn() of the CourseExam class to

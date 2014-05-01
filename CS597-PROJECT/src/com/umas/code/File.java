@@ -1,5 +1,3 @@
-package com.umas.code;
-
 
 //import java.lang.annotation.ElementType;
 //import java.lang.annotation.Retention;
@@ -114,15 +112,18 @@ public class File {
 					String addFileToDB = "yes";
 					
 					if(isFilePresent == true){
-						Scanner in = new Scanner(System.in);
-						System.out.println("File already Present. Do you want to Replace it? Yes/No: ");
-						addFileToDB = in.next();
-						in.close();
+//						Scanner in = new Scanner(System.in);
+//						System.out.println("File already Present. Do you want to Replace it? Yes/No: ");
+//						addFileToDB = in.next();
+//						in.close();
+						fileAdded = false;
 					}
 				
 						
 					// Add file in database
-					if(addFileToDB.toLowerCase().equals("yes")){
+					
+					// if(addFileToDB.toLowerCase().equals("yes")){
+					else{	
 						File file = new File(fileName, fileLocation, offerID);
 						file.deleteFileFromDB();
 						PreparedStatement statement = conn.prepareStatement(SQLFileInsert);
