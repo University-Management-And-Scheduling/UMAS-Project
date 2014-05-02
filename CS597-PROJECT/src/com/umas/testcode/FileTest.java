@@ -17,9 +17,10 @@ public class FileTest {
 		int offerID = 410;
 		
 		File file = new File(fileName,fileLocation,offerID);
-//		file.deleteFileFromDB();
 		boolean fileAdded = File.addFileToDB(fileName, fileLocation, offerID);
-		
+		System.out.println("-");
+		file = new File(fileName,fileLocation,offerID);
+		file.deleteFileFromDB();
 		assertEquals(true,fileAdded);
 	}
 	
@@ -31,20 +32,27 @@ public class FileTest {
 		int offerID = 410;
 		
 		File file = new File(fileName,fileLocation,offerID);
-		
+		File.addFileToDB(fileName, fileLocation, offerID);
 		boolean fileAdded = File.addFileToDB(fileName, fileLocation, offerID);
-		
+		file = new File(fileName,fileLocation,offerID);
+		file.deleteFileFromDB();
 		assertEquals(false,fileAdded);
 	}
 
 	@Test
 	public void testModifyFileLocation() {
+		System.out.println("------ DELETE -------");
 		String fileName = "CS442Syllabus";
 		String fileLocation = "C:/CS410";
 		int offerID = 410;
+		File.addFileToDB(fileName, fileLocation, offerID);
 		File file = new File(fileName,fileLocation,offerID);
 		boolean fileDeleted = file.modifyFileLocation("C:/Syllabus/CS410") ;
+		file.setFileLocation("C:/Syllabus/CS410");
+		file.deleteFileFromDB();
+		System.out.println("------ DELETE -------");
 		assertEquals(true,fileDeleted);
+
 		
 	}
 	
@@ -54,7 +62,7 @@ public class FileTest {
 		String fileName = "CS442Syllabus";
 		String fileLocation = "C:/Syllabus/CS410";
 		int offerID = 410;
-		
+		File.addFileToDB(fileName, fileLocation, offerID);
 		File file = new File(fileName,fileLocation,offerID);
 		boolean fileDeleted = file.deleteFileFromDB() ;
 		assertEquals(true,fileDeleted);

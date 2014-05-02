@@ -35,7 +35,7 @@ public class CourseExamStructureTest {
 	
 	@Test
 	public void testModifyExistingExamName() {
-		
+		System.out.println("-----testModifyExistingExamName----");
 		int offerID = 410;
 		String examName = "Assgn3";
 		
@@ -53,6 +53,9 @@ public class CourseExamStructureTest {
 		examStruct.deleteExistingExam();
 		examStruct.addNewExam();
 		boolean examModified = examStruct.modifyExistingExamName("Assgn4");
+		examStruct = new CourseExamStructure(offeredCourse,"Assgn4",totalMarks);
+		examStruct.modifyExistingExamName("Assgn3");
+		System.out.println("-----testModifyExistingExamName----");
 		assertEquals(true,examModified);
 		
 	}
@@ -79,8 +82,9 @@ public class CourseExamStructureTest {
 
 	@Test
 	public void testModifyExistingExamTotalMarks() {
+		System.out.println("-----testModifyExistingExamTotal----");
 		int offerID = 410;
-		String examName = "Assgn4";
+		String examName = "Assgn3";
 		int totalMarks = 20; 
 		CourseOffered offeredCourse = null;
 		try {
@@ -93,8 +97,9 @@ public class CourseExamStructureTest {
 
 		@SuppressWarnings("unused")
 		CourseExamStructure examStruct = new CourseExamStructure(offeredCourse,examName,totalMarks);
-		
+		System.out.println("-----testModifyExistingExamTotal----");
 		boolean examModified = examStruct.modifyExistingExamTotalMarks(30);
+		
 		assertEquals(true,examModified);
 	}
 
@@ -113,9 +118,9 @@ public class CourseExamStructureTest {
 		} catch (CourseOffered.CourseOfferingDoesNotExistException e1) {
 			e1.printStackTrace();
 		}
-
-		CourseExamStructure examStruct = new CourseExamStructure(offeredCourse,examName,totalMarks);
 		
+		CourseExamStructure examStruct = new CourseExamStructure(offeredCourse,examName,totalMarks);
+		examStruct.addNewExam();
 		boolean examDeleted = examStruct.deleteExistingExam();
 		assertEquals(true,examDeleted);
 	}

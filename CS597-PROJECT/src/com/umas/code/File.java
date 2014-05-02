@@ -181,6 +181,7 @@ public class File {
 						// Retrieve by column name
 						DBAnnotation.annoate("fileName", "files", "FileName", true);
 						String tableFileName = rs.getString("FileName");
+						System.out.println(tableFileName);
 						if(tableFileName.equals(fileName)){
 							isFilePresent = true;
 							break;
@@ -207,6 +208,7 @@ public class File {
 		int offerID = this.getOfferID();
 		
 		boolean isFilePresent = isFilePresent(fileName,fileLocation,offerID);
+		System.out.println(isFilePresent+" fileName: "+fileName + " loca: " + fileLocation + " id:" + fileID + " offerID " + offerID);
 		if(isFilePresent == false){
 			System.out.println("The file is not present");
 		} else {
