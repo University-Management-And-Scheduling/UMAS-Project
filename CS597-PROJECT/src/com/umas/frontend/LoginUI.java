@@ -97,7 +97,7 @@ public class LoginUI extends JPanel {
 						if (passwordrecovered == false){
 							JOptionPane.showMessageDialog(null, "Incorrect Username","Error",JOptionPane.ERROR_MESSAGE);
 						} else{
-							btnForgotPassword.setBounds(231, 164, 160, 23);
+							btnForgotPassword.setBounds(159, 214, 160, 23);
 							btnForgotPassword.setText("FORGOT PASSWORD");
 							textField.setText("");
 							passwordField.setVisible(true);

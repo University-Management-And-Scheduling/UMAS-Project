@@ -7,14 +7,12 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Collections;
 
+import com.umas.code.Course.CourseAlreadyExistsException;
+
 
 public class PopulateData {
 
-
-	/**
-	 * @param args
-	 */
-	
+		
 	public boolean populateDepartments(){
 		
 		boolean done=false;
@@ -38,7 +36,7 @@ public class PopulateData {
 								String deptName=rs.getString("names");
 								Department.addNewDepartment(deptName);
 								System.out.println(deptName);
-								Thread.sleep(500);
+								Thread.sleep(10);
 								done=true;
 								
 							
@@ -72,6 +70,8 @@ public class PopulateData {
 		return done;	
 	}
 		
+	
+	//50 administrators will be added
 	public boolean populateAdmins(){
 		
 		boolean done=false;
@@ -84,7 +84,7 @@ public class PopulateData {
 					
 					ArrayList<Department> getAllDepts=Department.getAllDepartments();
 					//Retrieve the current semester ID
-					String SemesterSelect = "Select * FROM names LIMIT 10";
+					String SemesterSelect = "Select * FROM names3 order by rand() LIMIT 50";
 					PreparedStatement statement = conn.prepareStatement(SemesterSelect);
 					ResultSet rs = statement.executeQuery();
 							
@@ -99,7 +99,7 @@ public class PopulateData {
 								System.out.println("Adding new admin");
 								Admin.addAdmin(name, d);
 								System.out.println(d.getDepartmentName()+"-------"+name);
-								Thread.sleep(500);
+								Thread.sleep(10);
 								done=true;
 							
 						}
@@ -145,7 +145,7 @@ public class PopulateData {
 					
 					ArrayList<Department> getAllDepts=Department.getAllDepartments();
 					//Retrieve the current semester ID
-					String SemesterSelect = "Select * FROM names";
+					String SemesterSelect = "Select * FROM names3";
 					PreparedStatement statement = conn.prepareStatement(SemesterSelect);
 					ResultSet rs = statement.executeQuery();
 					
@@ -160,7 +160,7 @@ public class PopulateData {
 								System.out.println("Adding new professor");
 								Professor.addProfToDb(name, d);
 								System.out.println(d.getDepartmentName()+"------"+name);
-								Thread.sleep(500);	
+								Thread.sleep(10);	
 								done=true;
 						}
 						
@@ -226,7 +226,7 @@ public class PopulateData {
 								System.out.println("Level:"+level);
 								System.out.println(d.getDepartmentName()+"---------"+name);
 								System.out.println(name);
-								Thread.sleep(500);
+								Thread.sleep(10);
 								done=true;
 							
 						}
@@ -271,6 +271,7 @@ public class PopulateData {
 			try{
 				if(conn != null){
 					
+					ArrayList<Department> departments = Department.getAllDepartments();
 					//Retrieve the current semester ID
 					String SemesterSelect = "Select * FROM names1";
 					PreparedStatement statement = conn.prepareStatement(SemesterSelect);
@@ -278,35 +279,11 @@ public class PopulateData {
 					
 					while(rs.next()){
 						String name = rs.getString(1);
-						int dept=0;
-						
-						while(dept<=17 || dept>=27){
-							dept = (int)(Math.random()*30);
-						}
-						
-						try{
-							if((dept>17 && dept<27)){
-								System.out.println("Adding new students");
-								Department d = new Department(dept);
-								Course.addCourse(name, d);
-								System.out.println(d.getDepartmentName());
-								System.out.println(name);
-								Thread.sleep(500);
-								done=true;
-							}
-						}
-						
-						catch (Department.DepartmentDoesNotExistException e) {
-							// TODO Auto-generated catch block
-							e.printStackTrace();
-						} catch (InterruptedException e) {
-							// TODO Auto-generated catch block
-							e.printStackTrace();
-						} 
-						catch (Course.CourseAlreadyExistsException e) {
-							// TODO Auto-generated catch block
-							e.printStackTrace();
-						}
+						Collections.shuffle(departments);
+						Department d = departments.get(0);
+						Course.addCourse(name, d);
+						Thread.sleep(10);
+						done=true;
 					}
 					
 				}
@@ -315,6 +292,12 @@ public class PopulateData {
 			
 			catch(SQLException e){
 				System.out.println(e.getMessage());
+				e.printStackTrace();
+			} catch (Course.CourseAlreadyExistsException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (InterruptedException e) {
+				// TODO Auto-generated catch block
 				e.printStackTrace();
 			} 
 				
@@ -341,20 +324,19 @@ public class PopulateData {
 					
 					ArrayList<Department> departments = Department.getAllDepartments();
 					int count = 0;
-					outer:for(Department d:departments){
+					for(Department d:departments){
 						ArrayList<Course> courses = Course.getCoursesOfDepartment(d);
 						ArrayList<Professor> profs = Professor.getAllProfInADept(d.getDepartmentID());
 						int[] capacity = {5,8,10};
-						for(int i=0;i<3;i++){
-							count++;
-							int coursesRand = (int)(Math.random()*courses.size());
-							int professorRand = (int)(Math.random()*profs.size());
-							CourseOffered.addCourseOfferingToDatabase(courses.remove(coursesRand), profs.remove(professorRand), capacity[i]);
-							Thread.sleep(1500);
-							done=true;
-							if(count>16){
-								break outer;
-							}
+						
+						for(Course course:courses){
+							Collections.shuffle(profs);
+							Professor p = profs.get(0);
+							int cap = (int)(Math.random()*3);
+							System.out.println("Course:"+course.getCourseName()+"--------------"+p.getName());							
+							CourseOffered.addCourseOfferingToDatabase(course, p, capacity[cap]);
+							Thread.sleep(10);
+							done = true;
 						}
 					}
 				}
@@ -417,7 +399,7 @@ public class PopulateData {
 						boolean x = JobApplication.addApplicationDetails(s.getUIN(), workExSelected,skills[0], skills[1], skills[2], skills[3], skills[4]);
 						if(!x)
 							System.out.println("*****************************Application exists:"+s.getUIN());
-						Thread.sleep(1000);
+						Thread.sleep(10);
 						done=true;
 						
 					}
@@ -482,7 +464,7 @@ public class PopulateData {
 						
 						int x=Job.postJob(p.getUIN(), p.getDeptID(), gPASelected, workExSelected,skills[0], skills[1], skills[2], skills[3], skills[4]);
 						System.out.println("Posted job is: "+x);
-						Thread.sleep(1000);
+						Thread.sleep(10);
 						done=true;
 						
 					}
@@ -523,7 +505,7 @@ public class PopulateData {
 					ArrayList<Student> getAllStudents=Student.getAllStudents();
 					
 					
-					for(int i=0;i<40;i++){
+					for(int i=0;i<100;i++){
 						Collections.shuffle(getAllCoursesOffered);
 						Collections.shuffle(getAllStudents);
 
@@ -536,7 +518,7 @@ public class PopulateData {
 						if(!check){
 							System.out.println("---------------------TA already exists"+s.getUIN()+"------"+c.getOfferID());
 						}
-						Thread.sleep(1000);
+						Thread.sleep(10);
 						done=true;
 						
 					}
@@ -596,7 +578,7 @@ public class PopulateData {
 						
 						
 
-						Thread.sleep(1000);
+						Thread.sleep(10);
 						done=true;
 					}
 					}
@@ -630,14 +612,15 @@ public class PopulateData {
 			try{
 				if(conn != null){
 					
-					ArrayList<CourseOffered> getAllOfferedCourses=CourseOffered.getAllCurrentlyOfferedCourses();
+					ArrayList<CourseOffered> getAllOfferedCourses=CourseOffered.getAllCurrentlyOfferedCourses();				
 					ArrayList<Student> getAllStudents=Student.getAllStudents();
-					
-					
 
 					for(CourseOffered c:getAllOfferedCourses){
-						
 						System.out.println("--------------------------------------------------------------------");
+						if(getAllStudents.size()<=10){
+							getAllStudents = Student.getAllStudents();
+						}
+						
 						for(int i=0;i<5;i++){
 							
 							Collections.shuffle(getAllStudents);
@@ -647,7 +630,7 @@ public class PopulateData {
 							boolean check=se.enrollStudents();
 							if(check){
 								System.out.println(""+c.getOfferID()+"-----------"+s.getUIN());
-								Thread.sleep(500);
+								Thread.sleep(10);
 								done=true;
 							}
 							else{
